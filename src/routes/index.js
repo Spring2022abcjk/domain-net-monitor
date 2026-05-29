@@ -15,6 +15,10 @@ import {
   handleResultSingle
 } from './result.js';
 
+import { handleAuth } from './admin/auth.js';
+import { handleConfig } from './admin/config.js';
+
+import { withAdminAuth } from '../middleware/auth.js';
 import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
 
 /**
@@ -49,6 +53,23 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   }
 
   let response;
+
+  // === Admin Routes (需要鉴权) ===
+  
+  // POST /api/admin/auth/verify
+  if (path === '/api/admin/auth/verify' && method === 'POST') {
+    response = await withAdminAuth(handleAuth)(request, env);
+  }
+  // POST /api/admin/auth/logout
+  else if (path === '/api/admin/auth/logout' && method === 'POST') {
+    response = await handleAuth(request, env);
+  }
+  // GET /api/admin/config/security
+  else if (path === '/api/admin/config/security' && method === 'GET') {
+    response = await withAdminAuth(handleConfig)(request, env);
+  }
+  
+  // === Public Routes (限流) ===
 
   // GET /api/domains
   if (path === '/api/domains' && method === 'GET') {

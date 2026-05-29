@@ -13,6 +13,7 @@ import { runDetectorTests } from './unit/detectors.test.js';
 import { runStorageTests } from './unit/storage.test.js';
 import { runRoutesTests } from './unit/routes.test.js';
 import { runStorageExtensionsTests } from './unit/storage-extensions.test.js';
+import { runAuthIntegrationTests } from './integration/auth.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -31,6 +32,7 @@ async function runAllTests() {
     await runStorageTests();
     await runRoutesTests();
     await runStorageExtensionsTests();
+    await runAuthIntegrationTests();
     
     const allPassed = printSummary();
     
