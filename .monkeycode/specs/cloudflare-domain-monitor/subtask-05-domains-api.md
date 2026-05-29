@@ -1,440 +1,533 @@
-# 子任务 5：域名管理 API
+# 任务 5：域名管理 API - 子任务分解
+
+**创建时间**: 2026-05-29  
+**任务状态**: ⏳ 待开始  
+**预计工期**: 1 天
+
+---
 
 ## 任务目标
 
-实现管理员对域名的增删改查（CRUD）操作，以及默认展示域名列表管理。
+实现域名管理相关的 API 端点，支持域名的增删查、默认展示设置等功能。
 
 ---
 
-## API 端点
+## 子任务列表
 
-| 方法 | 路径 | 说明 | 鉴权 |
-|------|------|------|------|
-| GET | `/api/admin/domains` | 获取所有域名 | ✅ |
-| GET | `/api/admin/domains/default` | 获取默认展示域名 | ✅ |
-| POST | `/api/admin/domains` | 添加域名 | ✅ |
-| DELETE | `/api/admin/domains/:domain` | 删除域名 | ✅ |
-| POST | `/api/admin/domains/:domain/default` | 设为默认展示 | ✅ |
-| DELETE | `/api/admin/domains/:domain/default` | 取消默认展示 | ✅ |
+### 5.1 实现获取所有域名 API
 
----
+**文件**: `src/routes/admin/domains.js`
 
-## 子任务步骤
+**API**: `GET /api/admin/domains`
 
-### 5.1 域名存储实现（如果任务 2 未完成）
+**请求**:
+```http
+GET /api/admin/domains
+X-API-Token: <admin-token>
+```
 
-```javascript
-// src/storage/domains.js
-
-import { KV_KEY_DOMAIN_LIST, KV_KEY_DEFAULT_DOMAINS } from '../config.js';
-import { getKV } from './kv.js';
-
-/**
- * 获取所有域名
- */
-export async function getAllDomains(env) {
-  const kv = getKV(env);
-  const data = await kv.get(KV_KEY_DOMAIN_LIST);
-  return data ? JSON.parse(data) : [];
-}
-
-/**
- * 添加域名
- */
-export async function addDomain(env, domain) {
-  const kv = getKV(env);
-  const domains = await getAllDomains(env);
-  
-  if (!domains.includes(domain)) {
-    domains.push(domain);
-    await kv.put(KV_KEY_DOMAIN_LIST, JSON.stringify(domains));
-  }
-  
-  return domains;
-}
-
-/**
- * 删除域名
- */
-export async function removeDomain(env, domain) {
-  const kv = getKV(env);
-  const domains = await getAllDomains(env);
-  const filtered = domains.filter(d => d !== domain);
-  
-  await kv.put(KV_KEY_DOMAIN_LIST, JSON.stringify(filtered));
-  
-  // 同时删除该域名的结果和历史记录
-  await kv.delete(`${KV_KEY_RESULT_PREFIX}${domain}`);
-  await kv.delete(`${KV_KEY_HISTORY_PREFIX}${domain}`);
-  
-  return filtered;
-}
-
-/**
- * 获取默认展示域名
- */
-export async function getDefaultDomains(env) {
-  const kv = getKV(env);
-  const data = await kv.get(KV_KEY_DEFAULT_DOMAINS);
-  return data ? JSON.parse(data) : [];
-}
-
-/**
- * 设置默认展示域名
- */
-export async function setDefaultDomains(env, domains) {
-  const kv = getKV(env);
-  await kv.put(KV_KEY_DEFAULT_DOMAINS, JSON.stringify(domains));
-}
-
-/**
- * 添加域名到默认列表
- */
-export async function addToDefaultDomains(env, domain) {
-  const defaultDomains = await getDefaultDomains(env);
-  
-  if (!defaultDomains.includes(domain)) {
-    defaultDomains.push(domain);
-    await setDefaultDomains(env, defaultDomains);
-  }
-  
-  return defaultDomains;
-}
-
-/**
- * 从默认列表移除域名
- */
-export async function removeFromDefaultDomains(env, domain) {
-  const defaultDomains = await getDefaultDomains(env);
-  const filtered = defaultDomains.filter(d => d !== domain);
-  
-  await setDefaultDomains(env, filtered);
-  
-  return filtered;
+**响应（成功）**:
+```json
+{
+  "domains": ["cloudflare.com", "google.com"],
+  "count": 2
 }
 ```
 
-**文件**: `/workspace/src/storage/domains.js`
-
-### 5.2 域名管理路由
-
+**实现要点**:
 ```javascript
-// src/routes/admin/domains.js
+import { getDomainList } from '../../storage/kv.js';
+import { withAdminAuth } from '../../middleware/auth.js';
 
-import { jsonResponse } from '../../utils/helper.js';
+async function handleGetDomains(request, env) {
+  const kv = env.DOMAIN_MONITOR_KV;
+  const domains = await getDomainList(kv);
+  
+  return new Response(JSON.stringify({
+    domains,
+    count: domains.length
+  }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+```
+
+**验收标准**:
+- ✅ 需要有效 Token 才能访问
+- ✅ 返回域名数组和数量
+- ✅ 空列表返回空数组
+- ✅ 响应包含 CORS 头
+
+---
+
+### 5.2 实现添加域名 API
+
+**文件**: `src/routes/admin/domains.js`
+
+**API**: `POST /api/admin/domains`
+
+**请求**:
+```http
+POST /api/admin/domains
+X-API-Token: <admin-token>
+Content-Type: application/json
+
+{
+  "domain": "example.com"
+}
+```
+
+**响应（成功）**:
+```json
+{
+  "success": true,
+  "message": "Domain added successfully",
+  "domain": "example.com"
+}
+```
+
+**响应（域名已存在）**:
+```json
+{
+  "success": false,
+  "message": "Domain already exists"
+}
+```
+
+**响应（域名格式错误）**:
+```json
+{
+  "success": false,
+  "message": "Invalid domain format"
+}
+```
+
+**实现要点**:
+```javascript
+import { addDomain } from '../../storage/kv.js';
 import { cleanDomain } from '../../utils/helper.js';
-import {
-  getAllDomains,
-  addDomain,
-  removeDomain,
-  getDefaultDomains,
-  addToDefaultDomains,
-  removeFromDefaultDomains
-} from '../../storage/domains.js';
 
-/**
- * 获取所有域名
- * GET /api/admin/domains
- */
-async function getDomains(request, env) {
-  const domains = await getAllDomains(env);
+async function handleAddDomain(request, env) {
+  const body = await request.json();
+  const domain = cleanDomain(body.domain);
   
-  return jsonResponse({
-    list: domains,
-    total: domains.length
-  });
-}
-
-/**
- * 获取默认展示域名
- * GET /api/admin/domains/default
- */
-async function getDefault(request, env) {
-  const domains = await getDefaultDomains(env);
-  
-  return jsonResponse({
-    list: domains,
-    total: domains.length
-  });
-}
-
-/**
- * 添加域名
- * POST /api/admin/domains
- */
-async function addDomainRoute(request, env) {
-  try {
-    const body = await request.json();
-    const domain = cleanDomain(body.domain);
-    
-    if (!domain) {
-      return new Response(JSON.stringify({
-        code: 400,
-        data: null,
-        msg: 'Invalid domain format'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    
-    const domains = await addDomain(env, domain);
-    
+  if (!domain) {
     return jsonResponse({
-      domain,
-      total: domains.length
-    }, 201, 'Domain added successfully');
-  } catch (error) {
-    return new Response(JSON.stringify({
-      code: 400,
-      data: null,
-      msg: 'Invalid request body'
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
-
-/**
- * 删除域名
- * DELETE /api/admin/domains/:domain
- */
-async function deleteDomain(request, env, domain) {
-  const clean = cleanDomain(domain);
-  
-  if (!clean) {
-    return new Response(JSON.stringify({
-      code: 400,
-      data: null,
-      msg: 'Invalid domain format'
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+      success: false,
+      message: 'Invalid domain format'
+    }, 400);
   }
   
-  const domains = await removeDomain(env, clean);
+  const added = await addDomain(env.DOMAIN_MONITOR_KV, domain);
+  
+  if (!added) {
+    return jsonResponse({
+      success: false,
+      message: 'Domain already exists'
+    }, 409);
+  }
   
   return jsonResponse({
-    domain: clean,
-    remaining: domains.length
-  }, 200, 'Domain deleted successfully');
+    success: true,
+    message: 'Domain added successfully',
+    domain
+  }, 200);
 }
-
-/**
- * 设为默认展示
- * POST /api/admin/domains/:domain/default
- */
-async function setAsDefault(request, env, domain) {
-  const clean = cleanDomain(domain);
-  
-  if (!clean) {
-    return new Response(JSON.stringify({
-      code: 400,
-      data: null,
-      msg: 'Invalid domain format'
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
-  const defaultDomains = await addToDefaultDomains(env, clean);
-  
-  return jsonResponse({
-    domain: clean,
-    totalDefault: defaultDomains.length
-  }, 200, 'Added to default list');
-}
-
-/**
- * 取消默认展示
- * DELETE /api/admin/domains/:domain/default
- */
-async function removeFromDefault(request, env, domain) {
-  const clean = cleanDomain(domain);
-  
-  if (!clean) {
-    return new Response(JSON.stringify({
-      code: 400,
-      data: null,
-      msg: 'Invalid domain format'
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
-  const defaultDomains = await removeFromDefaultDomains(env, clean);
-  
-  return jsonResponse({
-    domain: clean,
-    remaining: defaultDomains.length
-  }, 200, 'Removed from default list');
-}
-
-export const router = {
-  getDomains,
-  getDefault,
-  addDomainRoute,
-  deleteDomain,
-  setAsDefault,
-  removeFromDefault
-};
 ```
 
-**文件**: `/workspace/src/routes/admin/domains.js`
+**验收标准**:
+- ✅ 需要有效 Token 才能访问
+- ✅ 域名自动清洗（移除协议、端口、路径）
+- ✅ 重复域名返回 409
+- ✅ 无效域名返回 400
+- ✅ 成功添加返回 200
 
-### 5.3 更新管理路由分发
+---
 
+### 5.3 实现删除域名 API
+
+**文件**: `src/routes/admin/domains.js`
+
+**API**: `DELETE /api/admin/domains/:domain`
+
+**请求**:
+```http
+DELETE /api/admin/domains/example.com
+X-API-Token: <admin-token>
+```
+
+**响应（成功）**:
+```json
+{
+  "success": true,
+  "message": "Domain deleted successfully",
+  "domain": "example.com"
+}
+```
+
+**响应（域名不存在）**:
+```json
+{
+  "success": false,
+  "message": "Domain not found"
+}
+```
+
+**实现要点**:
 ```javascript
-// src/routes/admin/index.js
+import { deleteDomain } from '../../storage/kv.js';
 
-import { isValidAdminToken } from '../../middleware/auth.js';
-import { router as authRouter } from './auth.js';
-import { router as domainsRouter } from './domains.js';
-
-const adminRoutes = {
-  // 认证
-  '/api/admin/auth/verify': { POST: authRouter.verifyToken },
-  '/api/admin/auth/logout': { POST: authRouter.logout },
-  '/api/admin/config/security': { GET: authRouter.getSecurityConfig },
-  
-  // 域名管理
-  '/api/admin/domains': {
-    GET: domainsRouter.getDomains,
-    POST: domainsRouter.addDomainRoute
-  },
-  '/api/admin/domains/default': {
-    GET: domainsRouter.getDefault
-  },
-  '/api/admin/domains/:domain/default': {
-    POST: domainsRouter.setAsDefault,
-    DELETE: domainsRouter.removeFromDefault
-  },
-  '/api/admin/domains/:domain': {
-    DELETE: domainsRouter.deleteDomain
-  }
-};
-
-// 需要鉴权的路径（排除 verify 和 logout）
-const noAuthPaths = ['/api/admin/auth/verify', '/api/admin/auth/logout'];
-
-export async function handleAdminRoute(request, env) {
+async function handleDeleteDomain(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
-  const method = request.method;
+  const domain = path.split('/').pop();  // 获取 :domain 参数
   
-  // 精确匹配
-  let route = adminRoutes[path];
-  let domainParam = null;
+  const deleted = await deleteDomain(env.DOMAIN_MONITOR_KV, domain);
   
-  // 处理带参数的路径（如 /api/admin/domains/:domain）
-  if (!route) {
-    for (const [pattern, handlers] of Object.entries(adminRoutes)) {
-      if (pattern.includes(':domain')) {
-        const regex = new RegExp('^' + pattern.replace(':domain', '([^/]+)') + '$');
-        const match = path.match(regex);
-        if (match) {
-          route = handlers;
-          domainParam = match[1];
-          break;
-        }
-      }
-    }
+  if (!deleted) {
+    return jsonResponse({
+      success: false,
+      message: 'Domain not found'
+    }, 404);
   }
   
-  if (!route) {
-    return null;  // 不是管理路由
-  }
-  
-  const handler = route[method];
-  if (!handler) {
-    return new Response(JSON.stringify({
-      code: 405,
-      data: null,
-      msg: `Method ${method} not allowed`
-    }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
-  // 鉴权检查
-  if (!noAuthPaths.includes(path) && !isValidAdminToken(request, env)) {
-    return new Response(JSON.stringify({
-      code: 401,
-      data: null,
-      msg: 'Invalid or missing API Token'
-    }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
-  return handler(request, env, domainParam);
+  return jsonResponse({
+    success: true,
+    message: 'Domain deleted successfully',
+    domain
+  }, 200);
 }
 ```
 
-**文件**: `/workspace/src/routes/admin/index.js`
+**验收标准**:
+- ✅ 需要有效 Token 才能访问
+- ✅ 删除成功返回 200
+- ✅ 域名不存在返回 404
+- ✅ 同时清理相关历史记录（可选）
 
 ---
 
-## 验收标准
+### 5.4 实现设为默认展示 API
 
-1. ✅ `src/storage/domains.js` 存储模块实现
-2. ✅ `src/routes/admin/domains.js` 域名管理路由
-3. ✅ 管理路由支持路径参数 `:domain`
-4. ✅ 所有 6 个 API 端点正常工作
-5. ✅ 域名格式验证正确
-6. ✅ 删除域名时同时清理结果和历史记录
+**文件**: `src/routes/admin/domains.js`
 
----
+**API**: `POST /api/admin/domains/:domain/default`
 
-## 测试用例
-
-```bash
-# 设置 Token
-export TOKEN="ff10a24df88c7be158ff06f34e36707044b681f02ef090b569806d779e721703"
-
-# 获取所有域名
-curl -X GET http://localhost:8787/api/admin/domains -H "X-API-Token: $TOKEN"
-
-# 添加域名
-curl -X POST http://localhost:8787/api/admin/domains \
-  -H "Content-Type: application/json" \
-  -H "X-API-Token: $TOKEN" \
-  -d '{"domain": "example.com"}'
-
-# 设为默认展示
-curl -X POST http://localhost:8787/api/admin/domains/example.com/default \
-  -H "X-API-Token: $TOKEN"
-
-# 获取默认展示域名
-curl -X GET http://localhost:8787/api/admin/domains/default \
-  -H "X-API-Token: $TOKEN"
-
-# 取消默认展示
-curl -X DELETE http://localhost:8787/api/admin/domains/example.com/default \
-  -H "X-API-Token: $TOKEN"
-
-# 删除域名
-curl -X DELETE http://localhost:8787/api/admin/domains/example.com \
-  -H "X-API-Token: $TOKEN"
+**请求**:
+```http
+POST /api/admin/domains/cloudflare.com/default
+X-API-Token: <admin-token>
 ```
+
+**响应（成功）**:
+```json
+{
+  "success": true,
+  "message": "Domain set as default",
+  "domain": "cloudflare.com"
+}
+```
+
+**响应（域名不存在）**:
+```json
+{
+  "success": false,
+  "message": "Domain not in list"
+}
+```
+
+**实现要点**:
+```javascript
+import { setDefaultDomains, getDefaultDomains } from '../../storage/default-domains.js';
+
+async function handleSetDefaultDomain(request, env) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+  const domain = path.split('/').pop();
+  
+  // 检查域名是否在列表中
+  const allDomains = await getDomainList(env.DOMAIN_MONITOR_KV);
+  if (!allDomains.includes(domain)) {
+    return jsonResponse({
+      success: false,
+      message: 'Domain not in list'
+    }, 404);
+  }
+  
+  // 获取现有默认列表
+  const defaults = await getDefaultDomains(env);
+  
+  // 如果已在列表中，不重复添加
+  if (!defaults.includes(domain)) {
+    defaults.push(domain);
+    await setDefaultDomains(env, defaults);
+  }
+  
+  return jsonResponse({
+    success: true,
+    message: 'Domain set as default',
+    domain
+  }, 200);
+}
+```
+
+**验收标准**:
+- ✅ 需要有效 Token 才能访问
+- ✅ 域名必须在监控列表中
+- ✅ 重复设置不报错（幂等性）
+- ✅ 成功返回 200
+
+---
+
+### 5.5 实现取消默认展示 API
+
+**文件**: `src/routes/admin/domains.js`
+
+**API**: `DELETE /api/admin/domains/:domain/default`
+
+**请求**:
+```http
+DELETE /api/admin/domains/cloudflare.com/default
+X-API-Token: <admin-token>
+```
+
+**响应（成功）**:
+```json
+{
+  "success": true,
+  "message": "Domain removed from defaults",
+  "domain": "cloudflare.com"
+}
+```
+
+**响应（域名不在默认列表）**:
+```json
+{
+  "success": false,
+  "message": "Domain not in default list"
+}
+```
+
+**实现要点**:
+```javascript
+async function handleRemoveDefaultDomain(request, env) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+  const domain = path.split('/').pop();
+  
+  const defaults = await getDefaultDomains(env);
+  const index = defaults.indexOf(domain);
+  
+  if (index === -1) {
+    return jsonResponse({
+      success: false,
+      message: 'Domain not in default list'
+    }, 404);
+  }
+  
+  defaults.splice(index, 1);
+  await setDefaultDomains(env, defaults);
+  
+  return jsonResponse({
+    success: true,
+    message: 'Domain removed from defaults',
+    domain
+  }, 200);
+}
+```
+
+**验收标准**:
+- ✅ 需要有效 Token 才能访问
+- ✅ 域名不在默认列表返回 404
+- ✅ 成功移除返回 200
+- ✅ 操作幂等
+
+---
+
+### 5.6 更新路由分发器
+
+**文件**: `src/routes/index.js`
+
+**改动**:
+```javascript
+import { handleDomains } from './admin/domains.js';
+
+// 在管理员路由部分添加
+if (path.startsWith('/api/admin/domains/')) {
+  return withAdminAuth(handleDomains)(request, env);
+}
+```
+
+**验收标准**:
+- ✅ 所有域名管理路由都需要 Token
+- ✅ 路由匹配规则正确
+- ✅ 404 路由正常工作
+
+---
+
+## API 路由表
+
+| 路径 | 方法 | 鉴权 | 限流 | 说明 |
+|------|------|------|------|------|
+| `/api/admin/domains` | GET | ✅ | ❌（豁免） | 获取所有域名 |
+| `/api/admin/domains` | POST | ✅ | ❌（豁免） | 添加域名 |
+| `/api/admin/domains/:domain` | DELETE | ✅ | ❌（豁免） | 删除域名 |
+| `/api/admin/domains/:domain/default` | POST | ✅ | ❌（豁免） | 设为默认展示 |
+| `/api/admin/domains/:domain/default` | DELETE | ✅ | ❌（豁免） | 取消默认展示 |
 
 ---
 
 ## 相关文件
 
-- `src/storage/domains.js` - 域名存储
-- `src/routes/admin/domains.js` - 域名管理路由
-- `src/routes/admin/index.js` - 管理路由分发
+### 新增文件
+- `src/routes/admin/domains.js` - 域名管理路由（5 个 API）
+
+### 更新文件
+- `src/routes/index.js` - 添加域名管理路由
+
+### 依赖模块
+- `src/middleware/auth.js` - 鉴权中间件
+- `src/storage/kv.js` - KV 存储操作
+- `src/storage/default-domains.js` - 默认域名管理
+- `src/utils/helper.js` - 域名清洗
 
 ---
 
-## 后续依赖
+## 实现步骤
 
-- 任务 8：批量检测需要读取域名列表
-- 任务 11：定时检测默认域名需要读取默认列表
+### 步骤 1: 创建路由文件
+```bash
+touch src/routes/admin/domains.js
+```
+
+### 步骤 2: 实现 handleDomains 路由分发函数
+```javascript
+export async function handleDomains(request, env) {
+  const method = request.method;
+  const url = new URL(request.url);
+  const path = url.pathname;
+  
+  if (path === '/api/admin/domains') {
+    if (method === 'GET') return handleGetDomains(request, env);
+    if (method === 'POST') return handleAddDomain(request, env);
+  }
+  
+  if (path.endsWith('/default')) {
+    if (method === 'POST') return handleSetDefaultDomain(request, env);
+    if (method === 'DELETE') return handleRemoveDefaultDomain(request, env);
+  }
+  
+  if (method === 'DELETE') {
+    return handleDeleteDomain(request, env);
+  }
+  
+  return jsonResponse({ code: 405, msg: 'Method not allowed' }, 405);
+}
+```
+
+### 步骤 3: 实现各个处理函数
+- `handleGetDomains` - 获取域名列表
+- `handleAddDomain` - 添加域名
+- `handleDeleteDomain` - 删除域名
+- `handleSetDefaultDomain` - 设为默认
+- `handleRemoveDefaultDomain` - 取消默认
+
+### 步骤 4: 更新路由分发器
+在 `src/routes/index.js` 中添加域名管理路由
+
+### 步骤 5: 编写集成测试
+创建 `tests/integration/domains.test.js`，包含 20+ 个测试
+
+### 步骤 6: 运行测试验证
+```bash
+npm test
+```
+
+---
+
+## 测试计划
+
+### 集成测试（20+ 个测试）
+
+**文件**: `tests/integration/domains.test.js`
+
+**测试场景**:
+
+1. **GET /api/admin/domains** (3 个测试)
+   - ✅ 空列表返回
+   - ✅ 有数据返回
+   - ✅ 无 Token 返回 401
+
+2. **POST /api/admin/domains** (6 个测试)
+   - ✅ 添加新域名成功
+   - ✅ 添加重复域名返回 409
+   - ✅ 添加无效域名返回 400
+   - ✅ 域名自动清洗（带协议）
+   - ✅ 域名自动清洗（带端口）
+   - ✅ 无 Token 返回 401
+
+3. **DELETE /api/admin/domains/:domain** (4 个测试)
+   - ✅ 删除存在的域名
+   - ✅ 删除不存在的域名返回 404
+   - ✅ 无 Token 返回 401
+   - ✅ 删除后列表更新
+
+4. **POST /api/admin/domains/:domain/default** (4 个测试)
+   - ✅ 设为默认成功
+   - ✅ 域名不在列表返回 404
+   - ✅ 重复设置幂等
+   - ✅ 无 Token 返回 401
+
+5. **DELETE /api/admin/domains/:domain/default** (4 个测试)
+   - ✅ 取消默认成功
+   - ✅ 不在默认列表返回 404
+   - ✅ 操作幂等
+   - ✅ 无 Token 返回 401
+
+6. **边界场景** (2 个测试)
+   - ✅ 特殊字域名处理
+   - ✅ 大小写敏感测试
+
+---
+
+## 验收标准
+
+### 功能验收
+- ✅ 所有 `/api/admin/domains/*` API 需要有效 Token
+- ✅ GET 返回域名列表和数量
+- ✅ POST 添加域名（支持自动清洗）
+- ✅ DELETE 删除域名
+- ✅ POST /:domain/default 设为默认展示
+- ✅ DELETE /:domain/default 取消默认展示
+
+### 代码质量
+- ✅ 中间件正确使用（`withAdminAuth`）
+- ✅ 完整的 JSDoc 类型注释
+- ✅ 遵循现有代码风格
+- ✅ 错误处理完善
+- ✅ 响应格式一致
+
+### 测试覆盖
+- ✅ 至少 20 个测试用例
+- ✅ 包含边界场景测试
+- ✅ 所有测试通过
+- ✅ 测试代码有 JSDoc 注释
+
+---
+
+## 下一步
+
+- **任务 6**: 检测配置 API（获取/更新配置）
+- **任务 7**: DoH 配置 API
+- **任务 8**: 检测操作 API
+
+---
+
+## 相关文件
+
+- `/workspace/src/routes/admin/domains.js` - 域名管理路由
+- `/workspace/src/middleware/auth.js` - 鉴权中间件
+- `/workspace/src/storage/kv.js` - KV 存储
+- `/workspace/src/storage/default-domains.js` - 默认域名管理
+- `/workspace/tests/integration/domains.test.js` - 集成测试（待创建）
