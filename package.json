@@ -1,0 +1,29 @@
+{
+  "name": "cloudflare-domain-monitor",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker 域名网络特性监控",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "test": "node tests/index.js",
+    "test:unit": "node tests/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "dns",
+    "monitor",
+    "https-rr",
+    "ech",
+    "ipv6"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260529.1",
+    "typescript": "^6.0.3"
+  }
+}

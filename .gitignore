@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Wrangler state
+.wrangler/state/
+.wrangler/cache/
+.wrangler/tmp/
+
+# Environment files
+.dev.vars
+
+# Test local script
+test-local.sh
