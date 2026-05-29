@@ -12,6 +12,7 @@ import { runDoHTests } from './unit/doh-client.test.js';
 import { runDetectorTests } from './unit/detectors.test.js';
 import { runStorageTests } from './unit/storage.test.js';
 import { runRoutesTests } from './unit/routes.test.js';
+import { runStorageExtensionsTests } from './unit/storage-extensions.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -29,6 +30,7 @@ async function runAllTests() {
     await runDetectorTests();
     await runStorageTests();
     await runRoutesTests();
+    await runStorageExtensionsTests();
     
     const allPassed = printSummary();
     
