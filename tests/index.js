@@ -14,6 +14,8 @@ import { runStorageTests } from './unit/storage.test.js';
 import { runRoutesTests } from './unit/routes.test.js';
 import { runStorageExtensionsTests } from './unit/storage-extensions.test.js';
 import { runAuthIntegrationTests } from './integration/auth.test.js';
+import { runDomainsIntegrationTests } from './integration/domains.test.js';
+import { runConfigIntegrationTests } from './integration/config.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -33,6 +35,12 @@ async function runAllTests() {
     await runRoutesTests();
     await runStorageExtensionsTests();
     await runAuthIntegrationTests();
+    
+    // Task 5: Domains API
+    await runDomainsIntegrationTests();
+    
+    // Task 6: Config API
+    await runConfigIntegrationTests();
     
     const allPassed = printSummary();
     

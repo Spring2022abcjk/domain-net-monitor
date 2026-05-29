@@ -17,6 +17,7 @@ import {
 
 import { handleAuth } from './admin/auth.js';
 import { handleConfig } from './admin/config.js';
+import { handleDomains } from './admin/domains.js';
 
 import { withAdminAuth } from '../middleware/auth.js';
 import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
@@ -67,6 +68,18 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   // GET /api/admin/config/security
   else if (path === '/api/admin/config/security' && method === 'GET') {
     response = await withAdminAuth(handleConfig)(request, env);
+  }
+  // GET /api/admin/config
+  else if (path === '/api/admin/config' && method === 'GET') {
+    response = await withAdminAuth(handleConfig)(request, env);
+  }
+  // PUT /api/admin/config
+  else if (path === '/api/admin/config' && method === 'PUT') {
+    response = await withAdminAuth(handleConfig)(request, env);
+  }
+  // GET/POST/DELETE /api/admin/domains/*
+  else if (path.startsWith('/api/admin/domains')) {
+    response = await withAdminAuth(handleDomains)(request, env);
   }
   
   // === Public Routes (限流) ===
