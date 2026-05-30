@@ -21,9 +21,11 @@ import { handleDomains } from './admin/domains.js';
 import { getDohConfig, updateDohConfig, testDohEndpoint } from './admin/doh.js';
 import { detectSingle, detectAll, detectDefault } from './admin/detect.js';
 import { getHistoryRoute, deleteHistoryRoute, cleanupHistoryRoute } from './admin/history.js';
+import { getStatsRoute } from './admin/stats.js';
 
 import { withAdminAuth } from '../middleware/auth.js';
 import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
+import { incrementRequests, recordRateLimitHit } from '../storage/stats.js';
 
 /**
  * 路由分发处理函数
@@ -42,6 +44,9 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   const limitHeaders = rateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {
+    // 记录限流命中
+    await recordRateLimitHit(env);
+    
     const response = rateLimitExceededResponse();
     const headers = new Headers(response.headers);
     for (const [key, value] of Object.entries(limitHeaders)) {
@@ -55,6 +60,9 @@ export async function handleRequest(request, env, corsHeaders = {}) {
       headers
     });
   }
+  
+  // 记录请求数
+  await incrementRequests(env);
 
   let response;
 
@@ -120,6 +128,10 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   // DELETE /api/admin/history
   else if (path === '/api/admin/history' && method === 'DELETE') {
     response = await withAdminAuth(cleanupHistoryRoute)(request, env);
+  }
+  // GET /api/admin/stats
+  else if (path === '/api/admin/stats' && method === 'GET') {
+    response = await withAdminAuth(getStatsRoute)(request, env);
   }
   
   // === Public Routes (限流) ===

@@ -20,6 +20,8 @@ import { runDohTests } from './integration/doh.test.js';
 import { runDetectTests } from './integration/detect.test.js';
 import { runDetectorExportsTests } from './unit/detector-exports.test.js';
 import { runHistoryTests } from './integration/history.test.js';
+import { runStorageStatsTests } from './unit/storage-stats.test.js';
+import { runStatsTests } from './integration/stats.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -54,6 +56,12 @@ async function runAllTests() {
     
     // Task 9: History API
     await runHistoryTests();
+    
+    // Task 10: Stats API - Unit tests
+    await runStorageStatsTests();
+    
+    // Task 10: Stats API - Integration tests
+    await runStatsTests();
     
     // Detector exports
     await runDetectorExportsTests();

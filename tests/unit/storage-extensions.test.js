@@ -17,7 +17,7 @@ import {
 } from '../../src/storage/history.js';
 import {
   getStats,
-  incrementStats,
+  incrementRequests,
   recordRateLimitHit
 } from '../../src/storage/stats.js';
 
@@ -276,9 +276,9 @@ async function runStatsStorageTests() {
   await runSuite('Stats Storage - Increment', async () => {
     const env = createMockEnv();
     
-    await incrementStats(env, 'todayRequests', 1);
-    await incrementStats(env, 'todayRequests', 1);
-    await incrementStats(env, 'todayRequests', 1);
+    await incrementRequests(env, 1);
+    await incrementRequests(env, 1);
+    await incrementRequests(env, 1);
     
     const stats = await getStats(env);
     
@@ -317,7 +317,7 @@ async function runStatsStorageTests() {
   await runSuite('Stats Storage - Same Day No Reset', async () => {
     const env = createMockEnv();
     
-    await incrementStats(env, 'todayRequests', 5);
+    await incrementRequests(env, 5);
     const stats = await getStats(env);
     
     assertEqual(stats.todayRequests, 5, 'Stats preserved on same day');
