@@ -37,6 +37,12 @@ function createMockKV() {
     async delete(key) {
       delete store[key];
     },
+    async list({ prefix }) {
+      const keys = Object.keys(store)
+        .filter(key => key.startsWith(prefix))
+        .map(key => ({ name: key }));
+      return { keys };
+    },
     _getStore() {
       return store;
     }
@@ -245,7 +251,7 @@ async function runHistoryStorageTests() {
     ];
     
     await kv.put('history:cleanup.com', JSON.stringify(mixedHistory));
-    await cleanupHistory(env, ['cleanup.com'], 30);
+    await cleanupHistory(env, 30);
     
     const cleaned = await kv.get('history:cleanup.com');
     const parsed = JSON.parse(cleaned);

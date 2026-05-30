@@ -20,6 +20,7 @@ import { handleConfig } from './admin/config.js';
 import { handleDomains } from './admin/domains.js';
 import { getDohConfig, updateDohConfig, testDohEndpoint } from './admin/doh.js';
 import { detectSingle, detectAll, detectDefault } from './admin/detect.js';
+import { getHistoryRoute, deleteHistoryRoute, cleanupHistoryRoute } from './admin/history.js';
 
 import { withAdminAuth } from '../middleware/auth.js';
 import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
@@ -106,6 +107,19 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   // POST /api/admin/detect/default
   else if (path === '/api/admin/detect/default' && method === 'POST') {
     response = await withAdminAuth(detectDefault)(request, env);
+  }
+  // DELETE /api/admin/history/:domain
+  else if (path.startsWith('/api/admin/history/') && method === 'DELETE') {
+    const domain = path.replace('/api/admin/history/', '');
+    response = await deleteHistoryRoute(request, env, domain);
+  }
+  // GET /api/admin/history
+  else if (path === '/api/admin/history' && method === 'GET') {
+    response = await withAdminAuth(getHistoryRoute)(request, env);
+  }
+  // DELETE /api/admin/history
+  else if (path === '/api/admin/history' && method === 'DELETE') {
+    response = await withAdminAuth(cleanupHistoryRoute)(request, env);
   }
   
   // === Public Routes (限流) ===

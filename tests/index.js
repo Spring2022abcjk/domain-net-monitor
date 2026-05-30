@@ -19,6 +19,7 @@ import { runConfigIntegrationTests } from './integration/config.test.js';
 import { runDohTests } from './integration/doh.test.js';
 import { runDetectTests } from './integration/detect.test.js';
 import { runDetectorExportsTests } from './unit/detector-exports.test.js';
+import { runHistoryTests } from './integration/history.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -50,6 +51,9 @@ async function runAllTests() {
     
     // Task 8: Detect API
     await runDetectTests();
+    
+    // Task 9: History API
+    await runHistoryTests();
     
     // Detector exports
     await runDetectorExportsTests();

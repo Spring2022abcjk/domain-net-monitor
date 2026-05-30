@@ -25,6 +25,12 @@ export function createMockKV() {
     async delete(key) {
       delete store[key];
     },
+    async list({ prefix }) {
+      const keys = Object.keys(store)
+        .filter(key => key.startsWith(prefix))
+        .map(key => ({ name: key }));
+      return { keys };
+    },
     /**
      * 清空 KV 存储（用于重置测试状态）
      */
