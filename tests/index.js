@@ -16,6 +16,9 @@ import { runStorageExtensionsTests } from './unit/storage-extensions.test.js';
 import { runAuthIntegrationTests } from './integration/auth.test.js';
 import { runDomainsIntegrationTests } from './integration/domains.test.js';
 import { runConfigIntegrationTests } from './integration/config.test.js';
+import { runDohTests } from './integration/doh.test.js';
+import { runDetectTests } from './integration/detect.test.js';
+import { runDetectorExportsTests } from './unit/detector-exports.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -41,6 +44,15 @@ async function runAllTests() {
     
     // Task 6: Config API
     await runConfigIntegrationTests();
+    
+    // Task 7: DoH API
+    await runDohTests();
+    
+    // Task 8: Detect API
+    await runDetectTests();
+    
+    // Detector exports
+    await runDetectorExportsTests();
     
     const allPassed = printSummary();
     

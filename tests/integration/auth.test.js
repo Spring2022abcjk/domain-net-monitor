@@ -279,7 +279,7 @@ async function runAuthRoutesTests() {
     assertEqual(response.status, 200, 'Verify returns 200');
     
     const body = await response.json();
-    assert(body.valid === true, 'Token is valid');
+    assert(body.data.valid === true, 'Token is valid');
   });
   
   await runSuite('Auth Routes - Verify Invalid Token', async () => {
@@ -323,7 +323,7 @@ async function runAuthRoutesTests() {
     assertEqual(response.status, 200, 'Logout returns 200');
     
     const body = await response.json();
-    assert(body.message.includes('clear'), 'Message mentions clearing credentials');
+    assert(body.data.message.includes('clear'), 'Message mentions clearing credentials');
   });
   
   await runSuite('Auth Routes - Logout Without Token', async () => {
@@ -355,8 +355,8 @@ async function runSecurityConfigTests() {
     assertEqual(response.status, 200, 'Returns 200');
     
     const body = await response.json();
-    assertEqual(body.corsMode, 'wildcard', 'CORS mode is wildcard');
-    assert(body.allowedOrigins.length === 0, 'Allowed origins empty');
+    assertEqual(body.data.corsMode, 'wildcard', 'CORS mode is wildcard');
+    assert(body.data.allowedOrigins.length === 0, 'Allowed origins empty');
   });
   
   await runSuite('Security Config - Whitelist CORS', async () => {
@@ -373,9 +373,9 @@ async function runSecurityConfigTests() {
     assertEqual(response.status, 200, 'Returns 200');
     
     const body = await response.json();
-    assertEqual(body.corsMode, 'whitelist', 'CORS mode is whitelist');
-    assertEqual(body.allowedOrigins.length, 3, 'Has 3 allowed origins');
-    assert(body.allowedOrigins.includes('https://a.com'), 'Contains a.com');
+    assertEqual(body.data.corsMode, 'whitelist', 'CORS mode is whitelist');
+    assertEqual(body.data.allowedOrigins.length, 3, 'Has 3 allowed origins');
+    assert(body.data.allowedOrigins.includes('https://a.com'), 'Contains a.com');
   });
   
   await runSuite('Security Config - Rate Limit Config', async () => {
@@ -389,10 +389,10 @@ async function runSecurityConfigTests() {
     const response = await handleConfig(request, env);
     const body = await response.json();
     
-    assert(body.rateLimit.enabled === true, 'Rate limit enabled');
-    assertEqual(body.rateLimit.windowMs, 60000, 'Window is 60s');
-    assertEqual(body.rateLimit.maxRequests, 10, 'Max 10 requests');
-    assert(body.rateLimit.adminBypass === true, 'Admin bypass enabled');
+    assert(body.data.rateLimit.enabled === true, 'Rate limit enabled');
+    assertEqual(body.data.rateLimit.windowMs, 60000, 'Window is 60s');
+    assertEqual(body.data.rateLimit.maxRequests, 10, 'Max 10 requests');
+    assert(body.data.rateLimit.adminBypass === true, 'Admin bypass enabled');
   });
   
   await runSuite('Security Config - Token Configured', async () => {
@@ -406,7 +406,7 @@ async function runSecurityConfigTests() {
     const response = await handleConfig(request, env);
     const body = await response.json();
     
-    assert(body.tokenConfigured === true, 'Token is configured');
+    assert(body.data.tokenConfigured === true, 'Token is configured');
   });
 }
 

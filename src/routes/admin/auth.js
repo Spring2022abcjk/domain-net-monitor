@@ -41,22 +41,12 @@ function handleVerify(request, env) {
   const valid = isValidAdminToken(request, env);
   
   if (valid) {
-    return new Response(JSON.stringify({
+    return jsonResponse({
       valid: true,
       message: 'Token is valid'
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    }, 200);
   } else {
-    return new Response(JSON.stringify({
-      code: 401,
-      data: null,
-      msg: 'Invalid or missing API Token'
-    }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return jsonResponse(null, 401, 'Invalid or missing API Token');
   }
 }
 
@@ -70,21 +60,11 @@ function handleLogout(request, env) {
   // 验证 Token 存在（但不要求有效，允许强制登出）
   const token = extractToken(request);
   if (!token) {
-    return new Response(JSON.stringify({
-      code: 401,
-      data: null,
-      msg: 'API Token required for logout'
-    }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return jsonResponse(null, 401, 'API Token required for logout');
   }
   
   // 无状态登出，仅提示前端清除凭据
-  return new Response(JSON.stringify({
+  return jsonResponse({
     message: 'Logout successful. Please clear stored credentials on client side.'
-  }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  }, 200);
 }

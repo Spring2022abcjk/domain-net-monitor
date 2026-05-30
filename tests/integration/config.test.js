@@ -435,13 +435,13 @@ async function runPersistenceTests() {
       'X-API-Token': 'test_secret_token_123'
     });
     const getResponse = await handleConfig(getRequest, env);
-    const config = await getResponse.json();
+    const body = await getResponse.json();
     
     // Step 3: Verify values
-    assertEqual(config.data.defaultRefreshInterval, 99999, 'Refresh interval persisted');
-    assertEqual(config.data.rateLimit.windowMs, 5000, 'WindowMs persisted');
-    assertEqual(config.data.rateLimit.maxRequests, 5, 'MaxRequests persisted');
-    assertEqual(config.data.historyRetention, 30, 'Retention persisted');
+    assertEqual(body.data.defaultRefreshInterval, 99999, 'Refresh interval persisted');
+    assertEqual(body.data.rateLimit.windowMs, 5000, 'WindowMs persisted');
+    assertEqual(body.data.rateLimit.maxRequests, 5, 'MaxRequests persisted');
+    assertEqual(body.data.historyRetention, 30, 'Retention persisted');
   });
 }
 

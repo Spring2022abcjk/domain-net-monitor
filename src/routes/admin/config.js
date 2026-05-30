@@ -35,10 +35,7 @@ export async function handleConfig(request, env) {
   }
   
   // 方法不允许
-  return new Response(JSON.stringify({ code: 405, data: null, msg: 'Method not allowed' }), {
-    status: 405,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return jsonResponse(null, 405, 'Method not allowed');
 }
 
 /**
@@ -71,15 +68,12 @@ function handleSecurityConfig(request, env) {
   // Token 是否已配置
   const tokenConfigured = !!env.CLOUDFLARE_API_TOKEN;
   
-  return new Response(JSON.stringify({
+  return jsonResponse({
     corsMode,
     allowedOrigins,
     rateLimit: rateLimitConfig,
     tokenConfigured
-  }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  }, 200);
 }
 
 /**

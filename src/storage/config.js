@@ -9,6 +9,7 @@ const DEFAULT_CONFIG = {
     maxRequests: 10               // 10 次/分钟
   },
   historyRetention: 7,            // 7 天
+  historyMaxEntries: 100,         // 单域名历史记录最大条数
   defaultDomains: [],             // 默认域名列表（空则使用内置）
   doh: {
     primary: 'https://cloudflare-dns.com/dns-query',

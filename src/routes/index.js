@@ -18,6 +18,8 @@ import {
 import { handleAuth } from './admin/auth.js';
 import { handleConfig } from './admin/config.js';
 import { handleDomains } from './admin/domains.js';
+import { getDohConfig, updateDohConfig, testDohEndpoint } from './admin/doh.js';
+import { detectSingle, detectAll, detectDefault } from './admin/detect.js';
 
 import { withAdminAuth } from '../middleware/auth.js';
 import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
@@ -80,6 +82,30 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   // GET/POST/DELETE /api/admin/domains/*
   else if (path.startsWith('/api/admin/domains')) {
     response = await withAdminAuth(handleDomains)(request, env);
+  }
+  // GET /api/admin/doh
+  else if (path === '/api/admin/doh' && method === 'GET') {
+    response = await withAdminAuth(getDohConfig)(request, env);
+  }
+  // PUT /api/admin/doh
+  else if (path === '/api/admin/doh' && method === 'PUT') {
+    response = await withAdminAuth(updateDohConfig)(request, env);
+  }
+  // POST /api/admin/doh/test
+  else if (path === '/api/admin/doh/test' && method === 'POST') {
+    response = await withAdminAuth(testDohEndpoint)(request, env);
+  }
+  // POST /api/admin/detect/single
+  else if (path === '/api/admin/detect/single' && method === 'POST') {
+    response = await withAdminAuth(detectSingle)(request, env);
+  }
+  // POST /api/admin/detect/all
+  else if (path === '/api/admin/detect/all' && method === 'POST') {
+    response = await withAdminAuth(detectAll)(request, env);
+  }
+  // POST /api/admin/detect/default
+  else if (path === '/api/admin/detect/default' && method === 'POST') {
+    response = await withAdminAuth(detectDefault)(request, env);
   }
   
   // === Public Routes (限流) ===
