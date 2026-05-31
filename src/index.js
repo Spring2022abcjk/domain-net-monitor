@@ -1,5 +1,10 @@
 import { handleOptionsRequest, getCorsHeaders } from './utils/helper.js';
 import { handleRequest } from './routes/index.js';
+import { detectScheduled, cleanupScheduled } from './scheduled/detect.js';
+
+// Cron pattern constants for task routing
+const DETECT_CRON_PATTERNS = ['*/12', '0 0', '0 12'];
+const CLEANUP_CRON_PATTERN = '0 3';
 
 export default {
   /**
@@ -46,20 +51,33 @@ export default {
    */
   async scheduled(event, env, ctx) {
     const cronTime = event.cron;
-    console.log(`[Scheduled] Triggered at ${new Date().toISOString()}, cron: ${cronTime}`);
+    const scheduledTime = new Date().toISOString();
+    const startTime = Date.now();
+    
+    console.log('[Scheduled] ====================================');
+    console.log(`[Scheduled] Cron trigger: ${cronTime}`);
+    console.log(`[Scheduled] Execution time: ${scheduledTime}`);
+    console.log('[Scheduled] ====================================');
     
     // 每 12 小时执行检测（0 */12 * * *）
-    if (cronTime.includes('*/12') || cronTime.includes('0 0') || cronTime.includes('0 12')) {
-      const { detectScheduled } = await import('./scheduled/detect.js');
+    const isDetectTask = DETECT_CRON_PATTERNS.some(pattern => cronTime.includes(pattern));
+    if (isDetectTask) {
+      console.log('[Scheduled] Task: Default domains detection');
       ctx.waitUntil(detectScheduled(env));
     }
     
     // 每天 3 点清理历史（0 3 * * *）
-    if (cronTime.includes('0 3')) {
-      const { cleanupScheduled } = await import('./scheduled/detect.js');
+    if (cronTime.includes(CLEANUP_CRON_PATTERN)) {
+      console.log('[Scheduled] Task: History cleanup');
       ctx.waitUntil(cleanupScheduled(env));
     }
     
-    return new Response('Scheduled task started');
+    const duration = Date.now() - startTime;
+    console.log(`[Scheduled] Task initiated in ${duration}ms`);
+    console.log('[Scheduled] ====================================');
+    
+    return new Response('Scheduled task started', {
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
 };

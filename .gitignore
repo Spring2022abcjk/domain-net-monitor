@@ -6,6 +6,9 @@ node_modules/
 .wrangler/cache/
 .wrangler/tmp/
 
+# Wrangler config (contains KV IDs)
+wrangler.toml
+
 # Environment files
 .dev.vars
 

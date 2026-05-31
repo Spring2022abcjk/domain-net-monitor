@@ -22,6 +22,7 @@ import { runDetectorExportsTests } from './unit/detector-exports.test.js';
 import { runHistoryTests } from './integration/history.test.js';
 import { runStorageStatsTests } from './unit/storage-stats.test.js';
 import { runStatsTests } from './integration/stats.test.js';
+import { runScheduledTests } from './integration/scheduled.test.js';
 
 console.log('\n');
 console.log('╔══════════════════════════════════════════════════════════╗');
@@ -65,6 +66,9 @@ async function runAllTests() {
     
     // Detector exports
     await runDetectorExportsTests();
+    
+    // Task 11: Scheduled tasks
+    await runScheduledTests();
     
     const allPassed = printSummary();
     

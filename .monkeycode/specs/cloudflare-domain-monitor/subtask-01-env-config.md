@@ -25,6 +25,7 @@ ALLOWED_ORIGINS = "*"
 [[kv_namespaces]]
 binding = "DOMAIN_MONITOR_KV"
 id = "YOUR_KV_NAMESPACE_ID"
+# 注意：不要用真实 ID 提交，部署时请替换为实际 KV ID
 
 # 生产环境配置
 [env.production]
@@ -32,7 +33,8 @@ id = "YOUR_KV_NAMESPACE_ID"
 
 [env.production.kv_namespaces]
 binding = "DOMAIN_MONITOR_KV"
-id = "YOUR_KV_NAMESPACE_ID"
+id = "YOUR_PRODUCTION_KV_NAMESPACE_ID"
+# 注意：不要用真实 ID 提交，部署时请替换为实际 KV ID
 ```
 
 **文件**: `/workspace/wrangler.toml`

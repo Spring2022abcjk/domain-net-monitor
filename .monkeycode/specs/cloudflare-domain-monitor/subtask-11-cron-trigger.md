@@ -55,7 +55,8 @@ port = 8787
 [[kv_namespaces]]
 binding = "DOMAIN_MONITOR_KV"
 id = "YOUR_KV_NAMESPACE_ID"
-preview_id = "YOUR_KV_NAMESPACE_ID"
+preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"
+# 注意：不要用真实 KV ID 提交到 git
 
 # === 定时任务配置 ===
 [triggers]
@@ -66,7 +67,8 @@ crons = ["0 */12 * * *", "0 3 * * *"]
 
 [[env.production.kv_namespaces]]
 binding = "DOMAIN_MONITOR_KV"
-id = "YOUR_KV_NAMESPACE_ID"
+id = "YOUR_PRODUCTION_KV_NAMESPACE_ID"
+# 注意：不要用真实 KV ID 提交到 git
 ```
 
 **验收要点**:
