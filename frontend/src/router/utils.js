@@ -35,10 +35,38 @@ export function matchRoute(path, pattern) {
 
 /**
  * 获取查询参数
+ * @param {string} [hash] - 可选的 hash 路径，不传则使用当前 location.hash
  * @returns {URLSearchParams} 查询参数对象
  */
-export function getQueryParams() {
-  const hash = window.location.hash
+export function getQueryParams(hash) {
+  if (hash === undefined) {
+    hash = typeof window !== 'undefined' ? window.location.hash : ''
+  }
   const queryString = hash.split('?')[1] || ''
   return new URLSearchParams(queryString)
+}
+
+/**
+ * 导航到指定路由
+ * @param {string} path - 路由路径（不含 #）
+ * @param {Object} [params] - 路由参数
+ * @param {Object} [query] - 查询参数
+ */
+export function navigate(path, params = {}, query = {}) {
+  let finalPath = path
+  
+  if (params && Object.keys(params).length > 0) {
+    for (const [key, value] of Object.entries(params)) {
+      finalPath = finalPath.replace(`:${key}`, encodeURIComponent(value))
+    }
+  }
+  
+  const queryParams = new URLSearchParams(query)
+  const queryString = queryParams.toString()
+  
+  if (queryString) {
+    window.location.hash = `${finalPath}?${queryString}`
+  } else {
+    window.location.hash = finalPath
+  }
 }

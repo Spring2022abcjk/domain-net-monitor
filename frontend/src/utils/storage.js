@@ -89,3 +89,45 @@ export function isLoggedIn() {
   const config = getConfig()
   return !!(config.apiEndpoint && config.apiToken)
 }
+
+/**
+ * 获取当前用户信息（从 Token 解析）
+ * @returns {Object|null} 用户信息
+ */
+export function getCurrentUser() {
+  const token = getApiToken()
+  if (!token) return null
+  
+  try {
+    // 如果是 JWT，可以解析 payload
+    const parts = token.split('.')
+    if (parts.length === 3) {
+      const payload = JSON.parse(atob(parts[1]))
+      
+      // 检查是否过期
+      if (payload.exp && payload.exp < Date.now() / 1000) {
+        console.warn('[Storage] Token expired')
+        return null
+      }
+      
+      return {
+        id: payload.sub,
+        name: payload.name,
+        exp: payload.exp
+      }
+    }
+  } catch (e) {
+    console.warn('[Storage] Failed to parse token:', e)
+  }
+  
+  return null
+}
+
+/**
+ * @deprecated 请使用 router 模块的 navigateTo()
+ * 导航到指定路径
+ * @param {string} path - 路径
+ */
+export function navigate(path) {
+  window.location.hash = path
+}

@@ -8,6 +8,9 @@ import { runProjectTests } from './project-structure.test.js'
 import { runLoginPageTests } from './login-page.test.js'
 import { runP2FixesTests } from './p2-fixes.test.js'
 import { runRouterConfigTests } from './router-config.test.js'
+import { runUtils } from './utils.test.js'
+import { runRouterUtils } from './router-utils.test.js'
+import { runComponentsTests } from './components.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -27,6 +30,15 @@ async function runAllTests() {
     
     // 路由配置测试
     await runRouterConfigTests()
+    
+    // 工具函数测试
+    await runUtils()
+    
+    // 路由工具函数测试
+    await runRouterUtils()
+    
+    // 组件测试
+    await runComponentsTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)

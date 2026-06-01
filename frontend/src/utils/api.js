@@ -3,7 +3,21 @@
  */
 const API_CONFIG = {
   baseUrl: '',
-  timeout: 5000
+  timeout: 5000,
+  retryCount: 0
+}
+
+/**
+ * API 错误类
+ */
+export class APIError extends Error {
+  constructor(message, status, code, data) {
+    super(message)
+    this.name = 'APIError'
+    this.status = status
+    this.code = code
+    this.data = data
+  }
 }
 
 /**
@@ -82,13 +96,27 @@ export async function request(url, options = {}) {
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.msg || `HTTP ${response.status}`)
+        throw new APIError(
+          data.msg || `HTTP ${response.status}`,
+          response.status,
+          data.code || 'ERROR',
+          data
+        )
       }
       
       return data
     } catch (error) {
-      console.error('[API] Request failed:', error)
-      throw error
+      if (error instanceof APIError) {
+        throw error
+      }
+      
+      // 网络错误
+      throw new APIError(
+        '网络错误，请检查连接',
+        0,
+        'NETWORK_ERROR',
+        null
+      )
     }
   })()
   
@@ -99,10 +127,29 @@ export async function request(url, options = {}) {
 /**
  * GET 请求
  * @param {string} url - 请求 URL
+ * @param {Object} [params] - 查询参数
  * @returns {Promise<Object>} 响应数据
  */
-export function get(url) {
-  return request(url, { method: 'GET' })
+export function get(url, params) {
+  if (!params || Object.keys(params).length === 0) {
+    return request(url, { method: 'GET' })
+  }
+  
+  // 处理已有查询参数的 URL
+  const [baseUrl, existingQuery] = url.split('?')
+  const searchParams = new URLSearchParams(existingQuery || '')
+  
+  // 添加新参数
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      searchParams.append(key, value)
+    }
+  })
+  
+  const queryString = searchParams.toString()
+  const finalUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl
+  
+  return request(finalUrl, { method: 'GET' })
 }
 
 /**
@@ -138,4 +185,12 @@ export function put(url, body) {
  */
 export function del(url) {
   return request(url, { method: 'DELETE' })
+}
+
+/**
+ * 设置请求超时
+ * @param {number} ms - 超时毫秒数
+ */
+export function setRequestTimeout(ms) {
+  API_CONFIG.timeout = ms
 }

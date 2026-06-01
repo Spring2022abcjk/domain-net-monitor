@@ -25,6 +25,9 @@ export async function runP2FixesTests() {
     
     // 验证超时错误消息
     assertEqual(api.includes('Request timeout'), true, 'Has timeout error message')
+    
+    // 验证 setRequestTimeout 函数存在（重命名后的函数）
+    assertEqual(api.includes('export function setRequestTimeout'), true, 'Has setRequestTimeout function')
   })
   
   // ========== 未使用导出函数测试 ==========
@@ -39,7 +42,7 @@ export async function runP2FixesTests() {
     assertEqual(api.includes('export function del('), true, 'Has delete function')
     
     // 验证这些函数都有实际调用 request
-    const hasGetImpl = /export function get\(url\)\s*{\s*return request\(url/.test(api)
+    const hasGetImpl = api.includes('return request(') && api.includes('method: \'GET\'')
     const hasPostImpl = /export function post\(url,\s*body\)\s*{\s*return request\(url/.test(api)
     const hasPutImpl = /export function put\(url,\s*body\)\s*{\s*return request\(url/.test(api)
     const hasDelImpl = /export function del\(url\)\s*{\s*return request\(url/.test(api)
