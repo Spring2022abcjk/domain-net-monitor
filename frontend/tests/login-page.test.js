@@ -61,7 +61,7 @@ export async function runLoginPageTests() {
     assertEqual(router.includes('cleanupCurrentPage'), true, 'Has cleanup function')
     assertEqual(router.includes('currentPageInstance'), true, 'Tracks current page')
     assertEqual(router.includes('destroy'), true, 'Calls page destroy method')
-    assertEqual(router.includes('renderPage'), true, 'Has renderPage helper')
+    assertEqual(router.includes('matchRoute'), true, 'Uses matchRoute from utils')
   })
 }
 

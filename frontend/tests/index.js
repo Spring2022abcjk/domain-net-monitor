@@ -7,6 +7,7 @@
 import { runProjectTests } from './project-structure.test.js'
 import { runLoginPageTests } from './login-page.test.js'
 import { runP2FixesTests } from './p2-fixes.test.js'
+import { runRouterConfigTests } from './router-config.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -23,6 +24,9 @@ async function runAllTests() {
     
     // P2 修复测试
     await runP2FixesTests()
+    
+    // 路由配置测试
+    await runRouterConfigTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)

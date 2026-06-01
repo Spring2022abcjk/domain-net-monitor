@@ -1,14 +1,9 @@
-import Home from '../pages/Home.js'
-import Login from '../pages/Login.js'
-
 /**
- * 路由配置
+ * 路由系统 - 配置式实现
  */
-const routes = {
-  '/': Home,
-  '/home': Home,
-  '/login': Login
-}
+import { routes } from './routes.js'
+import { matchRoute, getQueryParams } from './utils.js'
+import { isLoggedIn } from '../utils/storage.js'
 
 // 当前页面实例，用于清理
 let currentPageInstance = null
@@ -24,61 +19,114 @@ function cleanupCurrentPage() {
 }
 
 /**
- * 获取当前页面
- * @returns {Object} 页面对象
- */
-export function getCurrentPage() {
-  const hash = window.location.hash || '#/'
-  const path = hash.slice(1) || '/'
-  
-  return routes[path] || Home
-}
-
-/**
  * 导航到指定路径
  * @param {string} path - 路径
  */
-export function navigate(path) {
+export function navigateTo(path) {
   window.location.hash = path
 }
 
 /**
- * 渲染页面
- * @param {Object} page - 页面对象
+ * 获取当前页面
+ * @returns {Object|null} 页面对象
  */
-function renderPage(page) {
-  const app = document.getElementById('app')
-  if (!app) {
-    console.error('[Router] App mount point not found')
+export function getCurrentPage() {
+  return currentPageInstance
+}
+
+/**
+ * 处理 404
+ */
+function handleNotFound() {
+  const notFoundRoute = routes.find(r => r.path === '/404')
+  if (notFoundRoute) {
+    renderRoute(notFoundRoute, {}, new URLSearchParams())
+  }
+}
+
+/**
+ * 渲染路由
+ * @param {Object} route - 路由对象
+ * @param {Object} params - 路由参数
+ * @param {URLSearchParams} query - 查询参数
+ */
+function renderRoute(route, params, query) {
+  // 权限检查
+  if (route.meta?.requiresAuth && !isLoggedIn()) {
+    navigateTo('/login')
     return
+  }
+  
+  // 设置页面标题
+  if (route.meta?.title) {
+    document.title = route.meta.title
   }
   
   // 清理旧页面
   cleanupCurrentPage()
   
   // 渲染新页面
-  app.innerHTML = page.render()
+  const app = document.getElementById('app')
+  if (!app) {
+    console.error('[Router] App mount point not found')
+    return
+  }
+  
+  app.innerHTML = route.component.render()
   
   // 保存页面实例并初始化
-  currentPageInstance = page
-  if (page.init) {
-    page.init()
+  currentPageInstance = route.component
+  if (currentPageInstance.init) {
+    currentPageInstance.init({ params, query })
   }
+  
+  console.log('[Router] Rendered:', route.name)
 }
 
 /**
  * 初始化路由
  */
 export function init() {
-  // 初始渲染
-  const page = getCurrentPage()
-  renderPage(page)
-  
-  // 监听 hash 变化
+  // 处理 hashchange 事件
   window.addEventListener('hashchange', () => {
-    const page = getCurrentPage()
-    renderPage(page)
+    const hash = window.location.hash || '#/'
+    const [pathPart, queryPart] = hash.slice(1).split('?')
+    const path = pathPart || '/'
+    const query = new URLSearchParams(queryPart || '')
+    
+    // 查找匹配的路由
+    let matchedRoute = null
+    let params = {}
+    
+    // 优先匹配具体路由
+    for (const route of routes) {
+      if (route.path === '*') continue // 通配符最后处理
+      
+      const routeParams = matchRoute(path, route.path)
+      if (routeParams) {
+        matchedRoute = route
+        params = routeParams
+        break
+      }
+    }
+    
+    // 未找到 match，使用通配符路由或 404
+    if (!matchedRoute) {
+      const catchAllRoute = routes.find(r => r.path === '*')
+      if (catchAllRoute) {
+        matchedRoute = catchAllRoute
+      } else {
+        handleNotFound()
+        return
+      }
+    }
+    
+    // 渲染路由
+    renderRoute(matchedRoute, params, query)
   })
   
-  console.log('[Router] Initialized')
+  // 触发初始路由
+  window.dispatchEvent(new Event('hashchange'))
+  
+  console.log('[Router] Initialized with', routes.length, 'routes')
 }
