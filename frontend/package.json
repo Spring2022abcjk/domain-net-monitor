@@ -1,0 +1,28 @@
+{
+  "name": "domain-monitor-frontend",
+  "version": "1.0.0",
+  "description": "Cloudflare Domain Monitor Frontend Dashboard",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node tests/index.js"
+  },
+  "keywords": [
+    "cloudflare",
+    "domain-monitor",
+    "dashboard"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "terser": "^5.26.0"
+  }
+}
