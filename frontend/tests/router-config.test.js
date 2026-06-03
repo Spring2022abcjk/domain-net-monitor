@@ -47,9 +47,9 @@ export async function runRouterConfigTests() {
     assertEqual(routes.includes('export const routes'), true, 'Exports routes array')
     assertEqual(routes.includes("path: '/'"), true, 'Has home route')
     assertEqual(routes.includes("path: '/login'"), true, 'Has login route')
-    assertEqual(routes.includes("path: '/404'"), true, 'Has 404 route')
     assertEqual(routes.includes("path: '*'"), true, 'Has catch-all route')
-    assertEqual(routes.includes('meta:'), true, 'Has route meta')
+    assertEqual(routes.includes("component: NotFound"), true, 'Uses NotFound component for catch-all')
+    assertEqual(routes.includes('requiresAuth'), true, 'Has route meta')
     assertEqual(routes.includes('title:'), true, 'Has page titles')
   })
   

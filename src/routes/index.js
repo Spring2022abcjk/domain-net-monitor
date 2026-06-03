@@ -23,6 +23,9 @@ import { detectSingle, detectAll, detectDefault } from './admin/detect.js';
 import { getHistoryRoute, deleteHistoryRoute, cleanupHistoryRoute } from './admin/history.js';
 import { getStatsRoute } from './admin/stats.js';
 
+import { handleGetPublicDomains } from './public/domains.js';
+import { handleGetPublicStats } from './public/stats.js';
+
 import { withAdminAuth } from '../middleware/auth.js';
 import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
 import { incrementRequests, recordRateLimitHit } from '../storage/stats.js';
@@ -135,9 +138,18 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   }
   
   // === Public Routes (限流) ===
-
+  
+  // GET /api/public/domains
+  if (path === '/api/public/domains' && method === 'GET') {
+    response = await handleGetPublicDomains(request, env);
+  }
+  // GET /api/public/stats/:domain
+  else if (path.startsWith('/api/public/stats/') && method === 'GET') {
+    const domain = path.replace('/api/public/stats/', '');
+    response = await handleGetPublicStats(request, env, decodeURIComponent(domain));
+  }
   // GET /api/domains
-  if (path === '/api/domains' && method === 'GET') {
+  else if (path === '/api/domains' && method === 'GET') {
     response = await handleGetDomains(request, env);
   }
   // POST /api/domains

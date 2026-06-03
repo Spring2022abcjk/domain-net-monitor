@@ -176,3 +176,25 @@ export function deepClone(obj, hash = new WeakMap()) {
 export function formatNumber(num) {
   return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
+
+/**
+ * 生成安全的元素 ID（移除特殊字符）
+ * @param {string} prefix - ID 前缀
+ * @param {string} identifier - 标识符（如域名）
+ * @returns {string} 安全的 ID
+ */
+export function generateElementId(prefix, identifier) {
+  return `${prefix}-${identifier.replace(/[^a-zA-Z0-9]/g, '_')}`
+}
+
+/**
+ * 域名格式验证
+ * @param {string} domain - 域名
+ * @returns {boolean} 是否有效
+ */
+export function isValidDomain(domain) {
+  if (!domain || typeof domain !== 'string') return false
+  // 基本域名格式验证
+  const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/
+  return domainRegex.test(domain)
+}

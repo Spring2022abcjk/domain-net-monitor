@@ -1,7 +1,7 @@
 /**
  * 路由配置表
  */
-import Home from '../pages/Home.js'
+import PublicDashboard from '../pages/PublicDashboard.js'
 import Login from '../pages/Login.js'
 import NotFound from '../pages/NotFound.js'
 
@@ -18,10 +18,11 @@ import NotFound from '../pages/NotFound.js'
 export const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home,
+    name: 'public-dashboard',
+    component: PublicDashboard,
     meta: {
-      title: '域名网络特性监控 Dashboard'
+      title: '域名监控平台',
+      requiresAuth: false
     }
   },
   {
@@ -29,15 +30,8 @@ export const routes = [
     name: 'login',
     component: Login,
     meta: {
-      title: '管理员登录'
-    }
-  },
-  {
-    path: '/404',
-    name: 'not-found',
-    component: NotFound,
-    meta: {
-      title: '页面不存在'
+      title: '管理员登录',
+      requiresAuth: false
     }
   },
   {

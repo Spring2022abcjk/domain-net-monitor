@@ -9,7 +9,9 @@ import {
   debounce,
   throttle,
   deepClone,
-  formatNumber
+  formatNumber,
+  generateElementId,
+  isValidDomain
 } from '../src/utils/index.js'
 
 /**
@@ -190,6 +192,26 @@ async function runUtilsTests() {
     await new Promise(resolve => setTimeout(resolve, 150))
     throttledFn()
     assertEqual(callCount, 2, 'Allows another call after limit')
+  })
+  
+  // ========== generateElementId 测试 ==========
+  await runSuite('Utils - generateElementId', async () => {
+    assertEqual(generateElementId('btn', 'test.com'), 'btn-test_com', 'Replaces dots with underscores')
+    assertEqual(generateElementId('btn', 'sub.example.com'), 'btn-sub_example_com', 'Handles subdomains')
+    assertEqual(generateElementId('btn', 'test-domain'), 'btn-test_domain', 'Replaces hyphens with underscores')
+    assertEqual(generateElementId('btn', 'TEST.COM'), 'btn-TEST_COM', 'Keeps uppercase')
+  })
+  
+  // ========== isValidDomain 测试 ==========
+  await runSuite('Utils - isValidDomain', async () => {
+    assertEqual(isValidDomain('example.com'), true, 'Valid domain')
+    assertEqual(isValidDomain('sub.example.com'), true, 'Valid subdomain')
+    assertEqual(isValidDomain('test-domain.com'), true, 'Domain with hyphen')
+    assertEqual(isValidDomain(''), false, 'Empty string')
+    assertEqual(isValidDomain(null), false, 'Null value')
+    assertEqual(isValidDomain('not-a-domain'), false, 'No TLD')
+    assertEqual(isValidDomain('.com'), false, 'No domain name')
+    assertEqual(isValidDomain('example.'), false, 'No TLD')
   })
 }
 

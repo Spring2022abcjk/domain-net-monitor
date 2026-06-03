@@ -56,7 +56,7 @@ export async function runProjectTests() {
       'src/styles/index.css',
       'src/components/Header.js',
       'src/components/Footer.js',
-      'src/pages/Home.js',
+      'src/pages/PublicDashboard.js',
       'src/pages/Login.js',
       'src/router/index.js',
       'src/utils/api.js',
@@ -143,7 +143,7 @@ export async function runProjectTests() {
     const footer = readFileSync(footerPath, 'utf-8')
     
     assert(footer.includes('export default'), 'Footer exported')
-    assert(footer.includes('render()'), 'Footer has render method')
+    assert(footer.includes('export function Footer'), 'Footer has Footer function')
   })
   
   // ========== 路由测试 ==========

@@ -215,3 +215,15 @@ export function handleOptionsRequest(request, env) {
     headers: corsHeaders
   });
 }
+
+/**
+ * 域名格式验证
+ * @param {string} domain - 域名
+ * @returns {boolean} 是否有效
+ */
+export function isValidDomain(domain) {
+  if (!domain || typeof domain !== 'string') return false
+  // 基本域名格式验证
+  const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/
+  return domainRegex.test(domain)
+}

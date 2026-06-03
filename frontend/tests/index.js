@@ -11,6 +11,7 @@ import { runRouterConfigTests } from './router-config.test.js'
 import { runUtils } from './utils.test.js'
 import { runRouterUtils } from './router-utils.test.js'
 import { runComponentsTests } from './components.test.js'
+import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -39,6 +40,9 @@ async function runAllTests() {
     
     // 组件测试
     await runComponentsTests()
+    
+    // 页面测试
+    await runPublicDashboardTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)
