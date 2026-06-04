@@ -1,5 +1,7 @@
 /**
  * 路由配置表
+ * 任务 15：添加登录页路由
+ * 任务 16：添加管理后台嵌套路由
  */
 import PublicDashboard from '../pages/PublicDashboard.js'
 import Login from '../pages/Login.js'
@@ -14,8 +16,10 @@ import NotFound from '../pages/NotFound.js'
  * @property {Object} [meta] - 路由元数据
  * @property {string} [meta.title] - 页面标题
  * @property {boolean} [meta.requiresAuth] - 是否需要登录
+ * @property {Array} [children] - 子路由（用于嵌套布局）
  */
 export const routes = [
+  // === 公开路由 ===
   {
     path: '/',
     name: 'public-dashboard',
@@ -34,6 +38,28 @@ export const routes = [
       requiresAuth: false
     }
   },
+  
+  // === 管理后台路由（任务 16 实现）===
+  // 注意：AdminLayout 将在任务 16 中创建
+  // {
+  //   path: '/admin',
+  //   name: 'admin',
+  //   component: () => import('../pages/admin/AdminLayout.js'),
+  //   meta: {
+  //     requiresAuth: true
+  //   },
+  //   children: [
+  //     {
+  //       path: '/admin/dashboard',
+  //       name: 'admin-dashboard',
+  //       component: () => import('../pages/admin/AdminDashboard.js'),
+  //       meta: { title: '仪表盘' }
+  //     },
+  //     ...
+  //   ]
+  // },
+  
+  // === 404 ===
   {
     path: '*',
     name: 'catch-all',
@@ -42,16 +68,6 @@ export const routes = [
       title: '页面不存在'
     }
   }
-  // 后续扩展:
-  // {
-  //   path: '/domain/:name',
-  //   name: 'domain-detail',
-  //   component: DomainDetail,
-  //   meta: {
-  //     title: '域名详情',
-  //     requiresAuth: true
-  //   }
-  // }
 ]
 
 export default routes

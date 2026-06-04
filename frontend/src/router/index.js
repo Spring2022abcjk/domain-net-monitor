@@ -51,9 +51,15 @@ function handleNotFound() {
  * @param {URLSearchParams} query - 查询参数
  */
 function renderRoute(route, params, query) {
-  // 权限检查
+  // 权限检查：需要认证但未登录
   if (route.meta?.requiresAuth && !isLoggedIn()) {
     navigateTo('/login')
+    return
+  }
+  
+  // 已登录访问登录页，重定向到首页
+  if (route.path === '/login' && isLoggedIn()) {
+    navigateTo('/admin/dashboard')
     return
   }
   

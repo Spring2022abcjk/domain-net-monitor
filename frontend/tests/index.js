@@ -5,13 +5,13 @@
  */
 
 import { runProjectTests } from './project-structure.test.js'
-import { runLoginPageTests } from './login-page.test.js'
 import { runP2FixesTests } from './p2-fixes.test.js'
 import { runRouterConfigTests } from './router-config.test.js'
 import { runUtils } from './utils.test.js'
 import { runRouterUtils } from './router-utils.test.js'
 import { runComponentsTests } from './components.test.js'
 import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
+import { runLoginTests } from './pages/login.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -22,9 +22,6 @@ async function runAllTests() {
   try {
     // 项目结构测试
     await runProjectTests()
-    
-    // 登录页面功能测试
-    await runLoginPageTests()
     
     // P2 修复测试
     await runP2FixesTests()
@@ -43,6 +40,9 @@ async function runAllTests() {
     
     // 页面测试
     await runPublicDashboardTests()
+    
+    // 登录页测试（任务 15）
+    await runLoginTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)
