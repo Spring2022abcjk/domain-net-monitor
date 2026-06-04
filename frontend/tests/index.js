@@ -12,6 +12,7 @@ import { runRouterUtils } from './router-utils.test.js'
 import { runComponentsTests } from './components.test.js'
 import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
 import { runLoginTests } from './pages/login.test.js'
+import { runAdminLayoutTests } from './pages/admin-layout.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -43,6 +44,9 @@ async function runAllTests() {
     
     // 登录页测试（任务 15）
     await runLoginTests()
+    
+    // 管理后台布局测试（任务 16）
+    await runAdminLayoutTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)

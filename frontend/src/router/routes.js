@@ -39,25 +39,41 @@ export const routes = [
     }
   },
   
-  // === 管理后台路由（任务 16 实现）===
-  // 注意：AdminLayout 将在任务 16 中创建
-  // {
-  //   path: '/admin',
-  //   name: 'admin',
-  //   component: () => import('../pages/admin/AdminLayout.js'),
-  //   meta: {
-  //     requiresAuth: true
-  //   },
-  //   children: [
-  //     {
-  //       path: '/admin/dashboard',
-  //       name: 'admin-dashboard',
-  //       component: () => import('../pages/admin/AdminDashboard.js'),
-  //       meta: { title: '仪表盘' }
-  //     },
-  //     ...
-  //   ]
-  // },
+  // === 管理后台路由（嵌套结构）===
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('../pages/admin/AdminLayout.js'),
+    meta: {
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: '/admin/dashboard',
+        name: 'admin-dashboard',
+        component: () => import('../pages/admin/AdminDashboard.js'),
+        meta: { title: '仪表盘' }
+      },
+      {
+        path: '/admin/domains',
+        name: 'admin-domains',
+        component: () => import('../pages/admin/AdminDomains.js'),
+        meta: { title: '域名管理' }
+      },
+      {
+        path: '/admin/config',
+        name: 'admin-config',
+        component: () => import('../pages/admin/AdminConfig.js'),
+        meta: { title: '系统配置' }
+      },
+      {
+        path: '/admin/history',
+        name: 'admin-history',
+        component: () => import('../pages/admin/AdminHistory.js'),
+        meta: { title: '历史记录' }
+      }
+    ]
+  },
   
   // === 404 ===
   {

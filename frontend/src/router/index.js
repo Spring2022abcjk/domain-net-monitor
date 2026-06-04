@@ -1,5 +1,6 @@
 /**
- * 路由系统 - 配置式实现
+ * 路由系统 - 配置式实现（支持嵌套路由）
+ * 任务 16：实现嵌套路由，支持 AdminLayout 包裹子页面
  */
 import { routes } from './routes.js'
 import { matchRoute, getQueryParams } from './utils.js'
@@ -45,12 +46,28 @@ function handleNotFound() {
 }
 
 /**
+ * 查找嵌套的子路由
+ * @param {Object} parentRoute - 父路由
+ * @param {string} path - 当前路径
+ * @returns {Object|null} 子路由对象
+ */
+function findChildRoute(parentRoute, path) {
+  if (!parentRoute.children) return null
+  
+  for (const child of parentRoute.children) {
+    if (child.path === path) return child
+  }
+  return null
+}
+
+/**
  * 渲染路由
  * @param {Object} route - 路由对象
  * @param {Object} params - 路由参数
  * @param {URLSearchParams} query - 查询参数
+ * @param {Object} [parentRoute] - 父路由（嵌套场景）
  */
-function renderRoute(route, params, query) {
+function renderRoute(route, params, query, parentRoute = null) {
   // 权限检查：需要认证但未登录
   if (route.meta?.requiresAuth && !isLoggedIn()) {
     navigateTo('/login')
@@ -66,6 +83,8 @@ function renderRoute(route, params, query) {
   // 设置页面标题
   if (route.meta?.title) {
     document.title = route.meta.title
+  } else if (parentRoute?.meta?.title) {
+    document.title = parentRoute.meta.title
   }
   
   // 清理旧页面
@@ -78,23 +97,45 @@ function renderRoute(route, params, query) {
     return
   }
   
-  app.innerHTML = route.component.render()
-  
-  // 保存页面实例并初始化
-  currentPageInstance = route.component
-  if (currentPageInstance.init) {
-    currentPageInstance.init({ params, query })
+  // === 处理嵌套路由 ===
+  if (parentRoute && route !== parentRoute) {
+    // 有父路由和子路由：创建父布局 + 子页面
+    const parentComponent = parentRoute.component
+    
+    // 动态导入子组件
+    const ChildComponent = typeof route.component === 'function' 
+      ? await route.component()
+      : route.component
+    
+    currentPageInstance = new parentComponent(ChildComponent)
+  } else {
+    // 普通路由
+    const PageComponent = route.component
+    currentPageInstance = new PageComponent()
   }
   
-  console.log('[Router] Rendered:', route.name)
+  // 初始化页面
+  if (currentPageInstance.init) {
+    await currentPageInstance.init({ params, query })
+  }
+  
+  // 渲染（如果是 Layout，会自己 render 和 bindEvents）
+  if (currentPageInstance.render) {
+    app.innerHTML = currentPageInstance.render()
+    if (currentPageInstance.bindEvents) {
+      currentPageInstance.bindEvents()
+    }
+  }
+  
+  console.log('[Router] Rendered:', route.name, parentRoute ? `(parent: ${parentRoute.name})` : '')
 }
 
 /**
  * 初始化路由
  */
-export function init() {
+export async function init() {
   // 处理 hashchange 事件
-  window.addEventListener('hashchange', () => {
+  window.addEventListener('hashchange', async () => {
     const hash = window.location.hash || '#/'
     const [pathPart, queryPart] = hash.slice(1).split('?')
     const path = pathPart || '/'
@@ -102,6 +143,7 @@ export function init() {
     
     // 查找匹配的路由
     let matchedRoute = null
+    let parentRoute = null
     let params = {}
     
     // 优先匹配具体路由
@@ -112,6 +154,15 @@ export function init() {
       if (routeParams) {
         matchedRoute = route
         params = routeParams
+        
+        // 检查是否有子路由（嵌套路由）
+        if (route.children && path.startsWith(route.path + '/')) {
+          parentRoute = route
+          const childRoute = findChildRoute(route, path)
+          if (childRoute) {
+            matchedRoute = childRoute
+          }
+        }
         break
       }
     }
@@ -128,7 +179,7 @@ export function init() {
     }
     
     // 渲染路由
-    renderRoute(matchedRoute, params, query)
+    await renderRoute(matchedRoute, params, query, parentRoute)
   })
   
   // 触发初始路由
