@@ -13,6 +13,7 @@ import { runComponentsTests } from './components.test.js'
 import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
 import { runLoginTests } from './pages/login.test.js'
 import { runAdminLayoutTests } from './pages/admin-layout.test.js'
+import { runAdminDomainsTests } from './pages/admin-domains.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -47,6 +48,9 @@ async function runAllTests() {
     
     // 管理后台布局测试（任务 16）
     await runAdminLayoutTests()
+    
+    // 管理后台域名管理测试（任务 17）
+    await runAdminDomainsTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)

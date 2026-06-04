@@ -67,7 +67,7 @@ function findChildRoute(parentRoute, path) {
  * @param {URLSearchParams} query - 查询参数
  * @param {Object} [parentRoute] - 父路由（嵌套场景）
  */
-function renderRoute(route, params, query, parentRoute = null) {
+async function renderRoute(route, params, query, parentRoute = null) {
   // 权限检查：需要认证但未登录
   if (route.meta?.requiresAuth && !isLoggedIn()) {
     navigateTo('/login')
@@ -109,8 +109,10 @@ function renderRoute(route, params, query, parentRoute = null) {
     
     currentPageInstance = new parentComponent(ChildComponent)
   } else {
-    // 普通路由
-    const PageComponent = route.component
+    // 普通路由（支持懒加载）
+    const PageComponent = typeof route.component === 'function'
+      ? await route.component()
+      : route.component
     currentPageInstance = new PageComponent()
   }
   

@@ -133,9 +133,9 @@ export async function runPublicDashboardTests() {
   await runSuite('Router - PublicDashboard Route', async () => {
     const routes = readFileSync(join(frontendRoot, 'src/router/routes.js'), 'utf-8')
     
-    assertEqual(routes.includes("import PublicDashboard"), true, 'Imports PublicDashboard')
+    assertEqual(routes.includes("PublicDashboard.js"), true, 'References PublicDashboard module')
     assertEqual(routes.includes("path: '/'"), true, 'Has root path')
-    assertEqual(routes.includes("component: PublicDashboard"), true, 'Uses PublicDashboard component')
+    assertEqual(routes.includes("import('../pages/PublicDashboard.js')"), true, 'Lazy loads PublicDashboard')
     assertEqual(routes.includes("requiresAuth: false"), true, 'Does not require auth')
   })
 }

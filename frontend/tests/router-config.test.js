@@ -48,7 +48,7 @@ export async function runRouterConfigTests() {
     assertEqual(routes.includes("path: '/'"), true, 'Has home route')
     assertEqual(routes.includes("path: '/login'"), true, 'Has login route')
     assertEqual(routes.includes("path: '*'"), true, 'Has catch-all route')
-    assertEqual(routes.includes("component: NotFound"), true, 'Uses NotFound component for catch-all')
+    assertEqual(routes.includes("import('../pages/NotFound.js')"), true, 'Lazy loads NotFound component')
     assertEqual(routes.includes('requiresAuth'), true, 'Has route meta')
     assertEqual(routes.includes('title:'), true, 'Has page titles')
   })
