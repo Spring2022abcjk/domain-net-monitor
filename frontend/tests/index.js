@@ -16,6 +16,7 @@ import { runAdminLayoutTests } from './pages/admin-layout.test.js'
 import { runAdminDomainsTests } from './pages/admin-domains.test.js'
 import { runAdminConfigTests } from './pages/admin-config.test.js'
 import { runAdminHistoryTests } from './pages/admin-history.test.js'
+import { runAdminStatsTests } from './pages/admin-stats.test.js'
 
 console.log('\n')
 console.log('╔══════════════════════════════════════════════════════════╗')
@@ -59,6 +60,9 @@ async function runAllTests() {
     
     // 管理后台历史记录测试（任务 19）
     await runAdminHistoryTests()
+    
+    // 管理后台统计概览测试（任务 20）
+    await runAdminStatsTests()
     
     console.log('\n✅ All tests passed!\n')
     process.exit(0)

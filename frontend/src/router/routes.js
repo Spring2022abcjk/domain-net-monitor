@@ -37,6 +37,11 @@ export const routes = [
         path: '/history',
         component: () => import('../pages/admin/AdminHistory.js'),
         meta: { title: '历史记录' }
+      },
+      {
+        path: '/stats',
+        component: () => import('../pages/admin/AdminStats.js'),
+        meta: { title: '统计概览' }
       }
     ]
   },

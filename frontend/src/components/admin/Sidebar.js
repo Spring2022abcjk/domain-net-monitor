@@ -31,6 +31,12 @@ export function Sidebar({ open = false, onClose }) {
       icon: '📜',
       label: '历史记录',
       active: window.location.hash.startsWith('#/admin/history')
+    },
+    {
+      path: '/admin/stats',
+      icon: '📈',
+      label: '统计概览',
+      active: window.location.hash.startsWith('#/admin/stats')
     }
   ]
   
