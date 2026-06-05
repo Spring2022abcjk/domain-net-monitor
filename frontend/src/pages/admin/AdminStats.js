@@ -135,7 +135,7 @@ export class AdminStats {
             ${this.stats.failCount || 0}
           </div>
         `,
-        footer: '失败率：' + (100 - successRate).toFixed(2) + '%',
+        footer: '失败率：' + Math.max(0, 100 - successRate).toFixed(2) + '%',
         class: 'border-l-4 border-red-500'
       })}
     `
@@ -176,6 +176,7 @@ export class AdminStats {
    */
   async handleRefresh() {
     await this.loadStats()
+    if (!this.stats) return
     this.render()
     this.bindEvents()
     show.success('数据已刷新')
