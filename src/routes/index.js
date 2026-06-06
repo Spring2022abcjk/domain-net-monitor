@@ -140,7 +140,7 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   // === Public Routes (限流) ===
   
   // GET /api/public/domains
-  if (path === '/api/public/domains' && method === 'GET') {
+  else if (path === '/api/public/domains' && method === 'GET') {
     response = await handleGetPublicDomains(request, env);
   }
   // GET /api/public/stats/:domain
