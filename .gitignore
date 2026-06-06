@@ -14,3 +14,9 @@ wrangler.toml
 
 # Test local script
 test-local.sh
+
+# Debug logs (Admin API 404 investigation)
+/tmp/wrangler-*.log
+/tmp/*.log
+/tmp/wrangler-debug-*/
+**/wrangler-*.log

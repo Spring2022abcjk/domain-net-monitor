@@ -22,13 +22,13 @@ export async function handleGetPublicStats(request, env, domain) {
       return jsonResponse(null, 400, 'Invalid domain format')
     }
     
-    const stats = await env.KV_DOMAIN_LIST.get(`stats:${domain}`, { type: 'json' })
-    
-    if (!stats) {
-      return jsonResponse(null, 404, 'Domain not found')
+    const stats = await env.DOMAIN_MONITOR_KV.get(`stats:${domain}`, { type: 'json' })
+    if (stats) {
+      result.stats = stats
     }
-    
-    const history = await env.KV_DOMAIN_LIST.get(`history:${domain}`, { type: 'json' }) || []
+
+    // 获取历史记录（只取最新一条）
+    const history = await env.DOMAIN_MONITOR_KV.get(`history:${domain}`, { type: 'json' }) || []
     const latestResults = history.slice(-10).reverse()
     
     return jsonResponse({

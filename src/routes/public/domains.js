@@ -11,17 +11,17 @@ import { jsonResponse } from '../../utils/helper.js'
  */
 export async function handleGetPublicDomains(request, env) {
   try {
-    const domainList = await env.KV_DOMAIN_LIST.get('domain_list', { type: 'json' }) || []
-    
-    const domains = await Promise.all(domainList.map(async (domain) => {
-      const stats = await env.KV_DOMAIN_LIST.get(`stats:${domain}`, { type: 'json' })
-      return {
+    const domainList = await env.DOMAIN_MONITOR_KV.get('domain_list', { type: 'json' }) || []
+    const domains = []
+    for (const domain of domainList) {
+      const stats = await env.DOMAIN_MONITOR_KV.get(`stats:${domain}`, { type: 'json' })
+      domains.push({
         domain,
         firstSeen: stats?.firstSeen || null,
         lastChecked: stats?.lastChecked || null,
         status: stats?.status || 'unknown'
-      }
-    }))
+      })
+    }
     
     return jsonResponse({
       domains,

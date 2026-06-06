@@ -279,7 +279,6 @@ export class AdminHistory {
     this.__exportHandler = null
     this.__cleanupHandler = null
   }
-}
 
   /**
    * 处理查询
@@ -372,13 +371,6 @@ export class AdminHistory {
     } catch (error) {
       show.error('清理失败：' + (error.message || '未知错误'))
     }
-  }
-
-  /**
-   * 清理资源
-   */
-  destroy() {
-    // 清理逻辑
   }
 }
 
