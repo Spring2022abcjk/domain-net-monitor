@@ -56,7 +56,7 @@ curl -s -I https://your-single.your-domain.pages.dev/#/login | head -5
 
 # 2. 验证 Token（有效）
 curl -s -X POST https://domain-monitor.varhub.workers.dev/api/admin/auth/verify \
-  -H "X-API-Token: YOUR_CLOUDFLARE_API_TOKEN" | jq .
+  -H "X-API-Token: YOUR_API_TOKEN_HERE" | jq .
 
 # 3. 验证 Token（无效）
 curl -s -X POST https://domain-monitor.varhub.workers.dev/api/admin/auth/verify \
@@ -72,7 +72,7 @@ curl -s -X POST https://domain-monitor.varhub.workers.dev/api/admin/auth/verify 
 #### 测试场景 3: 域名管理 CRUD
 
 ```bash
-TOKEN="YOUR_CLOUDFLARE_API_TOKEN"
+TOKEN="YOUR_API_TOKEN_HERE"
 BASE="https://domain-monitor.varhub.workers.dev"
 
 # 1. 获取域名列表
@@ -174,7 +174,7 @@ const stats = await env.DOMAIN_MONITOR_KV.get('stats', 'json');
 ```bash
 # 测试各 API 响应时间
 BASE="https://domain-monitor.varhub.workers.dev"
-TOKEN="YOUR_CLOUDFLARE_API_TOKEN"
+TOKEN="YOUR_API_TOKEN_HERE"
 
 echo "=== API Response Time Test ==="
 echo "Public Domains:"
@@ -648,7 +648,7 @@ curl -s $API_URL/api/admin/domains \
 # 端到端测试脚本
 
 BASE="https://domain-monitor.varhub.workers.dev"
-TOKEN="YOUR_CLOUDFLARE_API_TOKEN"
+TOKEN="YOUR_API_TOKEN_HERE"
 
 echo "=== E2E Test Suite ==="
 
