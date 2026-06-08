@@ -69,6 +69,23 @@ export async function handleRequest(request, env, corsHeaders = {}) {
 
   let response;
 
+  // === Health Check Route ===
+  
+  // GET /health
+  if (path === '/health' && method === 'GET') {
+    return new Response(JSON.stringify({
+      code: 200,
+      data: { status: 'ok', timestamp: new Date().toISOString() },
+      msg: 'OK'
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        ...corsHeaders
+      }
+    });
+  }
+
   // === Admin Routes (需要鉴权) ===
   
   // POST /api/admin/auth/verify
