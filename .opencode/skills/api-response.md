@@ -170,6 +170,56 @@ exit 0
 - [ ] 响应包含 `code`、`data`、`msg` 字段
 - [ ] 同一文件中无格式混用
 
+## 附录：常见 API 问题排查
+
+### URL 拼接问题
+
+**症状**：网络错误，URL 重复域名
+
+```
+https://example.comhttps//example.com/api/xxx
+```
+
+**原因**：api.js 的 URL 拼接逻辑，完整 URL 被再次拼接 baseUrl
+
+**修复**：检测是否是完整 URL
+
+```javascript
+// src/utils/api.js
+let fullUrl
+if (url.startsWith('http://') || url.startsWith('https://')) {
+  fullUrl = url  // 完整 URL，不拼接
+} else {
+  fullUrl = API_CONFIG.baseUrl ? API_CONFIG.baseUrl + url : url
+}
+```
+
+### Token 传递问题
+
+**症状**：登录验证返回 401
+
+**原因**：登录时 Token 还未保存，需要从 options 传递
+
+**修复**：支持 apiToken 参数
+
+```javascript
+// src/utils/api.js
+export async function request(url, options = {}) {
+  const token = options.apiToken || getToken()
+  
+  if (options.apiToken) {
+    headers['X-API-Token'] = options.apiToken
+  } else if (token) {
+    headers['X-API-Token'] = token
+  }
+}
+
+// src/pages/Login.js
+await post(`${endpoint}/api/admin/auth/verify`, {}, {
+  apiToken: token  // 传入用户输入的 Token
+})
+```
+
 ## 相关文件
 
 - `src/utils/helper.js` - `jsonResponse()` 函数实现
@@ -181,3 +231,4 @@ exit 0
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
 | 2026-06-01 | 1.0 | 基于 api-response-standards.md 升级到 Skill |
+| 2026-06-08 | 1.1 | 添加 URL 拼接和 Token 传递排查 |

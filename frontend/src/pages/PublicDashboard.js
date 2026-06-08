@@ -6,9 +6,10 @@ import { DomainCard } from '../components/DomainCard.js'
 import { SearchBox } from '../components/SearchBox.js'
 import { Footer } from '../components/Footer.js'
 import { EmptyState } from '../components/EmptyState.js'
-import { get } from '../utils/api.js'
+import { get, setApiBaseUrl } from '../utils/api.js'
 import { show } from '../components/Notification.js'
 import { debounce } from '../utils/index.js'
+import { getApiEndpoint } from '../utils/storage.js'
 
 export class PublicDashboard {
   constructor() {
@@ -31,6 +32,22 @@ export class PublicDashboard {
   
   async loadDomains() {
     try {
+      // 优先使用用户登录配置的端点
+      const userEndpoint = getApiEndpoint()
+      
+      // 如果没有用户配置，使用 Vite 注入的环境变量
+      if (userEndpoint) {
+        setApiBaseUrl(userEndpoint)
+        console.log('[PublicDashboard] Using user-configured endpoint:', userEndpoint)
+      } else if (import.meta.env.VITE_API_BASE_URL) {
+        setApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
+        console.log('[PublicDashboard] Using env endpoint:', import.meta.env.VITE_API_BASE_URL)
+      } else {
+        // 都没有，提示用户配置
+        show.info('请先在管理后台配置 API 端点')
+        return
+      }
+      
       const res = await get('/api/public/domains')
       this.domains = res.data.domains || []
       this.filteredDomains = this.domains

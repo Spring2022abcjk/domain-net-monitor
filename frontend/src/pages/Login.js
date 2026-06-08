@@ -36,9 +36,7 @@ export class LoginPage {
       const endpoint = getApiEndpoint()
       // 验证 Token 是否仍然有效
       try {
-        await post(`${endpoint}/api/admin/auth/verify`, {}, {
-          Authorization: `Bearer ${getApiToken()}`
-        })
+        await post(`${endpoint}/api/admin/auth/verify`, {})
         // Token 有效，跳转到管理后台
         window.location.hash = '/admin/dashboard'
         return
@@ -56,10 +54,7 @@ export class LoginPage {
    * 渲染页面
    */
   render() {
-    const app = document.getElementById('app')
-    if (!app) return
-    
-    app.innerHTML = `
+    return `
       <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
         ${Card({
           content: `
@@ -129,75 +124,48 @@ export class LoginPage {
     const form = document.getElementById('loginForm')
     if (!form) return
     
-    form.addEventListener('submit', (e) => this.handleSubmit(e))
-    
-    // 支持回车提交
-    const inputs = form.querySelectorAll('input')
-    inputs.forEach(input => {
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault()
-          form.dispatchEvent(new Event('submit'))
-        }
-      })
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      await this.handleSubmit()
     })
   }
   
   /**
-   * 处理表单提交
-   * @param {Event} e - 提交事件
+   * 处理登录提交
    */
-  async handleSubmit(e) {
-    e.preventDefault()
-    
+  async handleSubmit() {
     if (this.loading) return
     
     const endpointInput = document.getElementById('apiEndpoint')
     const tokenInput = document.getElementById('apiToken')
+    const submitBtn = document.getElementById('submitBtn')
     
     if (!endpointInput || !tokenInput) return
     
     const endpoint = endpointInput.value.trim()
     const token = tokenInput.value.trim()
     
-    // 验证输入
     if (!endpoint || !token) {
       show.error('请输入 API 端点和 Token')
-      endpointInput.focus()
       return
     }
     
-    // 验证 URL 格式
-    try {
-      new URL(endpoint)
-    } catch (e) {
-      show.error('API 端点格式不正确，请输入完整的 URL（包含 https://）')
-      endpointInput.focus()
-      return
-    }
-    
-    // 验证 Token 长度（至少 10 个字符）
-    if (token.length < 10) {
-      show.error('Token 格式不正确，请检查是否复制完整')
-      tokenInput.focus()
-      return
-    }
-    
-    // 开始登录流程
+    this.loading = true
     this.setLoading(true)
     
     try {
-      // 调用 API 验证 Token
+      // 验证 Token（通过 apiToken 参数传递）
       const response = await post(`${endpoint}/api/admin/auth/verify`, {}, {
-        Authorization: `Bearer ${token}`
+        apiToken: token
       })
       
-      if (response.code === 200 && response.data?.valid) {
-        // 验证成功，保存凭证
+      if (response.code === 200) {
+        // 保存配置
         setApiEndpoint(endpoint)
         setApiToken(token)
         
-        show.success('登录成功！正在跳转...')
+        show.success('登录成功')
+        this.setLoading(false)
         
         // 延迟跳转
         setTimeout(() => {
@@ -212,43 +180,44 @@ export class LoginPage {
       console.error('[Login] Login failed:', error)
       
       // 错误分类处理
-      let errorMessage = '登录失败'
-      
-      if (error.status === 401) {
-        errorMessage = 'Token 无效或已过期，请检查后重试'
-      } else if (error.status === 403) {
-        errorMessage = 'Token 权限不足，请确认 Token 具有管理员权限'
-      } else if (error.status === 404) {
-        errorMessage = 'API 端点不存在，请检查 URL 是否正确'
-      } else if (error.status === 0 || error.message?.includes('Network')) {
-        errorMessage = '网络连接失败，请确认：API 端点可访问、已启用 HTTPS、浏览器允许跨域请求'
-      } else if (error.message) {
-        errorMessage = error.message
+      if (error.message.includes('Failed to fetch')) {
+        show.error('无法连接到 API 端点，请检查网络或 CORS 配置')
+      } else if (error.message.includes('401')) {
+        show.error('无效的 Token')
+      } else if (error.message.includes('403')) {
+        show.error('Token 已过期')
+      } else {
+        show.error('登录失败：' + error.message)
       }
       
-      show.error(errorMessage)
       this.setLoading(false)
     }
   }
   
   /**
-   * 设置加载状态
-   * @param {boolean} loading - 是否加载中
+   * 设置按钮加载状态
    */
   setLoading(loading) {
-    this.loading = loading
     const btn = document.getElementById('submitBtn')
     if (btn) {
-      btn.disabled = loading
-      btn.textContent = loading ? '登录中...' : '登录'
+      if (loading) {
+        btn.classList.add('loading')
+        btn.disabled = true
+      } else {
+        btn.classList.remove('loading')
+        btn.disabled = false
+      }
     }
   }
   
   /**
-   * 清理资源
+   * 销毁页面
    */
   destroy() {
-    this.loading = false
+    const form = document.getElementById('loginForm')
+    if (form) {
+      form.remove()
+    }
   }
 }
 

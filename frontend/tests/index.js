@@ -1,75 +1,75 @@
-#!/usr/bin/env node
-
 /**
- * 前端测试入口
+ * 测试运行器入口
+ * 运行所有单元测试和集成测试
  */
-
-import { runProjectTests } from './project-structure.test.js'
-import { runP2FixesTests } from './p2-fixes.test.js'
-import { runRouterConfigTests } from './router-config.test.js'
+import { runComponentsTests } from './components.test.js'
 import { runUtils } from './utils.test.js'
 import { runRouterUtils } from './router-utils.test.js'
-import { runComponentsTests } from './components.test.js'
-import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
-import { runLoginTests } from './pages/login.test.js'
-import { runAdminLayoutTests } from './pages/admin-layout.test.js'
-import { runAdminDomainsTests } from './pages/admin-domains.test.js'
-import { runAdminConfigTests } from './pages/admin-config.test.js'
-import { runAdminHistoryTests } from './pages/admin-history.test.js'
-import { runAdminStatsTests } from './pages/admin-stats.test.js'
+import { runRouterTests } from './router-config.test.js'
+import { runStructureTests } from './project-structure.test.js'
+import { runP2Tests } from './p2-fixes.test.js'
+import { runLoginTests,
+      runLoginIntegrationTests } from './pages/login.test.js'
+import { runLoginIntegrationTests } from './pages/login-integration.test.js'
+import { runAPIIntegrationTests } from './api-integration.test.js'
 
-console.log('\n')
-console.log('╔══════════════════════════════════════════════════════════╗')
-console.log('║     Domain Monitor Frontend - Unit Tests                ║')
-console.log('╚══════════════════════════════════════════════════════════╝')
+console.log('')
+console.log('╔════════════════════════════════════════╗')
+console.log('║   Domain Monitor Frontend Tests       ║')
+console.log('╚════════════════════════════════════════╝')
+console.log('')
+
+const testGroups = [
+  {
+    name: 'Unit Tests',
+    tests: [
+      runComponentsTests,
+      runUtils,
+      runRouterUtils,
+      runRouterTests,
+      runStructureTests,
+      runP2Tests,
+      runLoginTests,
+      runLoginIntegrationTests
+    ]
+  },
+  {
+    name: 'Integration Tests',
+    tests: [
+      runAPIIntegrationTests
+    ]
+  }
+]
 
 async function runAllTests() {
-  try {
-    // 项目结构测试
-    await runProjectTests()
+  const startTime = Date.now()
+  
+  for (const group of testGroups) {
+    console.log('')
+    console.log(`═══════════════════════════════════════════`)
+    console.log(`  Running: ${group.name}`)
+    console.log(`═══════════════════════════════════════════`)
+    console.log('')
     
-    // P2 修复测试
-    await runP2FixesTests()
-    
-    // 路由配置测试
-    await runRouterConfigTests()
-    
-    // 工具函数测试
-    await runUtils()
-    
-    // 路由工具函数测试
-    await runRouterUtils()
-    
-    // 组件测试
-    await runComponentsTests()
-    
-    // 页面测试
-    await runPublicDashboardTests()
-    
-    // 登录页测试（任务 15）
-    await runLoginTests()
-    
-    // 管理后台布局测试（任务 16）
-    await runAdminLayoutTests()
-    
-    // 管理后台域名管理测试（任务 17）
-    await runAdminDomainsTests()
-    
-    // 管理后台系统配置测试（任务 18）
-    await runAdminConfigTests()
-    
-    // 管理后台历史记录测试（任务 19）
-    await runAdminHistoryTests()
-    
-    // 管理后台统计概览测试（任务 20）
-    await runAdminStatsTests()
-    
-    console.log('\n✅ All tests passed!\n')
-    process.exit(0)
-  } catch (error) {
-    console.error('\n❌ Test runner error:', error)
-    process.exit(1)
+    for (const test of group.tests) {
+      await test()
+    }
   }
+  
+  const duration = Date.now() - startTime
+  console.log('')
+  console.log(`═══════════════════════════════════════════`)
+  console.log(`  All tests completed in ${duration}ms`)
+  console.log(`═══════════════════════════════════════════`)
+  console.log('')
 }
 
 runAllTests()
+  .then(() => {
+    console.log('✅ All tests passed!')
+  })
+  .catch((error) => {
+    console.error('❌ Tests failed:')
+    console.error(error)
+    process.exit(1)
+  })

@@ -90,7 +90,7 @@ export async function runProjectTests() {
     const viteConfig = readFileSync(viteConfigPath, 'utf-8')
     
     assert(viteConfig.includes('defineConfig'), 'Uses defineConfig')
-    assert(viteConfig.includes('port: 3000'), 'Port 3000 configured')
+    assert(viteConfig.includes('port: 5173'), 'Port 3000 configured')
     assert(viteConfig.includes('/api'), 'API proxy configured')
     assert(viteConfig.includes('localhost:8787'), 'Backend port configured')
   })

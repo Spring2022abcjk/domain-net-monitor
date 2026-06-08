@@ -63,23 +63,40 @@ export function clearToken() {
  * API 请求封装
  * @param {string} url - 请求 URL
  * @param {Object} options - 请求选项
+ * @param {string} options.apiToken - 可选的 API Token（用于登录验证）
  * @returns {Promise<Object>} 响应数据
  */
 export async function request(url, options = {}) {
-  const token = getToken()
+  // 优先使用传入的 apiToken，否则从 localStorage 读取
+  const token = options.apiToken || getToken()
+  
+  // 检测是否是完整 URL
+  let fullUrl
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    // 已经是完整 URL，不拼接 baseUrl
+    fullUrl = url
+  } else {
+    // 相对路径，拼接 baseUrl
+    fullUrl = API_CONFIG.baseUrl ? API_CONFIG.baseUrl + url : url
+  }
   
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers
   }
   
-  // 添加 Token
-  if (token) {
+  // 添加 Token（如果 apiToken 在 options 中，使用它；否则使用 localStorage 的）
+  if (options.apiToken) {
+    headers['X-API-Token'] = options.apiToken
+  } else if (token) {
     headers['X-API-Token'] = token
   }
   
+  // 移除 apiToken 从 options，避免传给 fetch
+  const { apiToken, ...fetchOptions } = options
+  
   const config = {
-    ...options,
+    ...fetchOptions,
     headers
   }
   
@@ -92,7 +109,7 @@ export async function request(url, options = {}) {
   
   const fetchPromise = (async () => {
     try {
-      const response = await fetch(url, config)
+      const response = await fetch(fullUrl, config)
       const data = await response.json()
       
       if (!response.ok) {
@@ -156,12 +173,14 @@ export function get(url, params) {
  * POST 请求
  * @param {string} url - 请求 URL
  * @param {Object} body - 请求体
+ * @param {Object} options - 可选参数（如 apiToken）
  * @returns {Promise<Object>} 响应数据
  */
-export function post(url, body) {
+export function post(url, body, options = {}) {
   return request(url, {
     method: 'POST',
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
+    ...options
   })
 }
 

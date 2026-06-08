@@ -1,6 +1,6 @@
 /**
  * 通知组件
- * 支持全局调用：Notification.show('消息内容', 'success')
+ * 支持全局调用：show.error('消息'), show.success('消息')
  */
 
 const NOTIFICATION_TYPES = {
@@ -42,7 +42,7 @@ function getContainer() {
  * @param {string} [type='info'] - 通知类型 (success/error/warning/info)
  * @param {number} [duration=3000] - 显示时长（毫秒）
  */
-export function show(message, type = 'info', duration = 3000) {
+function show(message, type = 'info', duration = 3000) {
   const config = NOTIFICATION_TYPES[type] || NOTIFICATION_TYPES.info
   const container = getContainer()
   
@@ -58,65 +58,37 @@ export function show(message, type = 'info', duration = 3000) {
   
   container.appendChild(notification)
   
-  // 自动移除
   setTimeout(() => {
-    if (notification.parentElement) {
-      notification.classList.add('animate-slide-out-right')
-      setTimeout(() => notification.remove(), 300)
-    }
+    notification.remove()
   }, duration)
 }
 
 /**
- * 成功通知
- * @param {string} message - 通知内容
- * @param {number} [duration=3000] - 显示时长
+ * 便捷方法：显示错误通知
  */
-export function success(message, duration) {
-  show(message, 'success', duration)
-}
-
-/**
- * 错误通知
- * @param {string} message - 通知内容
- * @param {number} [duration=3000] - 显示时长
- */
-export function error(message, duration) {
+show.error = function(message, duration = 5000) {
   show(message, 'error', duration)
 }
 
 /**
- * 警告通知
- * @param {string} message - 通知内容
- * @param {number} [duration=3000] - 显示时长
+ * 便捷方法：显示成功通知
  */
-export function warning(message, duration) {
+show.success = function(message, duration = 3000) {
+  show(message, 'success', duration)
+}
+
+/**
+ * 便捷方法：显示警告通知
+ */
+show.warning = function(message, duration = 3000) {
   show(message, 'warning', duration)
 }
 
 /**
- * 信息通知
- * @param {string} message - 通知内容
- * @param {number} [duration=3000] - 显示时长
+ * 便捷方法：显示信息通知
  */
-export function info(message, duration) {
+show.info = function(message, duration = 3000) {
   show(message, 'info', duration)
 }
 
-/**
- * 清除所有通知
- */
-export function clear() {
-  if (notificationContainer) {
-    notificationContainer.innerHTML = ''
-  }
-}
-
-export default {
-  show,
-  success,
-  error,
-  warning,
-  info,
-  clear
-}
+export { show, NOTIFICATION_TYPES }

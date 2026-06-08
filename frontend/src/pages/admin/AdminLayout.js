@@ -38,7 +38,7 @@ export class AdminLayout {
     
     // 创建子页面实例
     this.childInstance = new this.childComponent()
-    this.childInstance.init(params, queryParams)
+    await this.childInstance.init(params, queryParams)
     
     // 绑定全局事件处理器
     this.bindGlobalHandlers()
@@ -51,10 +51,7 @@ export class AdminLayout {
    * 渲染布局框架 + 子页面内容
    */
   render() {
-    const app = document.getElementById('app')
-    if (!app) return
-    
-    app.innerHTML = `
+    return `
       <div class="dm-admin-layout flex h-screen bg-gray-100">
         ${Sidebar({ 
           open: this.sidebarOpen,
@@ -84,30 +81,15 @@ export class AdminLayout {
   }
   
   /**
-   * 绑定事件：子页面事件由子页面自己绑定
+   * 绑定事件
    */
   bindEvents() {
-    // 绑定子页面事件
-    if (this.childInstance?.bindEvents) {
-      this.childInstance.bindEvents()
-    }
-  }
-  
-  /**
-   * 绑定全局事件处理器
-   */
-  bindGlobalHandlers() {
-    // Sidebar 切换
-    window.__sidebarToggleHandler = () => this.toggleSidebar()
-    
-    // Sidebar 关闭
     window.__sidebarCloseHandler = () => {
       this.sidebarOpen = false
       this.render()
       this.bindEvents()
     }
     
-    // 退出登录
     window.__topbarOnLogout = () => this.handleLogout()
   }
   
@@ -132,18 +114,23 @@ export class AdminLayout {
   }
   
   /**
-   * 清理：调用子页面 destroy
+   * 绑定全局子路由刷新处理器
+   */
+  bindGlobalHandlers() {
+    if (this.childInstance?.bindGlobalHandlers) {
+      this.childInstance.bindGlobalHandlers()
+    }
+  }
+  
+  /**
+   * 销毁页面
    */
   destroy() {
+    window.__sidebarCloseHandler = null
+    window.__topbarOnLogout = null
     if (this.childInstance?.destroy) {
       this.childInstance.destroy()
     }
-    this.childInstance = null
-    
-    // 清理全局处理器
-    window.__sidebarToggleHandler = null
-    window.__sidebarCloseHandler = null
-    window.__topbarOnLogout = null
   }
 }
 

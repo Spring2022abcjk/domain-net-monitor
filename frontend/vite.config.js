@@ -7,7 +7,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [],
   server: {
-    port: 3000,
+    port: 5173,
     open: false,
     // 反向代理配置（用于本地开发联调后端）
     proxy: {

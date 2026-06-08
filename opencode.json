@@ -1,0 +1,54 @@
+{
+  "$schema": "https://opencode.ai/schema/latest.json",
+  "skills": {
+    "directories": [
+      ".opencode/skills"
+    ],
+    "include": [
+      "frontend-render-fix",
+      "admin-api-404-debug",
+      "vite-env-injection-fix",
+      "api-response",
+      "api-route",
+      "html-injection",
+      "subtask-doc",
+      "test-template",
+      "workflow-audit"
+    ]
+  },
+  "agents": {
+    "default": {
+      "instructions": [
+        "使用简体中文回复所有问题",
+        "遵循代码质量标准规范",
+        "优先使用 Skills 处理标准化任务",
+        "不使用 emoji 表情符号"
+      ]
+    }
+  },
+  "rules": {
+    "allow": {
+      "Shell": [
+        "npm run build",
+        "npm run test",
+        "npm run dev",
+        "npx wrangler *",
+        "git status",
+        "git diff",
+        "git log *",
+        "grep *",
+        "find *",
+        "ls *",
+        "cat *"
+      ]
+    },
+    "deny": {
+      "Shell": [
+        "rm -rf *",
+        "shutdown *",
+        "reboot *",
+        "sudo *"
+      ]
+    }
+  }
+}

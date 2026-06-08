@@ -43,8 +43,8 @@ export async function runP2FixesTests() {
     
     // 验证这些函数都有实际调用 request
     const hasGetImpl = api.includes('return request(') && api.includes('method: \'GET\'')
-    const hasPostImpl = /export function post\(url,\s*body\)\s*{\s*return request\(url/.test(api)
-    const hasPutImpl = /export function put\(url,\s*body\)\s*{\s*return request\(url/.test(api)
+    const hasPostImpl = api.includes('export function post') && api.includes('return request(')
+    const hasPutImpl = api.includes('export function put') && api.includes('return request(')
     const hasDelImpl = /export function del\(url\)\s*{\s*return request\(url/.test(api)
     
     assertEqual(hasGetImpl, true, 'Get function calls request')

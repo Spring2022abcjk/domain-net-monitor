@@ -123,7 +123,7 @@ async function runComponentsTests() {
   await runSuite('Components - Notification', async () => {
     const notification = readFileSync(join(frontendRoot, 'src/components/Notification.js'), 'utf-8')
     
-    assertEqual(notification.includes('export function show'), true, 'Has show function')
+    assertEqual(notification.includes('export { show'), true, 'Has show function')
     assertEqual(notification.includes('success'), true, 'Has success method')
     assertEqual(notification.includes('error'), true, 'Has error method')
     assertEqual(notification.includes('warning'), true, 'Has warning method')

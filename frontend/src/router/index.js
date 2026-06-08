@@ -103,16 +103,24 @@ async function renderRoute(route, params, query, parentRoute = null) {
     const parentComponent = parentRoute.component
     
     // 动态导入子组件
-    const ChildComponent = typeof route.component === 'function' 
-      ? await route.component()
-      : route.component
+    let ChildComponent
+    if (typeof route.component === 'function') {
+      const module = await route.component()
+      ChildComponent = module.default || Object.values(module)[0]
+    } else {
+      ChildComponent = route.component
+    }
     
     currentPageInstance = new parentComponent(ChildComponent)
   } else {
     // 普通路由（支持懒加载）
-    const PageComponent = typeof route.component === 'function'
-      ? await route.component()
-      : route.component
+    let PageComponent
+    if (typeof route.component === 'function') {
+      const module = await route.component()
+      PageComponent = module.default || Object.values(module)[0]
+    } else {
+      PageComponent = route.component
+    }
     currentPageInstance = new PageComponent()
   }
   
