@@ -1,6 +1,6 @@
 // src/storage/stats.js
 
-import { KV_KEY_STATS } from '../config.js';
+import { KV_KEY_STATS, RATE_LIMIT_ALERT_THRESHOLD } from '../config.js';
 
 /**
  * 获取统计数据（自动初始化）
@@ -144,6 +144,11 @@ export async function recordRateLimitHit(env, maxRetries = 3) {
       ...stats,
       rateLimitHits: stats.rateLimitHits + 1
     };
+    
+    // 告警：速率限制命中次数过高
+    if (updated.rateLimitHits > RATE_LIMIT_ALERT_THRESHOLD) {
+      console.warn('[RateLimit] High rate limit hit count:', updated.rateLimitHits);
+    }
     
     try {
       await kv.put(KV_KEY_STATS, JSON.stringify(updated));

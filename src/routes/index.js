@@ -73,7 +73,7 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   
   // GET /health
   if (path === '/health' && method === 'GET') {
-    return new Response(JSON.stringify({
+    const responseData = new Response(JSON.stringify({
       code: 200,
       data: { status: 'ok', timestamp: new Date().toISOString() },
       msg: 'OK'
@@ -84,6 +84,11 @@ export async function handleRequest(request, env, corsHeaders = {}) {
         ...corsHeaders
       }
     });
+    
+    // 记录请求统计（异步，不阻塞响应）
+    ctx.waitUntil(incrementRequests(env));
+    
+    return responseData;
   }
 
   // === Admin Routes (需要鉴权) ===

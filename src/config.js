@@ -23,6 +23,12 @@ export const KV_KEY_HISTORY_PREFIX = 'history:';
 export const KV_KEY_CONFIG = 'config';
 export const KV_KEY_STATS = 'stats';
 
+// 速率限制告警阈值
+export const RATE_LIMIT_ALERT_THRESHOLD = 100;
+
+// 健康检查配置
+export const HEALTH_CHECK_INTERVAL = 300000; // 5 分钟
+
 // 跨域响应头
 export const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
