@@ -105,8 +105,15 @@ async function renderRoute(route, params, query, parentRoute = null) {
     // 动态导入子组件
     let ChildComponent
     if (typeof route.component === 'function') {
-      const module = await route.component()
-      ChildComponent = module.default || Object.values(module)[0]
+      try {
+        const module = await route.component()
+        console.log('[Router] Loaded child module:', route.name, module)
+        ChildComponent = module.default || module[Object.keys(module)[0]]
+        console.log('[Router] ChildComponent resolved:', ChildComponent)
+      } catch (error) {
+        console.error('[Router] Failed to load child component:', error)
+        throw error
+      }
     } else {
       ChildComponent = route.component
     }
@@ -116,8 +123,15 @@ async function renderRoute(route, params, query, parentRoute = null) {
     // 普通路由（支持懒加载）
     let PageComponent
     if (typeof route.component === 'function') {
-      const module = await route.component()
-      PageComponent = module.default || Object.values(module)[0]
+      try {
+        const module = await route.component()
+        console.log('[Router] Loaded module:', route.name, module)
+        PageComponent = module.default || module[Object.keys(module)[0]]
+        console.log('[Router] PageComponent resolved:', PageComponent)
+      } catch (error) {
+        console.error('[Router] Failed to load component:', error)
+        throw error
+      }
     } else {
       PageComponent = route.component
     }

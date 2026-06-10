@@ -32,8 +32,14 @@ export class AdminLayout {
     
     // 子页面不存在时显示 Dashboard
     if (!this.childComponent) {
-      const AdminDashboard = (await import('./AdminDashboard.js')).default
-      this.childComponent = AdminDashboard
+      try {
+        const module = await import('./AdminDashboard.js')
+        this.childComponent = module.default || module.AdminDashboard
+      } catch (error) {
+        console.error('[AdminLayout] Failed to load AdminDashboard:', error)
+        show.error('加载 Dashboard 失败')
+        return
+      }
     }
     
     // 创建子页面实例
