@@ -48,14 +48,20 @@ function handleNotFound() {
 /**
  * 查找嵌套的子路由
  * @param {Object} parentRoute - 父路由
- * @param {string} path - 当前路径
+ * @param {string} fullPath - 完整路径（如 /admin/dashboard）
  * @returns {Object|null} 子路由对象
  */
-function findChildRoute(parentRoute, path) {
+function findChildRoute(parentRoute, fullPath) {
   if (!parentRoute.children) return null
   
+  // 提取子路径（去掉父路由路径部分）
+  const parentPath = parentRoute.path
+  const childPath = fullPath.startsWith(parentPath + '/') 
+    ? fullPath.slice(parentPath.length + 1)  // +1 是去掉斜杠
+    : fullPath
+  
   for (const child of parentRoute.children) {
-    if (child.path === path) return child
+    if (child.path === childPath) return child
   }
   return null
 }
@@ -185,7 +191,11 @@ export async function init() {
           const childRoute = findChildRoute(route, path)
           if (childRoute) {
             matchedRoute = childRoute
+            console.log('[Router] Matched child route:', childRoute.name, '(parent:', parentRoute.name + ')')
+          } else {
+            console.warn('[Router] Child route not found for path:', path, 'in parent:', route.path)
           }
+          break
         }
         break
       }
