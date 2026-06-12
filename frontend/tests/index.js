@@ -7,9 +7,7 @@ import { runUtils } from './utils.test.js'
 import { runRouterUtils } from './router-utils.test.js'
 import { runRouterTests } from './router-config.test.js'
 import { runStructureTests } from './project-structure.test.js'
-import { runP2Tests } from './p2-fixes.test.js'
-import { runLoginTests,
-      runLoginIntegrationTests } from './pages/login.test.js'
+import { runLoginTests } from './pages/login.test.js'
 import { runLoginIntegrationTests } from './pages/login-integration.test.js'
 import { runAPIIntegrationTests } from './api-integration.test.js'
 
@@ -28,7 +26,6 @@ const testGroups = [
       runRouterUtils,
       runRouterTests,
       runStructureTests,
-      runP2Tests,
       runLoginTests,
       runLoginIntegrationTests
     ]

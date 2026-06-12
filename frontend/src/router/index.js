@@ -180,23 +180,26 @@ export async function init() {
     for (const route of routes) {
       if (route.path === '*') continue // 通配符最后处理
       
+      // 检查是否是嵌套路由的父路由（如 /admin）
+      if (route.children && path.startsWith(route.path + '/')) {
+        parentRoute = route
+        const childRoute = findChildRoute(route, path)
+        if (childRoute) {
+          matchedRoute = childRoute
+          params = {} // 子路由暂时不支持动态参数
+          console.log('[Router] Matched child route:', childRoute.name, '(parent:', parentRoute.name + ')')
+          break
+        } else {
+          console.warn('[Router] Child route not found for path:', path, 'in parent:', route.path)
+          // 父路由匹配但子路由不存在，继续查找其他路由
+        }
+      }
+      
+      // 普通路由匹配
       const routeParams = matchRoute(path, route.path)
       if (routeParams) {
         matchedRoute = route
         params = routeParams
-        
-        // 检查是否有子路由（嵌套路由）
-        if (route.children && path.startsWith(route.path + '/')) {
-          parentRoute = route
-          const childRoute = findChildRoute(route, path)
-          if (childRoute) {
-            matchedRoute = childRoute
-            console.log('[Router] Matched child route:', childRoute.name, '(parent:', parentRoute.name + ')')
-          } else {
-            console.warn('[Router] Child route not found for path:', path, 'in parent:', route.path)
-          }
-          break
-        }
         break
       }
     }
