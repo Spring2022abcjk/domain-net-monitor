@@ -1,0 +1,42 @@
+# Cloudflare Worker 配置文件（公开模板）
+# 复制 wrangler.local.toml 并修改为你的真实值
+
+name = "domain-monitor"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# ───────────────────────────────────────
+# 开发环境变量（非敏感）
+# ───────────────────────────────────────
+[vars]
+ALLOWED_ORIGINS = "*"
+
+# ───────────────────────────────────────
+# KV 命名空间绑定
+# KV ID 在 wrangler.local.toml 中配置
+# ───────────────────────────────────────
+[[kv_namespaces]]
+binding = "DOMAIN_MONITOR_KV"
+id = "YOUR_KV_ID_HERE"
+preview_id = "YOUR_KV_ID_HERE"
+
+# ───────────────────────────────────────
+# 定时任务（Cron Triggers）
+# 时区：UTC（北京时间 = UTC + 8）
+# ───────────────────────────────────────
+[triggers]
+crons = [
+  "0 */12 * * *",  # 每 12 小时检测
+  "0 3 * * *"      # 每天清理历史
+]
+
+# ───────────────────────────────────────
+# 生产环境配置
+# ───────────────────────────────────────
+[env.production]
+# 敏感变量通过 Secrets 注入:
+#   wrangler secret put ALLOWED_ORIGINS --env production
+
+[[env.production.kv_namespaces]]
+binding = "DOMAIN_MONITOR_KV"
+id = "YOUR_PRODUCTION_KV_ID_HERE"

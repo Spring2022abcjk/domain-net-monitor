@@ -6,16 +6,23 @@ node_modules/
 .wrangler/cache/
 .wrangler/tmp/
 
-# Wrangler config (contains KV IDs)
-wrangler.toml
-
-# Environment files
+# Environment files (sensitive)
 .dev.vars
+*.local
+*.local.toml
+
+# Personal config (sensitive)
+wrangler.local.toml
+frontend/wrangler.local.toml
+frontend/.env
+
+# Build output
+frontend/dist/
 
 # Test local script
 test-local.sh
 
-# Debug logs (Admin API 404 investigation)
+# Debug logs
 /tmp/wrangler-*.log
 /tmp/*.log
 /tmp/wrangler-debug-*/
