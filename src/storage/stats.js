@@ -1,6 +1,6 @@
 // src/storage/stats.js
 
-import { KV_KEY_STATS, RATE_LIMIT_ALERT_THRESHOLD } from '../config.js';
+import { KV_KEY_STATS, KV_KEY_HISTORY_COUNT, KV_KEY_RESULT_COUNT, RATE_LIMIT_ALERT_THRESHOLD } from '../config.js';
 
 /**
  * 获取统计数据（自动初始化）
@@ -179,9 +179,12 @@ export async function getDetailedStats(env) {
   const defaultDomainsData = await kv.get('default_domains');
   const defaultDomains = defaultDomainsData ? JSON.parse(defaultDomainsData) : [];
   
-  // 只统计有多少个域名有历史记录，不遍历内容（性能优化）
-  const allKeys = await kv.list({ prefix: 'history:' });
-  const resultKeys = await kv.list({ prefix: 'result:' });
+  // 使用计数器替代 kv.list() 以提高性能
+  const historyCountData = await kv.get(KV_KEY_HISTORY_COUNT);
+  const historyDomainCount = historyCountData ? parseInt(historyCountData, 10) : 0;
+  
+  const resultCountData = await kv.get(KV_KEY_RESULT_COUNT);
+  const resultCount = resultCountData ? parseInt(resultCountData, 10) : 0;
   
   return {
     ...baseStats,
@@ -190,10 +193,10 @@ export async function getDetailedStats(env) {
       defaultCount: defaultDomains.length
     },
     history: {
-      domainCount: allKeys.keys.length
+      domainCount: historyDomainCount
     },
     cache: {
-      resultCount: resultKeys.keys.length
+      resultCount: resultCount
     }
   };
 }

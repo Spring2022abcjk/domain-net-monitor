@@ -1,22 +1,46 @@
 import { REQUEST_TIMEOUT } from '../config.js';
 
-// 限流配置
-const RATE_LIMIT = {
-  windowMs: 60000, // 1 分钟窗口
-  maxRequests: 10  // 每个 IP 最多 10 次请求
+export const RATE_LIMIT = {
+  windowMs: 60000,
+  maxRequests: 10
 };
 
 /**
- * 内存存储（Worker 重启后重置）
- * @type {Map<string, {windowStart: number, count: number}>}
+ * 基于 KV 的分布式限流器（跨边缘节点生效）
+ * 每个 IP 有独立窗口，使用 KV TTL 自动过期
+ * @param {Object} kv - KV 命名空间
+ * @param {Request} request - 请求对象
+ * @returns {Promise<import('../types.js').RateLimitResult>} 限流结果
  */
-const requestCounts = new Map();
+export async function rateLimiterKV(kv, request) {
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const key = `ratelimit:${ip}`;
+  const now = Math.floor(Date.now() / 1000);
+  
+  const data = await kv.get(key);
+  if (!data) {
+    await kv.put(key, JSON.stringify({ start: now, count: 1 }), { expirationTtl: 60 });
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+  }
+  
+  const record = JSON.parse(data);
+  if (now - record.start > 60) {
+    await kv.put(key, JSON.stringify({ start: now, count: 1 }), { expirationTtl: 60 });
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+  }
+  
+  if (record.count >= RATE_LIMIT.maxRequests) {
+    return { allowed: false, remaining: 0 };
+  }
+  
+  record.count++;
+  await kv.put(key, JSON.stringify(record), { expirationTtl: 60 });
+  return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count };
+}
 
 /**
- * 简单的基于 IP 的限流器
- * 注意：Cloudflare Worker 无状态，限流数据存储在内存，重启后重置
- * @param {Request} request - 请求对象
- * @returns {import('../types.js').RateLimitResult} 限流结果
+ * 内存限流器（单实例回退，已弃用于生产环境）
+ * @deprecated 使用 rateLimiterKV 替代
  */
 export function rateLimiter(request) {
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -26,32 +50,21 @@ export function rateLimiter(request) {
   const record = requestCounts.get(key);
   
   if (!record || now - record.windowStart > RATE_LIMIT.windowMs) {
-    // 新窗口
-    requestCounts.set(key, {
-      windowStart: now,
-      count: 1
-    });
-    return {
-      allowed: true,
-      remaining: RATE_LIMIT.maxRequests - 1
-    };
+    requestCounts.set(key, { windowStart: now, count: 1 });
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
   }
   
   if (record.count >= RATE_LIMIT.maxRequests) {
-    return {
-      allowed: false,
-      remaining: 0
-    };
+    return { allowed: false, remaining: 0 };
   }
   
   record.count++;
   requestCounts.set(key, record);
   
-  return {
-    allowed: true,
-    remaining: RATE_LIMIT.maxRequests - record.count
-  };
+  return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count };
 }
+
+const requestCounts = new Map();
 
 /**
  * 构造限流响应头

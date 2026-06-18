@@ -1,7 +1,13 @@
 // src/services/detector.js
 
-import { DNS_TYPE_HTTPS, DNS_TYPE_AAAA, STATUS_OK, STATUS_PARTIAL, STATUS_NO, STATUS_ERROR } from '../config.js';
+import { DNS_TYPE_HTTPS, DNS_TYPE_AAAA, STATUS_OK, STATUS_PARTIAL, STATUS_NO, STATUS_ERROR, KV_KEY_HISTORY_COUNT, KV_KEY_RESULT_COUNT } from '../config.js';
 import { getConfig } from '../storage/config.js';
+
+async function incrementCount(kv, key) {
+  const data = await kv.get(key);
+  const count = data ? parseInt(data, 10) : 0;
+  await kv.put(key, String(count + 1));
+}
 
 /**
  * 查询 DoH 获取 DNS 记录
@@ -127,7 +133,11 @@ export async function detectDomain(domain, env) {
 export async function saveResult(env, result) {
   const kv = env.DOMAIN_MONITOR_KV;
   const key = `result:${result.domain}`;
+  const exists = await kv.get(key);
   await kv.put(key, JSON.stringify(result));
+  if (!exists) {
+    await incrementCount(kv, KV_KEY_RESULT_COUNT);
+  }
 }
 
 /**
@@ -152,4 +162,9 @@ export async function addToHistory(env, result) {
   }
 
   await kv.put(key, JSON.stringify(history));
+
+  // 首次记录该域名历史时增加计数
+  if (history.length === 1 && !data) {
+    await incrementCount(kv, KV_KEY_HISTORY_COUNT);
+  }
 }

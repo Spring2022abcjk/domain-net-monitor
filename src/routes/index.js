@@ -27,7 +27,8 @@ import { handleGetPublicDomains } from './public/domains.js';
 import { handleGetPublicStats } from './public/stats.js';
 
 import { withAdminAuth } from '../middleware/auth.js';
-import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
+import { isValidAdminToken } from '../middleware/auth.js';
+import { rateLimiter, rateLimiterKV, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
 import { incrementRequests, recordRateLimitHit } from '../storage/stats.js';
 
 /**
@@ -42,26 +43,28 @@ export async function handleRequest(request, env, corsHeaders = {}) {
   const path = url.pathname;
   const method = request.method;
 
-  // 限流检查
-  const rateLimitResult = rateLimiter(request);
-  const limitHeaders = rateLimitHeaders(rateLimitResult);
+  // 限流检查（KV 分布式，管理员 Token 豁免）
+  let limitHeaders = {};
+  if (!isValidAdminToken(request, env)) {
+    const rateLimitResult = await rateLimiterKV(env.DOMAIN_MONITOR_KV, request);
+    limitHeaders = rateLimitHeaders(rateLimitResult);
 
-  if (!rateLimitResult.allowed) {
-    // 记录限流命中
-    await recordRateLimitHit(env);
-    
-    const response = rateLimitExceededResponse();
-    const headers = new Headers(response.headers);
-    for (const [key, value] of Object.entries(limitHeaders)) {
-      headers.set(key, value);
+    if (!rateLimitResult.allowed) {
+      await recordRateLimitHit(env);
+      
+      const response = rateLimitExceededResponse();
+      const headers = new Headers(response.headers);
+      for (const [key, value] of Object.entries(limitHeaders)) {
+        headers.set(key, value);
+      }
+      for (const [key, value] of Object.entries(corsHeaders)) {
+        headers.set(key, value);
+      }
+      return new Response(response.body, {
+        status: response.status,
+        headers
+      });
     }
-    for (const [key, value] of Object.entries(corsHeaders)) {
-      headers.set(key, value);
-    }
-    return new Response(response.body, {
-      status: response.status,
-      headers
-    });
   }
   
   // 记录请求数

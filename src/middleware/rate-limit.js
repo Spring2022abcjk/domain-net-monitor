@@ -1,6 +1,6 @@
 // src/middleware/rate-limit.js
 
-import { rateLimiter, rateLimitHeaders, rateLimitExceededResponse } from '../utils/helper.js';
+import { rateLimiterKV, rateLimitHeaders, rateLimitExceededResponse } from '../utils/helper.js';
 import { isValidAdminToken } from './auth.js';
 
 /**
@@ -35,8 +35,8 @@ export function rateLimitMiddleware(handler) {
       });
     }
     
-    // 普通用户走限流逻辑（使用 request 对象）
-    const { allowed, remaining, reset } = rateLimiter(request);
+    // 普通用户走限流逻辑（KV 分布式，跨边缘节点生效）
+    const { allowed, remaining } = await rateLimiterKV(env.DOMAIN_MONITOR_KV, request);
     
     if (!allowed) {
       // 记录限流命中统计

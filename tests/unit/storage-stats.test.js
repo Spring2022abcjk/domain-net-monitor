@@ -100,14 +100,8 @@ export async function runStorageStatsTests() {
     // Mock domain list
     await env.DOMAIN_MONITOR_KV.put('domain_list', JSON.stringify(['a.com', 'b.com']));
     await env.DOMAIN_MONITOR_KV.put('default_domains', JSON.stringify(['a.com']));
-    await env.DOMAIN_MONITOR_KV.put('history:example.com', JSON.stringify([
-      { domain: 'example.com', timestamp: Date.now(), overall: 'ok' },
-      { domain: 'example.com', timestamp: Date.now() - 1000, overall: 'ok' }
-    ]));
-    await env.DOMAIN_MONITOR_KV.put('result:test.com', JSON.stringify({
-      domain: 'test.com',
-      overall: 'ok'
-    }));
+    await env.DOMAIN_MONITOR_KV.put('history_count', '1');
+    await env.DOMAIN_MONITOR_KV.put('result_count', '1');
     
     const detailedStats = await getDetailedStats(env);
     

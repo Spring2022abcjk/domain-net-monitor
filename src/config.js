@@ -22,6 +22,8 @@ export const KV_KEY_DEFAULT_DOMAINS = 'default_domains';
 export const KV_KEY_HISTORY_PREFIX = 'history:';
 export const KV_KEY_CONFIG = 'config';
 export const KV_KEY_STATS = 'stats';
+export const KV_KEY_HISTORY_COUNT = 'history_count';
+export const KV_KEY_RESULT_COUNT = 'result_count';
 
 // 速率限制告警阈值
 export const RATE_LIMIT_ALERT_THRESHOLD = 100;

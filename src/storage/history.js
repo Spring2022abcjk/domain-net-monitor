@@ -1,6 +1,6 @@
 // src/storage/history.js
 
-import { KV_KEY_HISTORY_PREFIX } from '../config.js';
+import { KV_KEY_HISTORY_PREFIX, KV_KEY_HISTORY_COUNT } from '../config.js';
 
 /**
  * 追加单条历史记录
@@ -120,7 +120,13 @@ export async function getAllHistory(env, domains = null, days = 7, limit = 100) 
 export async function deleteHistory(env, domain) {
   const kv = env.DOMAIN_MONITOR_KV;
   const key = `${KV_KEY_HISTORY_PREFIX}${domain}`;
+  const exists = await kv.get(key);
   await kv.delete(key);
+  if (exists) {
+    const countData = await kv.get(KV_KEY_HISTORY_COUNT);
+    const count = countData ? Math.max(0, parseInt(countData, 10) - 1) : 0;
+    await kv.put(KV_KEY_HISTORY_COUNT, String(count));
+  }
   return { domain, deleted: true };
 }
 
