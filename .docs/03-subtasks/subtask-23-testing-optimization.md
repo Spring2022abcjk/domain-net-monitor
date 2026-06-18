@@ -1,10 +1,10 @@
 # 子任务 23：测试与优化
 
-**状态**: 🔴 未启动  
-**优先级**: P1 (中)  
-**预计工时**: 4-6 小时  
-**创建日期**: 2026-06-06  
-**更新日期**: 2026-06-06  
+**状态**: 🟢 已完成
+**优先级**: P1 (中)
+**预计工时**: 4-6 小时
+**创建日期**: 2026-06-06
+**更新日期**: 2026-06-18
 **前置依赖**: 任务 22（部署配置）✅  
 
 ---
@@ -677,6 +677,46 @@ curl -s "$BASE/api/admin/config" -H "X-API-Token: $TOKEN" | jq -e '.code == 200'
 
 ---
 
-**创建时间**: 2026-06-06  
-**预计完成**: 2026-06-06  
-**状态**: 🔴 待开始
+**创建时间**: 2026-06-06
+**完成日期**: 2026-06-18
+**状态**: 🟢 已完成
+
+## 完成摘要
+
+### 23.1 端到端测试 - 全部通过
+- 场景 1 (公开 API): ✅ 健康检查 + 域名列表
+- 场景 2 (认证): ✅ Token 验证 200 / 无效 401
+- 场景 3 (域名 CRUD): ✅ 添加/获取/删除
+- 场景 4 (配置): ✅ 获取配置 + DoH 测试
+- 场景 5 (历史): ✅ 历史查询
+- 场景 6 (统计): ✅ 完整统计概览
+- 前端 Pages: ✅ monitor-fn.inthub.top 正常加载
+- CORS: ✅ 跨域头正确返回
+
+### 23.2 性能优化 - 核心修复
+- 统计 API: `kv.list()` → KV 计数器，热响应 15.8s → 0.71s
+- 新增 `history_count` / `result_count` 计数器键
+- saveResult/addToHistory 首次写入时递增计数
+- deleteHistory 时递减计数
+- 生产环境 API Token 已配置（wrangler secret put）
+
+### 23.3 安全审计 - 完成
+- 限流: 从内存 Map 迁移至 KV 分布式计数器，跨边缘节点生效
+- 管理员豁免: 顶层路由 + 限流中间件双保险
+- XSS 防护: 脚本注入正确拒绝 (Invalid domain format)
+- 无 Token 401 / 错误 Token 401 / 无 Rate Limit Header 泄露
+- CSRF: CORS 白名单 + Origin 验证 + Token 认证
+
+### 23.4 错误处理 - 验证通过
+- 统一格式 `{code, data, msg}` 所有端点一致
+- 400/401/404/409/500 错误码正确
+- 限流 429 正确返回
+
+### 文件变更
+- `src/utils/helper.js`: 新增 rateLimiterKV (KV 分布式限流)
+- `src/routes/index.js`: 管理员 Token 豁免限流
+- `src/middleware/rate-limit.js`: 切换至 KV 限流
+- `src/storage/stats.js`: kv.list() → kv.get() 计数器
+- `src/services/detector.js`: 新增计数器递增逻辑
+- `src/storage/history.js`: 新增计数器递减逻辑
+- `src/config.js`: 新增 KV_KEY_HISTORY_COUNT / KV_KEY_RESULT_COUNT
