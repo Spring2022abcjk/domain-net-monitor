@@ -74,8 +74,9 @@ function findChildRoute(parentRoute, fullPath) {
  * @param {Object} [parentRoute] - 父路由（嵌套场景）
  */
 async function renderRoute(route, params, query, parentRoute = null) {
-  // 权限检查：需要认证但未登录
-  if (route.meta?.requiresAuth && !isLoggedIn()) {
+  // 权限检查：需要认证但未登录（子路由从父路由继承 requiresAuth）
+  const requiresAuth = route.meta?.requiresAuth || parentRoute?.meta?.requiresAuth
+  if (requiresAuth && !isLoggedIn()) {
     navigateTo('/login')
     return
   }
