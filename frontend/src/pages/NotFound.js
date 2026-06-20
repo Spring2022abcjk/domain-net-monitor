@@ -1,7 +1,7 @@
 /**
  * 404 页面
  */
-export default {
+export class NotFound {
   render() {
     return `
       <div class="max-w-2xl mx-auto mt-20 text-center">
@@ -24,3 +24,5 @@ export default {
     `
   }
 }
+
+export default NotFound
