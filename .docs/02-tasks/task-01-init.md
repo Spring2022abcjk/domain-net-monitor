@@ -76,7 +76,7 @@ preview_id = "<KV_PREVIEW_ID>"
 | | `STATUS_ERROR` | `"error"` |
 | KV 键名 | `KV_KEY_DOMAIN_LIST` | `"domain_list"` |
 | | `KV_KEY_RESULT_PREFIX` | `"result:"` |
-| 响应头 | `CORS_HEADERS` | 跨域请求头对象 |
+| 限流阈值 | `RATE_LIMIT_ALERT_THRESHOLD` | 限流告警阈值 |
 
 ---
 

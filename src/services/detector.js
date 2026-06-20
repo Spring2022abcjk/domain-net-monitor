@@ -1,8 +1,15 @@
 // src/services/detector.js
 
-import { DNS_TYPE_HTTPS, DNS_TYPE_AAAA, STATUS_OK, STATUS_PARTIAL, STATUS_NO, STATUS_ERROR, KV_KEY_HISTORY_COUNT, KV_KEY_RESULT_COUNT } from '../config.js';
+import { DNS_TYPE_HTTPS, DNS_TYPE_AAAA, STATUS_OK, STATUS_PARTIAL, STATUS_NO, STATUS_ERROR, KV_KEY_HISTORY_COUNT, KV_KEY_RESULT_COUNT, REQUEST_TIMEOUT } from '../config.js';
 import { getConfig } from '../storage/config.js';
+import { fetchWithTimeout } from '../utils/helper.js';
 
+/**
+ * 递增 KV 计数器（非原子操作，并发时可能略微低计）
+ * 统计场景下可接受：计数器用于 stats 展示，不要求精确
+ * @param {Object} kv - KV 命名空间
+ * @param {string} key - 计数器键名
+ */
 async function incrementCount(kv, key) {
   const data = await kv.get(key);
   const count = data ? parseInt(data, 10) : 0;
@@ -17,16 +24,14 @@ async function incrementCount(kv, key) {
  * @param {number} timeout - 超时时间（毫秒）
  * @returns {Promise<Object>} DoH 响应 JSON
  */
-export async function queryDoh(domain, recordType, dohUrl, timeout = 5000) {
+export async function queryDoh(domain, recordType, dohUrl, timeout = REQUEST_TIMEOUT) {
   const url = `${dohUrl}?name=${encodeURIComponent(domain)}&type=${recordType}`;
 
-  const response = await fetch(url, {
-    method: 'GET',
+  const response = await fetchWithTimeout(url, {
     headers: {
       'Accept': 'application/dns-json'
-    },
-    signal: AbortSignal.timeout(timeout)
-  });
+    }
+  }, timeout);
 
   if (!response.ok) {
     throw new Error(`DoH response status: ${response.status}`);

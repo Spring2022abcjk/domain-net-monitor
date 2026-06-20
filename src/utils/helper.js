@@ -8,6 +8,7 @@ export const RATE_LIMIT = {
 /**
  * 基于 KV 的分布式限流器（跨边缘节点生效）
  * 每个 IP 有独立窗口，使用 KV TTL 自动过期
+ * 注意：KV 读写非原子操作，并发时可能略微超限
  * @param {Object} kv - KV 命名空间
  * @param {Request} request - 请求对象
  * @returns {Promise<import('../types.js').RateLimitResult>} 限流结果
@@ -38,9 +39,11 @@ export async function rateLimiterKV(kv, request) {
   return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count };
 }
 
+const requestCounts = new Map();
+
 /**
- * 内存限流器（单实例回退，已弃用于生产环境）
- * @deprecated 使用 rateLimiterKV 替代
+ * 内存限流器（单元测试回退用）
+ * @deprecated 生产环境使用 rateLimiterKV
  */
 export function rateLimiter(request) {
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -63,8 +66,6 @@ export function rateLimiter(request) {
   
   return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count };
 }
-
-const requestCounts = new Map();
 
 /**
  * 构造限流响应头

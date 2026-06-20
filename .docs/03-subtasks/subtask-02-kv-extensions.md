@@ -129,6 +129,7 @@ import { KV_KEY_HISTORY_PREFIX } from '../config.js';
  * @param {string} domain - 域名
  * @param {Object} result - 检测结果
  */
+/** @deprecated 生产环境使用 services/detector.js 中的 addToHistory() 替代 */
 export async function addHistory(env, domain, result) {
   const kv = getKV(env);
   const key = `${KV_KEY_HISTORY_PREFIX}${domain}`;

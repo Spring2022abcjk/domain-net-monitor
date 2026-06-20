@@ -1,7 +1,8 @@
 // src/middleware/rate-limit.js
 
-import { rateLimiterKV, rateLimitHeaders, rateLimitExceededResponse } from '../utils/helper.js';
+import { rateLimiterKV, rateLimitHeaders, rateLimitExceededResponse, RATE_LIMIT } from '../utils/helper.js';
 import { isValidAdminToken } from './auth.js';
+import { recordRateLimitHit } from '../storage/stats.js';
 
 /**
  * 检查是否应该豁免限流（管理员 Token）
@@ -39,23 +40,13 @@ export function rateLimitMiddleware(handler) {
     const { allowed, remaining } = await rateLimiterKV(env.DOMAIN_MONITOR_KV, request);
     
     if (!allowed) {
-      // 记录限流命中统计
-      try {
-        const kv = env.DOMAIN_MONITOR_KV;
-        const statsKey = 'stats';
-        const statsData = await kv.get(statsKey);
-        const stats = statsData ? JSON.parse(statsData) : { todayRequests: 0, rateLimitHits: 0, lastReset: Date.now() };
-        stats.rateLimitHits = (stats.rateLimitHits || 0) + 1;
-        await kv.put(statsKey, JSON.stringify(stats));
-      } catch (e) {
-        // 统计失败不影响限流
-      }
+      await recordRateLimitHit(env);
       
       const response = rateLimitExceededResponse();
       const newHeaders = new Headers(response.headers);
-      newHeaders.set('X-RateLimit-Limit', '10');
+      newHeaders.set('X-RateLimit-Limit', RATE_LIMIT.maxRequests.toString());
       newHeaders.set('X-RateLimit-Remaining', '0');
-      newHeaders.set('X-RateLimit-Window', '60s');
+      newHeaders.set('X-RateLimit-Window', (RATE_LIMIT.windowMs / 1000).toString() + 's');
       return new Response(response.body, {
         status: response.status,
         headers: newHeaders

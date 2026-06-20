@@ -5,7 +5,6 @@ import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/
 import {
   getHistory,
   getAllHistory,
-  getMultipleHistory,
   deleteHistory,
   cleanupHistory
 } from '../../storage/history.js';

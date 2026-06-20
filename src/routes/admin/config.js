@@ -2,7 +2,7 @@
 
 import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js';
 import { getConfig, setConfig } from '../../storage/config.js';
-import { jsonResponse } from '../../utils/helper.js';
+import { jsonResponse, RATE_LIMIT } from '../../utils/helper.js';
 
 /**
  * 处理配置相关请求
@@ -60,9 +60,9 @@ function handleSecurityConfig(request, env) {
   // 读取限流配置
   const rateLimitConfig = {
     enabled: true,
-    windowMs: 60000,          // 60 秒
-    maxRequests: 10,          // 10 次/分钟
-    adminBypass: true         // 管理员豁免
+    windowMs: RATE_LIMIT.windowMs,
+    maxRequests: RATE_LIMIT.maxRequests,
+    adminBypass: true
   };
   
   // Token 是否已配置

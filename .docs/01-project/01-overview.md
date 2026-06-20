@@ -1,26 +1,26 @@
 # Cloudflare Domain Monitor - 项目任务总览
 
-**最后更新**: 2026-05-29  
-**项目状态**: 🟢 进行中（95% 完成）  
-## 📊 整体进度
-**总进度**: 95% (36/38 任务完成)  
-**最近更新**: 2026-06-08 - Task 24 定时检测验证完成
+**最后更新**: 2026-06-18  
+**项目状态**: 已完成（97% / 37/38）  
+## 整体进度
+**总进度**: 97% (37/38 任务完成)  
+**最近更新**: 2026-06-18 - 架构审查完成（2 P0 + 4 P1 + 5 P2 修复）
 
-| 任务 | 名称 | 状态 | 完成时间 | 测试数 | 提交哈希 |
-|------|------|------|----------|--------|----------|
-| **任务 1** | 环境变量配置 + CORS + JSDoc | ✅ 完成 | 2026-05-29 | 164 | `0ebbcd6` |
-| **任务 2** | KV 存储结构扩展 | ✅ 完成 | 2026-05-29 | 49 | `4a13bf4` |
-| **任务 3** | CORS 中间件实现 | ✅ 完成 | 2026-05-29 | (包含在任务 1) | `0ebbcd6` |
-| **任务 4** | 管理员认证 API | ✅ 完成 | 2026-05-29 | 54 | `3a6fe66` |
-| **任务 5** | 域名管理 API | ⏳ 待开始 | - | - | - |
-| **任务 6** | 检测配置 API | ⏳ 待开始 | - | - | - |
-| **任务 7** | DoH 配置 API | ⏳ 待开始 | - | - | - |
-| **任务 8** | 检测操作 API | ⏳ 待开始 | - | - | - |
-| **任务 9** | 历史记录 API | ⏳ 待开始 | - | - | - |
-| **任务 10** | 统计概览 API | ⏳ 待开始 | - | - | - |
-| **任务 11** | 定时检测任务（Cron） | ⏳ 待开始 | - | - | - |
+| 任务 | 名称 | 状态 | 完成时间 | 测试数 |
+|------|------|------|----------|--------|
+| **任务 1** | 环境变量配置 + CORS + JSDoc | ✅ 完成 | 2026-05-29 | 164 |
+| **任务 2** | KV 存储结构扩展 | ✅ 完成 | 2026-05-29 | 49 |
+| **任务 3** | CORS 中间件实现 | ✅ 完成 | 2026-05-29 | (含任务1) |
+| **任务 4** | 管理员认证 API | ✅ 完成 | 2026-05-29 | 54 |
+| **任务 5** | 域名管理 API | ✅ 完成 | 2026-05-30 | - |
+| **任务 6** | 检测配置 API | ✅ 完成 | 2026-05-30 | - |
+| **任务 7** | DoH 配置 API | ✅ 完成 | 2026-05-31 | - |
+| **任务 8** | 检测操作 API | ✅ 完成 | 2026-05-31 | - |
+| **任务 9** | 历史记录 API | ✅ 完成 | 2026-06-01 | - |
+| **任务 10** | 统计概览 API | ✅ 完成 | 2026-06-01 | - |
+| **任务 11** | 定时检测任务（Cron） | ✅ 完成 | 2026-06-02 | - |
 
-**后端进度**: 4/11 完成（36%）
+**后端进度**: 11/11 完成（100%）
 
 ---
 
@@ -28,83 +28,94 @@
 
 | 任务 | 名称 | 状态 | 预计工期 |
 |------|------|------|----------|
-| **任务 12** | 前端项目初始化 | ⏳ 待开始 | 0.5 天 |
-| **任务 13** | 前端基础组件 | ⏳ 待开始 | 1 天 |
-| **任务 14** | 公开页面 Dashboard | ⏳ 待开始 | 0.5 天 |
-| **任务 15** | 管理后台登录页 | ⏳ 待开始 | 0.5 天 |
-| **任务 16** | 管理后台主布局 | ⏳ 待开始 | 0.5 天 |
-| **任务 17** | 域名管理页 | ⏳ 待开始 | 1 天 |
-| **任务 18** | 检测配置页 | ⏳ 待开始 | 0.5 天 |
-| **任务 19** | DoH 配置页 | ⏳ 待开始 | 0.5 天 |
-| **任务 20** | 历史记录页 | ⏳ 待开始 | 0.5 天 |
-| **任务 21** | 统计概览页 | ⏳ 待开始 | 0.5 天 |
-| **任务 22** | 前后端联调 | ⏳ 待开始 | 0.5 天 |
-| **任务 23** | 部署配置 | ⏳ 待开始 | 0.5 天 |
-| **任务 24** | 测试与优化 | ⏳ 待开始 | 1 天 |
+| **任务 12** | 前端项目初始化 | ✅ 完成 | 0.5 天 |
+| **任务 13** | 前端基础组件 | ✅ 完成 | 1 天 |
+| **任务 14** | 公开页面 Dashboard | ✅ 完成 | 0.5 天 |
+| **任务 15** | 管理后台登录页 | ✅ 完成 | 0.5 天 |
+| **任务 16** | 管理后台主布局 | ✅ 完成 | 0.5 天 |
+| **任务 17** | 域名管理页 | ✅ 完成 | 1 天 |
+| **任务 18** | 检测配置页 | ✅ 完成 | 0.5 天 |
+| **任务 19** | 历史记录页 | ✅ 完成 | 0.5 天 |
+| **任务 20** | 统计概览页 | ✅ 完成 | 0.5 天 |
+| **任务 21** | 前后端联调 | ✅ 完成 | 0.5 天 |
+| **任务 22** | 部署配置 | ✅ 完成 | 0.5 天 |
+| **任务 23** | 测试与优化 | ✅ 完成 | 1 天 |
+| **任务 24** | 定时检测验证 | ✅ 完成 | 0.5 天 |
 
-**前端进度**: 0/13 完成（0%）
+**前端进度**: 13/13 完成（100%）
 
 ---
 
-## 📁 现有代码结构
+## 现有代码结构
 
 ```
 /workspace/
+├── wrangler.toml                    # Worker 公开模板
 ├── src/
-│   ├── config.js                 # ✅ 全局常量（KV 键名、DoH 地址等）
-│   ├── index.js                  # ✅ Worker 入口
-│   ├── types.js                  # ✅ JSDoc 类型定义（12 个核心类型）
-│   ├── middleware/
-│   │   ├── auth.js               # ✅ 鉴权中间件（恒定时间比较）
-│   │   └── rate-limit.js         # ✅ 限流中间件（管理员豁免）
-│   ├── routes/
-│   │   ├── index.js              # ✅ 路由分发器
-│   │   ├── domains.js            # ✅ 域名管理路由
-│   │   ├── detect.js             # ✅ 检测路由
-│   │   ├── result.js             # ✅ 结果查询路由
-│   │   └── admin/                # ✅ 管理 API 路由
-│   │       ├── auth.js           # ✅ 认证路由
-│   │       └── config.js         # ✅ 配置路由
-│   ├── storage/
-│   │   ├── index.js              # ✅ 统一导出
-│   │   ├── kv.js                 # ✅ KV 存储基础
-│   │   ├── config.js             # ✅ 配置管理
-│   │   ├── default-domains.js    # ✅ 默认域名
-│   │   ├── history.js            # ✅ 历史记录
-│   │   └── stats.js              # ✅ 统计数据
-│   ├── detectors/
-│   │   ├── index.js              # ✅ 检测器导出
-│   │   ├── https-rr.js           # ✅ HTTPS RR 检测
-│   │   ├── ech.js                # ✅ ECH 检测
-│   │   └── ipv6.js               # ✅ IPv6 检测
+│   ├── config.js                    # 全局常量（KV键名、DoH地址、状态枚举）
+│   ├── index.js                     # Worker 入口（fetch + scheduled）
+│   ├── types.js                     # JSDoc 类型定义（12 个核心类型）
 │   ├── doh/
-│   │   └── client.js             # ✅ DoH 客户端（主备）
+│   │   └── client.js                # DoH 客户端（主/备故障切换 + fetchWithTimeout）
+│   ├── detectors/
+│   │   ├── index.js                 # 检测器聚合 + detectAll()
+│   │   ├── ech.js                   # ECH 能力检测
+│   │   ├── https-rr.js              # HTTPS RR 记录检测
+│   │   └── ipv6.js                  # IPv6 AAAA 记录检测
+│   ├── middleware/
+│   │   ├── auth.js                  # 鉴权中间件（恒定时间比较 + withAdminAuth）
+│   │   └── rate-limit.js            # 限流中间件（KV 分布式，管理员豁免）
+│   ├── routes/
+│   │   ├── index.js                 # 路由分发器（限流 + 鉴权 + 分发）
+│   │   ├── domains.js               # 公开域名 CRUD 路由
+│   │   ├── detect.js                # 公开检测路由
+│   │   ├── result.js                # 公开结果查询路由
+│   │   ├── admin/
+│   │   │   ├── auth.js              # 管理员认证路由
+│   │   │   ├── config.js            # 管理员配置路由
+│   │   │   ├── detect.js            # 管理员检测路由
+│   │   │   ├── doh.js               # 管理员 DoH 端点路由
+│   │   │   ├── domains.js           # 管理员域名管理路由
+│   │   │   ├── history.js           # 管理员历史记录路由
+│   │   │   └── stats.js             # 管理员统计路由
+│   │   └── public/
+│   │       ├── domains.js           # 公开域名列表路由
+│   │       └── stats.js             # 公开域名统计路由
+│   ├── scheduled/
+│   │   └── detect.js                # 定时任务（检测 + 清理）
+│   ├── services/
+│   │   └── detector.js              # 检测服务（queryDoh + detectDomain + saveResult + addToHistory）
+│   ├── storage/
+│   │   ├── index.js                 # 统一 re-export
+│   │   ├── kv.js                    # 底层 KV 存取
+│   │   ├── config.js                # 运行时配置 KV 存取（引用 config.js 常量）
+│   │   ├── default-domains.js       # 默认域名列表 KV 存取
+│   │   ├── domains.js               # 域名管理 KV 存取
+│   │   ├── history.js               # 历史记录 KV 存取（addHistory 已 @deprecated）
+│   │   └── stats.js                 # 统计数据 KV 存取（计数器 + 明细）
 │   └── utils/
-│       └── helper.js             # ✅ 工具函数（CORS、限流等）
+│       └── helper.js                # 工具函数（限流、CORS、JSON、fetchWithTimeout、域名清洗）
+├── frontend/                        # Vite + Vue3 + Tailwind
+│   ├── src/pages/                   # 6 个前端页面
+│   └── dist/                        # 构建输出（gitignore）
 ├── tests/
-│   ├── unit/                     # 单元测试
-│   │   ├── helper.test.js        # ✅ 42 个测试
-│   │   ├── detectors.test.js     # ✅ 33 个测试
-│   │   ├── doh-client.test.js    # ✅ 10 个测试
-│   │   ├── storage.test.js       # ✅ 18 个测试
-│   │   ├── routes.test.js        # ✅ 30 个测试
-│   │   └── storage-extensions.test.js  # ✅ 49 个测试
-│   └── integration/
-│       ├── cors.test.js          # ✅ 31 个测试
-│       └── auth.test.js          # ✅ 54 个测试
-├── docs/
-│   ├── environment-setup.md      # ✅ 环境配置指南
-│   └── jsdoc-guide.md            # ✅ JSDoc 使用指南
-└── .docs/
-    └── cloudflare-domain-monitor/
-        ├── frontend-requirements.md   # ✅ 前端需求
-        ├── frontend-tasklist.md       # ✅ 前端任务清单
-        ├── tasklist.md                # ✅ 主任务清单
-        ├── subtask-01 ~ subtask-11    # ✅ 11 个子任务文档
-        ├── task-01-complete.md        # ✅ 任务 1 完成报告
-        ├── task-02-complete.md        # ✅ 任务 2 完成报告
-        ├── task-04-complete.md        # ✅ 任务 4 完成报告
-        └── PROJECT_OVERVIEW.md        # ✅ 项目总览（本文档）
+│   ├── unit/                        # 8 个单元测试文件
+│   └── integration/                 # 10 个集成测试文件
+└── .docs/                           # 项目文档
+```
+
+### KV 存储结构
+
+```
+domain_list             → JSON[]        # 监控域名列表
+default_domains         → JSON[]        # 默认域名列表
+config                  → Object        # 运行时配置（引用 config.js 常量）
+stats                   → Object        # 今日统计（日重置）
+history_count           → String        # 有历史记录的域数量（计数器）
+result_count            → String        # 有缓存结果的数量（计数器）
+result:{domain}         → Object        # 最新检测结果
+history:{domain}        → JSON[]        # 历史记录（最多 100 条）
+ratelimit:{ip}          → JSON          # 限流窗口（TTL 60s）
 ```
 
 ---
@@ -145,15 +156,16 @@
   - 部分更新保留未修改字段
   - 嵌套对象合并（rateLimit, doh）
 - ✅ **默认域名列表**（`getDefaultDomains` / `setDefaultDomains`）
-- ✅ **历史记录管理**（`addHistory` / `getHistory` / `cleanupHistory`）
+- ✅ **历史记录管理**（`addHistory` @deprecated / `getHistory` / `cleanupHistory`）
+  - 生产环境使用 `services/detector.js` 中的 `addToHistory()` 替代
   - 自动添加 timestamp
   - 最新记录在前（unshift）
   - 限制 100 条/域名
   - 按天数过滤
   - 多域名批量查询
-- ✅ **统计数据**（`getStats` / `incrementStats` / `recordRateLimitHit`）
+- ✅ **统计数据**（`getStats` / `incrementRequests` / `recordRateLimitHit` / `getDetailedStats`）
   - 自动按天重置
-  - 今日请求数、限流命中次数
+  - 计数器优化（`history_count` / `result_count` 替代 `kv.list()` 全量扫描）
 
 **KV 结构**:
 ```

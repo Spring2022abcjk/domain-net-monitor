@@ -26,9 +26,8 @@ import { getStatsRoute } from './admin/stats.js';
 import { handleGetPublicDomains } from './public/domains.js';
 import { handleGetPublicStats } from './public/stats.js';
 
-import { withAdminAuth } from '../middleware/auth.js';
-import { isValidAdminToken } from '../middleware/auth.js';
-import { rateLimiter, rateLimiterKV, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
+import { withAdminAuth, isValidAdminToken } from '../middleware/auth.js';
+import { rateLimiterKV, rateLimitHeaders, rateLimitExceededResponse, jsonResponse } from '../utils/helper.js';
 import { incrementRequests, recordRateLimitHit } from '../storage/stats.js';
 
 /**
@@ -36,9 +35,10 @@ import { incrementRequests, recordRateLimitHit } from '../storage/stats.js';
  * @param {Request} request - 请求对象
  * @param {import('../types.js').Env} env - 环境变量对象
  * @param {import('../types.js').CorsHeaders} corsHeaders - CORS 响应头
+ * @param {ExecutionContext} ctx - 执行上下文
  * @returns {Promise<Response>} 响应对象
  */
-export async function handleRequest(request, env, corsHeaders = {}) {
+export async function handleRequest(request, env, corsHeaders = {}, ctx) {
   const url = new URL(request.url);
   const path = url.pathname;
   const method = request.method;
@@ -87,9 +87,6 @@ export async function handleRequest(request, env, corsHeaders = {}) {
         ...corsHeaders
       }
     });
-    
-    // 记录请求统计（异步，不阻塞响应）
-    ctx.waitUntil(incrementRequests(env));
     
     return responseData;
   }

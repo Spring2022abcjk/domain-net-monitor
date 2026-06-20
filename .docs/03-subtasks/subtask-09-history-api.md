@@ -81,7 +81,7 @@ export async function getHistory(env, domain, days = 7, limit = 100) {
  * @param {number} limit - 每域名返回条数
  * @returns {Promise<Object>} 域名 -> 历史记录映射
  */
-export async function getMultipleHistory(env, domains, days = 7, limit = 50) {
+async function getMultipleHistory(env, domains, days = 7, limit = 50) {
   const results = {};
   
   for (const domain of domains) {
@@ -184,7 +184,6 @@ import { jsonResponse, cleanDomain } from '../../utils/helper.js';
 import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js';
 import {
   getHistory,
-  getMultipleHistory,
   deleteHistory,
   cleanupHistory
 } from '../../storage/history.js';

@@ -64,11 +64,17 @@ npm run deploy
 ```
 /workspace
 ├── src/
-│   ├── routes/          # API 路由
-│   ├── middleware/      # 中间件（鉴权、限流）
-│   ├── storage/         # KV 存储操作
-│   ├── utils/           # 工具函数
-│   └── types.js         # JSDoc 类型定义
+│   ├── index.js          # Worker 入口
+│   ├── config.js         # 全局常量
+│   ├── types.js          # JSDoc 类型定义
+│   ├── routes/           # API 路由（admin/ + public/）
+│   ├── middleware/       # 中间件（鉴权、限流）
+│   ├── storage/          # KV 存储操作
+│   ├── services/         # 检测服务
+│   ├── scheduled/        # 定时任务
+│   ├── detectors/        # 检测器
+│   ├── doh/              # DoH 客户端
+│   └── utils/            # 工具函数
 ├── tests/
 │   ├── unit/            # 单元测试
 │   ├── integration/     # 集成测试

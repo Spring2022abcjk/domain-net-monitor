@@ -49,26 +49,22 @@ compatibility_date = "2024-01-01"
 [vars]
 ALLOWED_ORIGINS = "*"
 
-[dev]
-port = 8787
-
 [[kv_namespaces]]
 binding = "DOMAIN_MONITOR_KV"
-id = "YOUR_KV_NAMESPACE_ID"
-preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"
-# 注意：不要用真实 KV ID 提交到 git
+id = "YOUR_KV_ID_HERE"
+preview_id = "YOUR_KV_ID_HERE"
 
 # === 定时任务配置 ===
 [triggers]
 crons = ["0 */12 * * *", "0 3 * * *"]
 
 [env.production]
-# ALLOWED_ORIGINS 和 CLOUDFLARE_API_TOKEN 通过 wrangler secret 注入
+[env.production.vars]
+ALLOWED_ORIGINS = "*"
 
 [[env.production.kv_namespaces]]
 binding = "DOMAIN_MONITOR_KV"
-id = "YOUR_PRODUCTION_KV_NAMESPACE_ID"
-# 注意：不要用真实 KV ID 提交到 git
+id = "YOUR_PRODUCTION_KV_ID_HERE"
 ```
 
 **验收要点**:

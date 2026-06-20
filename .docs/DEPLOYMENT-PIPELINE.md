@@ -88,7 +88,7 @@ workspace/
 │ .env.example          │ ✅   │ 模板        │ ❌       │
 │ .env                  │ ❌   │ 实际值      │ ⚠️       │
 │ .dev.vars             │ ❌   │ 本地开发    │ ✅       │
-│ wrangler.toml         │ ✅   │ Worker 配置  | ⚠️       │
+│ wrangler.toml         │ ✅   │ Worker 配置（公开模板）│ ❌       │
 │ frontend/wrangler.toml│ ✅   │ Pages 配置   | ❌       │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -223,13 +223,14 @@ wrangler pages deploy dist/ --project-name=domain-monitor
 
 ## 🔧 实施步骤
 
-### 阶段 1: 配置文件整理（立即执行）
+### 阶段 1: 配置文件整理（已完成）
 
-- [ ] 删除 `frontend/.env.production`（冗余）
-- [ ] 创建 `.env.example`（模板）
-- [ ] 创建 `frontend/.env.example`（模板）
-- [ ] 创建 `frontend/wrangler.toml`（Pages 配置）
-- [ ] 清理 `wrangler.toml` 冗余配置
+- [x] 删除 `frontend/.env.production`（冗余）
+- [x] 创建 `.env.example`（模板）→ `.dev.vars.example`
+- [x] 创建 `frontend/.env.example`（模板）→ 使用 `frontend/.env`
+- [x] 创建 `frontend/wrangler.toml`（Pages 配置）
+- [x] 清理 `wrangler.toml` 冗余配置 → 公开模板 + `.local.toml` 方案
+- [x] `wrangler.toml` 添加 `[env.production.vars]`（2026-06-18）
 
 ### 阶段 2: Token 配置（需要用户提供）
 

@@ -11,47 +11,63 @@ Cloudflare Worker 域名网络特性监控项目需求（Wrangler 工程化版�
 3. 执行策略：检测任务串行执行，适配 Cloudflare Worker CPU 时长限制。
 4. 运行载体：最终部署至 Cloudflare Worker，兼容 Worker 运行时规则。
  
-三、项目目录结构
- 
-plaintext
-  
+三、项目目录结构（实际实现）
+
+```
 {项目仓库名}/
-├── wrangler.toml       # 工程核心配置、KV绑定、运行参数
-└── src/
-    ├── config.js       # 全局常量定义
-    ├── utils/
-    │   └── helper.js   # 通用工具函数
-    ├── doh/
-    │   └── client.js   # DoH 请求封装
-    ├── detectors/     # 三大指标检测逻辑
-    │   ├── https-rr.js
-    │   ├── ech.js
-    │   ├── ipv6.js
-    │   └── index.js   # 检测方法聚合导出
-    ├── storage/
-    │   └── kv.js      # KV 数据读写封装
-    ├── routes/         # 接口路由分发
-    │   ├── domains.js
-    │   ├── detect.js
-    │   ├── result.js
-    │   └── index.js   # 路由聚合导出
-    └── index.js        # Worker 入口主文件
- 
+├── wrangler.toml       # 工程核心配置、KV绑定、运行参数（公开模板）
+├── src/
+│   ├── config.js       # 全局常量定义（DoH地址、DNS类型码、超时、状态枚举、KV键名）
+│   ├── types.js        # JSDoc 类型定义
+│   ├── utils/
+│   │   └── helper.js   # 限流、CORS、JSON响应、fetchWithTimeout、域名清洗
+│   ├── doh/
+│   │   └── client.js   # DoH 请求封装（主备切换）
+│   ├── detectors/      # 三大指标检测逻辑
+│   │   ├── https-rr.js
+│   │   ├── ech.js
+│   │   ├── ipv6.js
+│   │   └── index.js    # 检测方法聚合导出
+│   ├── services/
+│   │   └── detector.js # 检测服务（queryDoh + detectDomain + saveResult + addToHistory）
+│   ├── storage/
+│   │   ├── kv.js       # KV 数据读写封装
+│   │   ├── config.js   # 运行时配置存取（引用 config.js 常量）
+│   │   ├── domains.js  # 域名管理
+│   │   ├── history.js  # 历史记录
+│   │   ├── stats.js    # 统计计数
+│   │   └── index.js    # 统一 re-export
+│   ├── routes/
+│   │   ├── domains.js
+│   │   ├── detect.js
+│   │   ├── result.js
+│   │   ├── admin/      # 管理 API（需认证）
+│   │   ├── public/     # 公开 API
+│   │   └── index.js    # 路由分发 + 限流
+│   ├── middleware/
+│   │   ├── auth.js     # 鉴权中间件
+│   │   └── rate-limit.js  # 限流中间件
+│   ├── scheduled/
+│   │   └── detect.js   # 定时任务（Cron）
+│   └── index.js        # Worker 入口主文件
+```
  
 四、模块职责说明
  
-1. config.js：统一管理 DoH 地址、DNS 类型码、请求超时、状态枚举、KV 键名、跨域请求头。
-2. utils/helper.js：实现域名清洗、带超时的  fetch  封装、统一 JSON 响应构造、OPTIONS 跨域预检处理。
-3. doh/client.js：封装主备双节点 DoH 查询逻辑，接收域名与 DNS 类型，返回 DoH 原始 JSON 数据。
-4. detectors 目录
--  https-rr.js ：检测 DNS HTTPS RR（TYPE 65）记录；
--  ech.js ：结合 DNS 配置 + 443 端口 TLS 握手，检测 ECH 支持；
--  ipv6.js ：结合 AAAA 记录（TYPE 28）+ IPv6 端口连通性，检测 IPv6 服务；
--  index.js ：聚合所有检测方法，提供单域名全量检测入口。
-5. storage/kv.js：封装 KV 读写方法，实现域名列表、检测结果的持久化存取。
-6. routes 目录：按业务拆分接口逻辑，分别处理域名管理、检测任务、结果查询， index.js  统一聚合路由。
-7. src/index.js：Worker 入口，解析请求路径、请求方法与请求体，分发至对应路由，全局捕获异常。
-8. wrangler.toml：配置 Worker 名称、兼容日期、端口，绑定 KV Namespace。
+1. config.js：统一管理 DoH 地址、DNS 类型码、请求超时、状态枚举、KV 键名、限流告警阈值。
+2. utils/helper.js：限流器（KV 分布式 + 内存回退）、CORS 动态头生成、JSON 响应构造、带超时 fetch 封装、域名清洗。
+3. doh/client.js：封装主备双节点 DoH 查询逻辑，接收域名与 DNS 类型，返回 DoH 原始 JSON 数据。
+4. detectors 目录
+- https-rr.js：检测 DNS HTTPS RR（TYPE 65）记录；
+- ech.js：检测 ECH 支持；
+- ipv6.js：检测 IPv6 AAAA 记录（TYPE 28）；
+- index.js：聚合所有检测方法，提供单域名全量检测入口。
+5. services/detector.js：核心检测服务，封装 DoH 查询、域名检测、结果保存、历史记录追加（含计数器递增）。
+6. storage 目录：封装 KV 读写方法，实现域名列表、检测结果、历史记录、统计数据、配置的持久化存取。
+7. routes 目录：按业务拆分接口逻辑，分别处理域名管理、检测任务、结果查询，admin/ 子目录存放需认证的管理 API，public/ 存放公开 API，index.js 统一聚合路由分发和限流。
+8. middleware 目录：鉴权（恒定时间比较）和限流（KV 分布式）中间件。
+9. scheduled/detect.js：Worker Cron 触发器处理，定时执行域名检测和历史清理。
+10. src/index.js：Worker 入口，解析请求路径、请求方法与请求体，分发至对应路由，全局捕获异常。同时处理定时任务。
  
 五、核心检测规则
  

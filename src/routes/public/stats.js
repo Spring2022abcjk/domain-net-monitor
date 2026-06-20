@@ -23,11 +23,8 @@ export async function handleGetPublicStats(request, env, domain) {
     }
     
     const stats = await env.DOMAIN_MONITOR_KV.get(`stats:${domain}`, { type: 'json' })
-    if (stats) {
-      result.stats = stats
-    }
 
-    // 获取历史记录（只取最新一条）
+    // 获取历史记录（只取最新 10 条）
     const history = await env.DOMAIN_MONITOR_KV.get(`history:${domain}`, { type: 'json' }) || []
     const latestResults = history.slice(-10).reverse()
     

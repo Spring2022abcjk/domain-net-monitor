@@ -23,7 +23,7 @@ export default {
     }
 
     try {
-      const response = await handleRequest(request, env, corsHeaders);
+      const response = await handleRequest(request, env, corsHeaders, ctx);
       return response;
     } catch (error) {
       console.error('Unhandled error:', error);

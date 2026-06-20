@@ -1,19 +1,20 @@
 // src/storage/config.js
 
-import { KV_KEY_CONFIG } from '../config.js';
+import { KV_KEY_CONFIG, DOH_PRIMARY, DOH_BACKUP } from '../config.js';
+import { RATE_LIMIT } from '../utils/helper.js';
 
 const DEFAULT_CONFIG = {
   defaultRefreshInterval: 43200,  // 12 小时（秒）
   rateLimit: {
-    windowMs: 60000,              // 60 秒
-    maxRequests: 10               // 10 次/分钟
+    windowMs: RATE_LIMIT.windowMs,
+    maxRequests: RATE_LIMIT.maxRequests
   },
   historyRetention: 7,            // 7 天
   historyMaxEntries: 100,         // 单域名历史记录最大条数
   defaultDomains: [],             // 默认域名列表（空则使用内置）
   doh: {
-    primary: 'https://cloudflare-dns.com/dns-query',
-    backup: 'https://dns.google/resolve'
+    primary: DOH_PRIMARY,
+    backup: DOH_BACKUP
   }
 };
 

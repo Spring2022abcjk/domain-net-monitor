@@ -4,6 +4,7 @@ import { KV_KEY_HISTORY_PREFIX, KV_KEY_HISTORY_COUNT } from '../config.js';
 
 /**
  * 追加单条历史记录
+ * @deprecated 生产环境使用 services/detector.js 中的 addToHistory() 替代
  * @param {Object} env - 环境变量
  * @param {string} domain - 域名
  * @param {Object} record - 历史记录对象
@@ -17,17 +18,14 @@ export async function addHistory(env, domain, record, maxEntries = 100) {
   const data = await kv.get(key);
   const history = data ? JSON.parse(data) : [];
   
-  // 添加时间戳
   const recordWithTimestamp = {
     ...record,
     domain,
     timestamp: Date.now()
   };
   
-  // 在开头添加新记录
   history.unshift(recordWithTimestamp);
   
-  // 限制条数
   if (history.length > maxEntries) {
     history.length = maxEntries;
   }
@@ -68,7 +66,7 @@ export async function getHistory(env, domain, days = 7, limit = 100) {
  * @param {number} limit - 每域名返回条数
  * @returns {Promise<Object>} 域名 -> 历史记录映射
  */
-export async function getMultipleHistory(env, domains, days = 7, limit = 50) {
+async function getMultipleHistory(env, domains, days = 7, limit = 50) {
   const results = {};
   
   for (const domain of domains) {

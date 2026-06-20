@@ -27,13 +27,3 @@ export const KV_KEY_RESULT_COUNT = 'result_count';
 
 // 速率限制告警阈值
 export const RATE_LIMIT_ALERT_THRESHOLD = 100;
-
-// 健康检查配置
-export const HEALTH_CHECK_INTERVAL = 300000; // 5 分钟
-
-// 跨域响应头
-export const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type'
-};

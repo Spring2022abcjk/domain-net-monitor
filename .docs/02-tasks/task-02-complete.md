@@ -89,7 +89,7 @@
 **文件**: `src/storage/history.js`
 
 **功能**:
-- `addHistory(env, domain, result)` - 添加历史记录
+- `addHistory(env, domain, result)` - 添加历史记录（@deprecated，生产使用 `addToHistory`）
 - `getHistory(env, domain, days, limit)` - 获取单域名历史
 - `getAllHistory(env, domainList, days, limit)` - 获取多域名历史
 - `cleanupHistory(env, domainList, retentionDays)` - 清理过期历史
