@@ -162,25 +162,23 @@ export class AdminHistory {
         historyData = domainData.history.map(h => ({ ...h, domain: this.selectedDomain }))
       }
     } else {
-      // 显示所有域名的最新记录
       this.historyData.domains.forEach(d => {
         if (d.history && d.history.length > 0) {
           const latestRecord = d.history[0]
           historyData.push({
             timestamp: latestRecord.timestamp,
             domain: d.domain,
-            httpsRR: latestRecord.httpsRR,
+            https_rr: latestRecord.https_rr,
             ipv6: latestRecord.ipv6,
             ech: latestRecord.ech
           })
         } else if (d.latestCheck) {
-          // 兼容旧数据结构
           historyData.push({
             timestamp: d.latestCheck,
             domain: d.domain,
-            httpsRR: 'success',
-            ipv6: true,
-            ech: false
+            https_rr: { status: 'no' },
+            ipv6: { status: 'no' },
+            ech: { status: 'no' }
           })
         }
       })
@@ -212,19 +210,31 @@ export class AdminHistory {
         render: (value) => `<span class="font-medium text-gray-900">${value}</span>`
       },
       {
-        key: 'httpsRR',
+        key: 'https_rr',
         title: 'HTTPS RR',
-        render: (value) => this.renderStatusBadge(value === 'success', '成功', '失败')
+        render: (value) => this.renderStatusBadge(
+          value?.status === 'ok' || value?.status === 'partial',
+          '支持',
+          '不支持'
+        )
       },
       {
         key: 'ipv6',
         title: 'IPv6',
-        render: (value) => this.renderStatusBadge(value, '支持', '不支持')
+        render: (value) => this.renderStatusBadge(
+          value?.status === 'ok' || value?.status === 'partial',
+          '支持',
+          '不支持'
+        )
       },
       {
         key: 'ech',
         title: 'ECH',
-        render: (value) => this.renderStatusBadge(value, '支持', '不支持')
+        render: (value) => this.renderStatusBadge(
+          value?.status === 'ok' || value?.status === 'partial',
+          '支持',
+          '不支持'
+        )
       }
     ]
 
