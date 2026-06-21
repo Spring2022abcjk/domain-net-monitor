@@ -36,15 +36,7 @@ export class AdminDomains {
     try {
       this.loading = true
       const res = await get('/api/admin/domains')
-      // API 返回 { domains: ["domain1", "domain2"], count }
-      // 转换为 Table 组件期望的对象数组格式
-      const rawDomains = res.data.domains || []
-      this.domains = rawDomains.map(d => {
-        if (typeof d === 'string') {
-          return { domain: d, status: 'unknown', lastChecked: null, isDefault: false }
-        }
-        return d
-      })
+      this.domains = res.data.domains || []
       this.loading = false
     } catch (error) {
       show.error('加载域名列表失败：' + (error.message || '未知错误'))
