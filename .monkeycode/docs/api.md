@@ -26,7 +26,7 @@
 X-API-Token: <your-api-token>
 ```
 
-Token 通过 Worker Secret (`CLOUDFLARE_API_TOKEN`) 进行常量时间比对，验证失败返回 401。
+Token 通过 Worker Secret (`ADMIN_API_TOKEN`，向后兼容 `CLOUDFLARE_API_TOKEN`) 进行常量时间比对，验证失败返回 401。
 
 ### 限流说明
 

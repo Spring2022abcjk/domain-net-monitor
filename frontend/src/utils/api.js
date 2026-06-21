@@ -1,6 +1,8 @@
 /**
  * API 请求配置
  */
+import { getApiToken, getApiEndpoint, setApiToken as syncApiToken } from './storage.js'
+
 const API_CONFIG = {
   baseUrl: '',
   timeout: 15000,
@@ -25,7 +27,7 @@ export class APIError extends Error {
  * @returns {string} API 端点
  */
 export function getApiBaseUrl() {
-  return API_CONFIG.baseUrl
+  return API_CONFIG.baseUrl || getApiEndpoint()
 }
 
 /**
@@ -41,7 +43,7 @@ export function setApiBaseUrl(url) {
  * @returns {string|null} Token
  */
 export function getToken() {
-  return localStorage.getItem('api_token')
+  return localStorage.getItem('api_token') || getApiToken()
 }
 
 /**
@@ -50,6 +52,7 @@ export function getToken() {
  */
 export function setToken(token) {
   localStorage.setItem('api_token', token)
+  syncApiToken(token)
 }
 
 /**

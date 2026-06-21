@@ -26,6 +26,9 @@ curl https://monitor-bk.inthub.top/health
 ### 生产部署命令模板
 
 ```bash
+# CLOUDFLARE_API_TOKEN: 部署专用 (Wrangler CLI)
+# ADMIN_API_TOKEN: 管理员登录专用
+
 export CLOUDFLARE_API_TOKEN="cfat_xxx" && \
 cp wrangler.toml wrangler.deploy.toml && \
 sed -i "s/YOUR_PRODUCTION_KV_ID_HERE/<actual-kv-id>/g" wrangler.deploy.toml && \
@@ -53,6 +56,7 @@ npx wrangler pages deploy dist/ --project-name=domain-monitor-frontend
 ```bash
 # 设置 Worker Secret
 wrangler secret put CLOUDFLARE_API_TOKEN --env production
+wrangler secret put ADMIN_API_TOKEN --env production
 wrangler secret put ALLOWED_ORIGINS --env production
 
 # 查看已设置的 Secret 列表
@@ -155,7 +159,7 @@ npx wrangler tail --env production | tail -20
 
 **排查**:
 1. 确认请求头 `X-API-Token` 已携带
-2. 确认 Token 与 Worker Secret `CLOUDFLARE_API_TOKEN` 一致
+2. 确认 Token 与 Worker Secret `ADMIN_API_TOKEN` 一致
 3. Secret 部署后需重新部署 Worker 才生效
 
 ```bash
@@ -241,13 +245,24 @@ curl -X PUT https://monitor-bk.inthub.top/api/admin/config \
 
 ### 定期更换 Token
 
+**管理员登录 Token**:
+
 ```bash
-# 1. Cloudflare Dashboard → 创建新 API Token
+# 1. 生成新的管理员密钥
 # 2. 更新 Worker Secret
-wrangler secret put CLOUDFLARE_API_TOKEN --env production
+wrangler secret put ADMIN_API_TOKEN --env production
 # 3. 重新部署
 npx wrangler deploy --env production -c wrangler.local.toml
-# 4. 通知管理员更新本地凭据
+# 4. 通知管理员更新登录凭据
+```
+
+**部署 Token**:
+
+```bash
+# 1. Cloudflare Dashboard → 创建新 API Token
+# 2. 更新 Worker Secret (仅 Wrangler CLI 使用)
+wrangler secret put CLOUDFLARE_API_TOKEN --env production
+# 3. 更新本地环境变量
 ```
 
 ### 安全审计检查

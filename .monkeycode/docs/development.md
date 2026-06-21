@@ -38,7 +38,8 @@ cd frontend && npm install && cd ..
 cp .dev.vars.example .dev.vars
 
 # 编辑 .dev.vars，填入：
-# CLOUDFLARE_API_TOKEN=cfat_xxxxxx
+# CLOUDFLARE_API_TOKEN=cfat_xxxxxx (部署用)
+# ADMIN_API_TOKEN=your-admin-token   (管理后台登录用)
 # CLOUDFLARE_ACCOUNT_ID=your-account-id
 ```
 

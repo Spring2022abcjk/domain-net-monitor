@@ -23,7 +23,7 @@
 - 配置 CORS 白名单（允许的前端域名）
 
 ### 3. 认证方式
-- **Token 存储**：Worker 环境变量 `CLOUDFLARE_API_TOKEN`
+- **Token 存储**：Worker Secret `ADMIN_API_TOKEN` (向后兼容 `CLOUDFLARE_API_TOKEN`)
 - **CORS 白名单**：Worker 环境变量 `ALLOWED_ORIGINS`
 - **前端登录**：管理员输入 API 端点 + Token，验证后保存到 localStorage
 
