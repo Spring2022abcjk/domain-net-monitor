@@ -8,7 +8,8 @@
  * @typedef {Object} Env
  * @property {import('@cloudflare/workers-types').KVNamespace} DOMAIN_MONITOR_KV - KV 存储绑定
  * @property {string} ALLOWED_ORIGINS - CORS 白名单（逗号分隔或 *）
- * @property {string} CLOUDFLARE_API_TOKEN - 管理员认证 Token
+ * @property {string} ADMIN_API_TOKEN - 管理员登录认证 Token (优先级高于 CLOUDFLARE_API_TOKEN)
+ @property {string} [CLOUDFLARE_API_TOKEN] - (已废弃) 向后兼容的管理员认证 Token
  * @property {string} CLOUDFLARE_ACCOUNT_ID - Cloudflare Account ID
  */
 

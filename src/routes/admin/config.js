@@ -66,7 +66,7 @@ function handleSecurityConfig(request, env) {
   };
   
   // Token 是否已配置
-  const tokenConfigured = !!env.CLOUDFLARE_API_TOKEN;
+    const tokenConfigured = !!(env.ADMIN_API_TOKEN || env.CLOUDFLARE_API_TOKEN);
   
   return jsonResponse({
     corsMode,
