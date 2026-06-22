@@ -149,8 +149,7 @@ export class AdminDomains {
         title: '默认展示',
         render: (value, row) => Toggle({
           checked: value,
-          id: `toggle-${row.domain.replace(/\./g, '-')}`,
-          onChange: () => this.handleToggleDefault(row.domain)
+          id: `toggle-${row.domain.replace(/\./g, '-')}`
         })
       },
       {
@@ -280,6 +279,15 @@ export class AdminDomains {
           this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
         }
       })
+    })
+
+    // Toggle 默认展示开关
+    this.domains.forEach(({ domain }) => {
+      const id = `toggle-${domain.replace(/\./g, '-')}`
+      const toggle = document.getElementById(id)
+      if (toggle) {
+        toggle.addEventListener('change', () => this.handleToggleDefault(domain))
+      }
     })
 
     // 获取弹窗输入
