@@ -10,7 +10,7 @@
  */
 export function Toggle({ checked = false, id, name, disabled = false, onChange }) {
   const eventHandler = onChange && typeof onChange === 'function' 
-    ? `onchange="window.${id}_onChange && window.${id}_onChange(event)"` 
+    ? `onchange="window['${id}_onChange'] && window['${id}_onChange'](event)"` 
     : ''
   
   if (onChange && id) {
