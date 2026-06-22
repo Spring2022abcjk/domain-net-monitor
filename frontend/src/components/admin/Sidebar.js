@@ -3,9 +3,8 @@
  * 任务 16：配置式导航菜单，响应式设计
  * @param {Object} props - 属性
  * @param {boolean} [props.open=false] - 是否展开（移动端）
- * @param {Function} [props.onClose] - 关闭回调（移动端）
  */
-export function Sidebar({ open = false, onClose }) {
+export function Sidebar({ open = false }) {
   // 导航菜单配置（集中管理，易于扩展）
   const navItems = [
     {
@@ -55,8 +54,8 @@ export function Sidebar({ open = false, onClose }) {
         </div>
         ${open ? `
           <button 
+            id="sidebar-close-btn"
             class="lg:hidden ml-auto text-gray-500 hover:text-gray-700"
-            onclick="window.__sidebarCloseHandler && window.__sidebarCloseHandler()"
           >
             ✕
           </button>

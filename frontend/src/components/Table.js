@@ -6,9 +6,8 @@
  * @param {string} [props.emptyText='暂无数据'] - 空数据提示
  * @param {string} [props.rowIdPrefix='row'] - 行 ID 前缀
  * @param {Function} [props.rowClassName] - 行类名函数 (row, index) => string
- * @param {Function} [props.onRowClick] - 行点击事件 (row, index, event) => void
  */
-export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix = 'row', rowClassName, onRowClick }) {
+export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix = 'row', rowClassName }) {
   if (!data || data.length === 0) {
     return `
       <div class="text-center py-8 text-gray-500">
@@ -43,13 +42,11 @@ export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix =
         <tbody class="bg-white divide-y divide-gray-200">
           ${data.map((row, index) => {
             const customClass = rowClassName ? rowClassName(row, index) : ''
-            const rowAttrs = onRowClick ? `onclick="window.__tableRowClickHandler && window.__tableRowClickHandler(${index}, event)"` : ''
             return `
               <tr 
                 class="hover:bg-gray-50 ${customClass}" 
                 id="${rowIdPrefix}-${index}" 
                 data-row-index="${index}"
-                ${rowAttrs}
               >
                 ${columns.map(col => {
                   const cellValue = row[col.key]
@@ -74,15 +71,6 @@ export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix =
       </table>
     </div>
   `
-}
-
-window.__tableRowClickHandler = null
-if (typeof window !== 'undefined') {
-  window.__tableRowClickHandler = function(index, event) {
-    if (window.__currentTableConfig && window.__currentTableConfig.onRowClick) {
-      window.__currentTableConfig.onRowClick(window.__currentTableConfig.data[index], index, event)
-    }
-  }
 }
 
 export default Table

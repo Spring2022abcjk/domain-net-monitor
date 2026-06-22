@@ -247,6 +247,12 @@ export class AdminDomains {
       this.newDomainInput = ''
     })
 
+    // Modal X 关闭按钮
+    document.getElementById('modal-close-btn')?.addEventListener('click', () => {
+      this.showAddModal = false
+      this.newDomainInput = ''
+    })
+
     // 确认添加
     document.getElementById('confirmAddBtn')?.addEventListener('click', () => {
       this.handleAddDomain()

@@ -59,16 +59,10 @@ export class AdminLayout {
   render() {
     return `
       <div class="dm-admin-layout flex h-screen bg-gray-100">
-        ${Sidebar({ 
-          open: this.sidebarOpen,
-          onClose: () => this.toggleSidebar()
-        })}
+        ${Sidebar({ open: this.sidebarOpen })}
         
         <div class="flex-1 flex flex-col overflow-hidden">
-          ${Topbar({
-            onMenuClick: () => this.toggleSidebar(),
-            onLogout: () => this.handleLogout()
-          })}
+          ${Topbar()}
           
           <main id="admin-content" class="flex-1 overflow-auto p-6">
             ${this.childInstance?.render ? this.childInstance.render() : '<div class="text-center py-12">加载中...</div>'}
@@ -78,8 +72,8 @@ export class AdminLayout {
         <!-- 移动端遮罩 -->
         ${this.sidebarOpen ? `
           <div 
+            id="sidebar-overlay"
             class="dm-sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-            onclick="window.__sidebarCloseHandler()"
           ></div>
         ` : ''}
       </div>
@@ -87,16 +81,22 @@ export class AdminLayout {
   }
   
   /**
-   * 绑定事件
+   * 绑定事件 — 组件只渲染 HTML，事件在此统一绑定
    */
   bindEvents() {
-    window.__sidebarCloseHandler = () => {
-      this.sidebarOpen = false
-      this.render()
-      this.bindEvents()
-    }
-    
-    window.__topbarOnLogout = () => this.handleLogout()
+    document.getElementById('topbar-menu-btn')?.addEventListener('click', () => this.toggleSidebar())
+    document.getElementById('topbar-logout-btn')?.addEventListener('click', () => this.handleLogout())
+    document.getElementById('sidebar-close-btn')?.addEventListener('click', () => this.closeSidebar())
+    document.getElementById('sidebar-overlay')?.addEventListener('click', () => this.closeSidebar())
+  }
+  
+  /**
+   * 关闭侧边栏（移动端）
+   */
+  closeSidebar() {
+    this.sidebarOpen = false
+    this.render()
+    this.bindEvents()
   }
   
   /**
@@ -132,8 +132,6 @@ export class AdminLayout {
    * 销毁页面
    */
   destroy() {
-    window.__sidebarCloseHandler = null
-    window.__topbarOnLogout = null
     if (this.childInstance?.destroy) {
       this.childInstance.destroy()
     }

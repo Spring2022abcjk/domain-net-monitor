@@ -17,11 +17,6 @@
  * @param {number} [props.maxlength] - 最大长度
  * @param {number} [props.min] - 最小值（number 类型）
  * @param {number} [props.max] - 最大值（number 类型）
- * @param {Function} [props.onInput] - input 事件回调
- * @param {Function} [props.onChange] - change 事件回调
- * @param {Function} [props.onFocus] - focus 事件回调
- * @param {Function} [props.onBlur] - blur 事件回调
- * @param {Function} [props.onKeydown] - keydown 事件回调
  */
 export function Input({ 
   type, 
@@ -39,32 +34,8 @@ export function Input({
   minlength,
   maxlength,
   min,
-  max,
-  onInput,
-  onChange,
-  onFocus,
-  onBlur,
-  onKeydown
+  max
 }) {
-  const eventHandlers = []
-  const handlerConfig = {
-    input: onInput,
-    change: onChange,
-    focus: onFocus,
-    blur: onBlur,
-    keydown: onKeydown
-  }
-  
-  for (const [eventName, handler] of Object.entries(handlerConfig)) {
-    if (handler && typeof handler === 'function') {
-      const handlerName = `__input_${id}_${eventName}`
-      window[handlerName] = handler
-      eventHandlers.push(`on${eventName}="window.${handlerName}(event)"`)
-    }
-  }
-  
-  const eventHandlersStr = eventHandlers.join(' ')
-  
   return `
     <div class="mb-4">
       ${label ? `<label class="block text-sm font-medium text-gray-700 mb-1">${label}</label>` : ''}
@@ -84,7 +55,6 @@ export function Input({
         ${maxlength ? `maxlength="${maxlength}"` : ''}
         ${min !== undefined ? `min="${min}"` : ''}
         ${max !== undefined ? `max="${max}"` : ''}
-        ${eventHandlersStr}
       />
       ${error ? `<p class="mt-1 text-sm text-danger">${error}</p>` : ''}
     </div>
