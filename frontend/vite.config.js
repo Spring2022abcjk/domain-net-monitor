@@ -9,6 +9,7 @@ export default defineConfig({
   server: {
     port: 5173,
     open: false,
+    allowedHosts: ['.monkeycode-ai.online'],
     // 反向代理配置（用于本地开发联调后端）
     proxy: {
       '/api': {
