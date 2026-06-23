@@ -131,6 +131,16 @@ export async function runAdminHistoryTests() {
 
     assertEqual(content.includes('grid grid-cols-1 md:grid-cols-3'), true, 'Has responsive grid')
   })
+
+  // 任务 27.6 - Handler 引用存储 + 生命周期去重测试
+  await runSuite('Task 27.6 - AdminHistory Handler Storage', () => {
+    const content = readFileSync(join(ROOT, 'src/pages/admin/AdminHistory.js'), 'utf-8')
+
+    assertEqual(content.includes('this.__queryHandler = () => this.handleQuery()'), true, 'Stores queryHandler in constructor')
+    assertEqual(content.includes('this.__exportHandler = () => this.handleExportCsv()'), true, 'Stores exportHandler in constructor')
+    assertEqual(content.includes('this.__cleanupHandler = () => this.handleCleanup()'), true, 'Stores cleanupHandler in constructor')
+    assertEqual(content.includes('removeEventListener'), true, 'Uses removeEventListener for cleanup')
+  })
 }
 
 /**

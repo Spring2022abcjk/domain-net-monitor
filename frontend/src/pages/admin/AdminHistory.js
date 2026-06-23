@@ -18,6 +18,9 @@ export class AdminHistory {
     this.selectedDomain = ''
     this.daysFilter = '7'
     this.loading = false
+    this.__queryHandler = () => this.handleQuery()
+    this.__exportHandler = () => this.handleExportCsv()
+    this.__cleanupHandler = () => this.handleCleanup()
   }
 
   /**
@@ -267,14 +270,17 @@ export class AdminHistory {
    * 绑定事件
    */
   bindEvents() {
-    // 存储事件处理器引用以便清理
-    this.__queryHandler = () => this.handleQuery()
-    this.__exportHandler = () => this.handleExportCsv()
-    this.__cleanupHandler = () => this.handleCleanup()
+    const queryBtn = document.getElementById('queryBtn')
+    const exportBtn = document.getElementById('exportCsvBtn')
+    const cleanupBtn = document.getElementById('cleanupHistoryBtn')
 
-    document.getElementById('queryBtn')?.addEventListener('click', this.__queryHandler)
-    document.getElementById('exportCsvBtn')?.addEventListener('click', this.__exportHandler)
-    document.getElementById('cleanupHistoryBtn')?.addEventListener('click', this.__cleanupHandler)
+    queryBtn?.removeEventListener('click', this.__queryHandler)
+    exportBtn?.removeEventListener('click', this.__exportHandler)
+    cleanupBtn?.removeEventListener('click', this.__cleanupHandler)
+
+    queryBtn?.addEventListener('click', this.__queryHandler)
+    exportBtn?.addEventListener('click', this.__exportHandler)
+    cleanupBtn?.addEventListener('click', this.__cleanupHandler)
   }
 
   /**
@@ -284,10 +290,6 @@ export class AdminHistory {
     document.getElementById('queryBtn')?.removeEventListener('click', this.__queryHandler)
     document.getElementById('exportCsvBtn')?.removeEventListener('click', this.__exportHandler)
     document.getElementById('cleanupHistoryBtn')?.removeEventListener('click', this.__cleanupHandler)
-    
-    this.__queryHandler = null
-    this.__exportHandler = null
-    this.__cleanupHandler = null
   }
 
   /**

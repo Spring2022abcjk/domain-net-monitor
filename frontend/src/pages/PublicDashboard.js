@@ -18,8 +18,16 @@ export class PublicDashboard {
     this.searchQuery = ''
     this.loading = false
     this.typingTimer = null
-    // 搜索防抖（300ms）
     this.debouncedSearch = debounce(this._doSearch.bind(this), 300)
+    this.__searchClickHandler = () => this.triggerSearch()
+    this.__searchInputHandler = () => this.debouncedSearch()
+    this.__searchKeyHandler = (e) => {
+      if (e.key === 'Enter') this.debouncedSearch()
+    }
+    this.__domainClickHandler = (e) => {
+      const btn = e.target.closest('[data-domain]')
+      if (btn) this.handleViewDetail(btn.dataset.domain)
+    }
   }
   
   async init() {
@@ -128,36 +136,19 @@ export class PublicDashboard {
   }
   
   bindEvents() {
-    // 搜索按钮 - 单独绑定（只有一个）
     const searchBtn = document.getElementById('btn-search')
-    if (searchBtn) {
-      searchBtn.addEventListener('click', () => this.triggerSearch())
-    }
-    
-    // 搜索框输入 - 防抖触发搜索
     const searchInput = document.getElementById('domain-search')
-    if (searchInput) {
-      // 输入时触发防抖搜索
-      searchInput.addEventListener('input', () => this.debouncedSearch())
-      // 回车立即搜索
-      searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          this.debouncedSearch()
-        }
-      })
-    }
-    
-    // 域名卡片点击 - 事件委托（关键优化）
     const container = document.getElementById('domain-grid')
-    if (container && !container.__eventBound) {
-      container.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-domain]')
-        if (btn) {
-          this.handleViewDetail(btn.dataset.domain)
-        }
-      })
-      container.__eventBound = true // 标记已绑定，防止重复
-    }
+
+    searchBtn?.removeEventListener('click', this.__searchClickHandler)
+    searchInput?.removeEventListener('input', this.__searchInputHandler)
+    searchInput?.removeEventListener('keydown', this.__searchKeyHandler)
+    container?.removeEventListener('click', this.__domainClickHandler)
+
+    searchBtn?.addEventListener('click', this.__searchClickHandler)
+    searchInput?.addEventListener('input', this.__searchInputHandler)
+    searchInput?.addEventListener('keydown', this.__searchKeyHandler)
+    container?.addEventListener('click', this.__domainClickHandler)
   }
   
   triggerSearch() {
@@ -190,16 +181,12 @@ export class PublicDashboard {
   }
   
   destroy() {
-    // 只清理搜索按钮和输入框的监听器
-    // 域名卡片使用事件委托，只需绑定一次，无需清理
-    const searchBtn = document.getElementById('btn-search')
-    const searchInput = document.getElementById('domain-search')
-    
-    if (searchBtn) {
-      searchBtn.removeEventListener('click', () => this.handleSearch())
-    }
-    if (searchInput) {
-      searchInput.removeEventListener('keydown', () => this.handleSearch())
+    document.getElementById('btn-search')?.removeEventListener('click', this.__searchClickHandler)
+    document.getElementById('domain-search')?.removeEventListener('input', this.__searchInputHandler)
+    document.getElementById('domain-search')?.removeEventListener('keydown', this.__searchKeyHandler)
+    document.getElementById('domain-grid')?.removeEventListener('click', this.__domainClickHandler)
+    if (this.debouncedSearch?.cancel) {
+      this.debouncedSearch.cancel()
     }
   }
 }

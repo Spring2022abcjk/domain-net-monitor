@@ -140,14 +140,29 @@ export async function runAdminDomainsTests() {
     const content = readFileSync(join(ROOT, 'src/pages/admin/AdminDomains.js'), 'utf-8')
     
     const hasBindEvents = content.includes('bindEvents()')
-    const hasBindGlobalHandlers = content.includes('bindGlobalHandlers()')
     const hasDestroy = content.includes('destroy()')
-    const hasDeleteHandler = content.includes('__deleteDomainHandler')
-    
+    const hasInstanceMethod = content.includes('_handleDeleteDomain(')
+    const hasWindowCleanup = content.includes('delete window.__')
+    const hasEventDelegation = content.includes('.dm-delete-btn') && content.includes('_tableDelegateHandler')
+    const hasTableBodyBinding = content.includes('__tableDelegateHandler')
+
     assertEqual(hasBindEvents, true, 'Has bindEvents method')
-    assertEqual(hasBindGlobalHandlers, true, 'Has bindGlobalHandlers method')
     assertEqual(hasDestroy, true, 'Has destroy method for cleanup')
-    assertEqual(hasDeleteHandler, true, 'Has global delete handler')
+    assertEqual(hasInstanceMethod, true, 'Delete handler is instance method (no window global)')
+    assertEqual(hasWindowCleanup, true, 'Clears window variables in destroy')
+    assertEqual(hasEventDelegation, true, 'Uses event delegation for table actions')
+    assertEqual(hasTableBodyBinding, true, 'Stores table delegate handler reference')
+  })
+  
+  // 无 window 全局泄漏测试
+  await runSuite('Task 27.5 - No Window Globals', () => {
+    const content = readFileSync(join(ROOT, 'src/pages/admin/AdminDomains.js'), 'utf-8')
+    
+    const hasOnclickDelete = content.includes('onclick="window.')
+    const hasWindowAssign = /\bwindow\.__[a-zA-Z]+\s*=/.test(content)
+
+    assertEqual(hasOnclickDelete, false, 'No inline onclick handler via window globals')
+    assertEqual(hasWindowAssign, false, 'No new window.__ variable assignments')
   })
   
   // 表格渲染测试

@@ -21,6 +21,7 @@ import {
 export class LoginPage {
   constructor() {
     this.loading = false
+    this._redirectTimer = null
     this.formData = {
       endpoint: '',
       token: ''
@@ -168,7 +169,7 @@ export class LoginPage {
         this.setLoading(false)
         
         // 延迟跳转
-        setTimeout(() => {
+        this._redirectTimer = setTimeout(() => {
           window.location.hash = '/admin/dashboard'
         }, 800)
       } else {
@@ -214,6 +215,10 @@ export class LoginPage {
    * 销毁页面
    */
   destroy() {
+    if (this._redirectTimer) {
+      clearTimeout(this._redirectTimer)
+      this._redirectTimer = null
+    }
     const form = document.getElementById('loginForm')
     if (form) {
       form.remove()

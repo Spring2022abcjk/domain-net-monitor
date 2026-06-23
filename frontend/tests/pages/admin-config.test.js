@@ -120,6 +120,9 @@ export async function runAdminConfigTests() {
     assertEqual(content.includes('bindEvents'), true, 'Has bindEvents method')
     assertEqual(content.includes('destroy'), true, 'Has destroy method')
     assertEqual(content.includes('.addEventListener'), true, 'Uses event listeners')
+    assertEqual(content.includes('.removeEventListener'), true, 'Uses removeEventListener in bindEvents')
+    assertEqual(content.includes('removeEventListener'), true, 'Has cleanup in destroy')
+    assertEqual(content.includes('if (this.config) return'), true, 'Caches config to skip duplicate loads')
   })
 }
 

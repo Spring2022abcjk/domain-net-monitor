@@ -72,17 +72,13 @@ async function runComponentsTests() {
     assertEqual(input.includes('dm-input'), true, 'Uses dm-input class')
     assertEqual(input.includes('label'), true, 'Supports label')
     assertEqual(input.includes('error'), true, 'Supports error message')
-    assertEqual(input.includes('onInput'), true, 'Supports onInput event')
-    assertEqual(input.includes('onChange'), true, 'Supports onChange event')
-    assertEqual(input.includes('onFocus'), true, 'Supports onFocus event')
-    assertEqual(input.includes('onBlur'), true, 'Supports onBlur event')
-    assertEqual(input.includes('onKeydown'), true, 'Supports onKeydown event')
     assertEqual(input.includes('disabled'), true, 'Supports disabled state')
     assertEqual(input.includes('readonly'), true, 'Supports readonly state')
     assertEqual(input.includes('autocomplete'), true, 'Supports autocomplete')
     assertEqual(input.includes('pattern'), true, 'Supports pattern validation')
     assertEqual(input.includes('minlength'), true, 'Supports minlength')
     assertEqual(input.includes('maxlength'), true, 'Supports maxlength')
+    assertEqual(input.includes('oninput') || input.includes("onInput"), false, 'No inline event handler attributes')
   })
   
   // ========== Card 组件测试 ==========
@@ -113,10 +109,10 @@ async function runComponentsTests() {
     assertEqual(table.includes('emptyText'), true, 'Supports empty text')
     assertEqual(table.includes('render'), true, 'Supports custom render function')
     assertEqual(table.includes('rowClassName'), true, 'Supports custom row class name')
-    assertEqual(table.includes('onRowClick'), true, 'Supports row click event')
     assertEqual(table.includes('align'), true, 'Supports column alignment')
     assertEqual(table.includes('text-center'), true, 'Supports center alignment')
     assertEqual(table.includes('text-right'), true, 'Supports right alignment')
+    assertEqual(table.includes('onclick') || table.includes("onClick"), false, 'No inline onclick handlers')
   })
   
   // ========== Notification 组件测试 ==========

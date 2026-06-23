@@ -65,6 +65,9 @@ export async function runPublicDashboardTests() {
     assertEqual(page.includes("addEventListener('click'"), true, 'Has click event listeners')
     assertEqual(page.includes("addEventListener('keydown'"), true, 'Has keydown event listeners')
     assertEqual(page.includes('removeEventListener'), true, 'Has event cleanup')
+    assertEqual(page.includes('this.__searchClickHandler'), true, 'Stores search handler reference')
+    assertEqual(page.includes('this.__domainClickHandler'), true, 'Stores grid delegate handler reference')
+    assertEqual(page.includes('.cancel()'), true, 'Cancels debounce timer in destroy')
   })
   
   // ========== SearchBox 组件测试 ==========

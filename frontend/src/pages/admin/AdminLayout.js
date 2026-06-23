@@ -14,7 +14,10 @@ export class AdminLayout {
   constructor(childComponent) {
     this.childComponent = childComponent
     this.childInstance = null
-    this.sidebarOpen = false // 移动端控制
+    this.sidebarOpen = false
+    this.__sidebarToggleHandler = () => this.toggleSidebar()
+    this.__topbarLogoutHandler = () => this.handleLogout()
+    this.__sidebarCloseHandler = () => this.closeSidebar()
   }
   
   /**
@@ -84,10 +87,20 @@ export class AdminLayout {
    * 绑定事件 — 组件只渲染 HTML，事件在此统一绑定
    */
   bindEvents() {
-    document.getElementById('topbar-menu-btn')?.addEventListener('click', () => this.toggleSidebar())
-    document.getElementById('topbar-logout-btn')?.addEventListener('click', () => this.handleLogout())
-    document.getElementById('sidebar-close-btn')?.addEventListener('click', () => this.closeSidebar())
-    document.getElementById('sidebar-overlay')?.addEventListener('click', () => this.closeSidebar())
+    const menuBtn = document.getElementById('topbar-menu-btn')
+    const logoutBtn = document.getElementById('topbar-logout-btn')
+    const closeBtn = document.getElementById('sidebar-close-btn')
+    const overlay = document.getElementById('sidebar-overlay')
+
+    menuBtn?.removeEventListener('click', this.__sidebarToggleHandler)
+    logoutBtn?.removeEventListener('click', this.__topbarLogoutHandler)
+    closeBtn?.removeEventListener('click', this.__sidebarCloseHandler)
+    overlay?.removeEventListener('click', this.__sidebarCloseHandler)
+
+    menuBtn?.addEventListener('click', this.__sidebarToggleHandler)
+    logoutBtn?.addEventListener('click', this.__topbarLogoutHandler)
+    closeBtn?.addEventListener('click', this.__sidebarCloseHandler)
+    overlay?.addEventListener('click', this.__sidebarCloseHandler)
   }
   
   /**
@@ -132,6 +145,10 @@ export class AdminLayout {
    * 销毁页面
    */
   destroy() {
+    document.getElementById('topbar-menu-btn')?.removeEventListener('click', this.__sidebarToggleHandler)
+    document.getElementById('topbar-logout-btn')?.removeEventListener('click', this.__topbarLogoutHandler)
+    document.getElementById('sidebar-close-btn')?.removeEventListener('click', this.__sidebarCloseHandler)
+    document.getElementById('sidebar-overlay')?.removeEventListener('click', this.__sidebarCloseHandler)
     if (this.childInstance?.destroy) {
       this.childInstance.destroy()
     }
