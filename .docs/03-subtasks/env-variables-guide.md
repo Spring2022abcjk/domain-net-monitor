@@ -11,8 +11,8 @@
 **必须通过命令行注入，不要写入配置文件**：
 
 ```bash
-# API Token（管理员认证）
-wrangler secret put CLOUDFLARE_API_TOKEN --env production
+# 管理员登录 Token — 用户登录后台时填写的密码
+wrangler secret put ADMIN_API_TOKEN --env production
 
 # 允许的 CORS 来源（可选，默认 *）
 wrangler secret put ALLOWED_ORIGINS --env production
@@ -32,7 +32,10 @@ id = "YOUR_KV_ID_HERE"
 
 ```bash
 # .dev.vars
-CLOUDFLARE_API_TOKEN=your_dev_token_here
+# CLOUDFLARE_API_TOKEN: wrangler CLI 部署凭证
+CLOUDFLARE_API_TOKEN=cfat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# ADMIN_API_TOKEN: 管理员登录 Token
+ADMIN_API_TOKEN=your_admin_token_here
 ALLOWED_ORIGINS=*
 ```
 
@@ -80,9 +83,10 @@ npm run dev
 
 | 变量名 | 位置 | 说明 | 是否必须 |
 |--------|------|------|----------|
-| `CLOUDFLARE_API_TOKEN` | 后端 Secret | Cloudflare API Token，用于 DoH 查询 | ✅ 必须 |
-| `ALLOWED_ORIGINS` | 后端 Secret | CORS 允许的来源，默认 `*` | ❌ 可选 |
-| `DOMAIN_MONITOR_KV` | 后端绑定 | KV 命名空间 ID | ✅ 必须 |
+| `CLOUDFLARE_API_TOKEN` | 本机环境变量 | wrangler CLI 部署凭证（cfat_xxx 格式） | ✅ 部署时需要 |
+| `ADMIN_API_TOKEN` | Worker Secret | 管理员登录 Token，用户登录后台时填写 | ✅ 必须 |
+| `ALLOWED_ORIGINS` | Worker Secret | CORS 允许的来源，默认 `*` | ❌ 可选 |
+| `DOMAIN_MONITOR_KV` | Worker 绑定 | KV 命名空间 ID | ✅ 必须 |
 | `VITE_API_BASE_URL` | 前端环境变量 | API 端点地址 | ✅ 必须 |
 
 ---
@@ -90,9 +94,10 @@ npm run dev
 ## 安全注意事项
 
 1. **不要提交敏感信息到 Git**
-   - `CLOUDFLARE_API_TOKEN` 必须通过 `wrangler secret put` 注入
+   - `ADMIN_API_TOKEN` 必须通过 `wrangler secret put` 注入
+   - `CLOUDFLARE_API_TOKEN` 仅用于本机 `wrangler` CLI，不要写入配置文件
    - `.dev.vars` 已加入 `.gitignore`
-   - `wrangler.toml` 已加入 `.gitignore`（包含 KV ID）
+   - 个人配置文件 `wrangler.local.toml` 已加入 `.gitignore`
 
 2. **生产环境配置**
    - 使用 `--env production` 指定生产环境
@@ -135,7 +140,7 @@ grep -r "your-worker.your-domain.workers.dev" dist/assets/
 检查 Secret 是否正确注入：
 
 ```bash
-wrangler secret list --env production
+wrangler secret list -c wrangler.local.toml
 ```
 
 ### 前端 API 连接失败
