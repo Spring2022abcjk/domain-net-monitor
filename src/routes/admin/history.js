@@ -57,12 +57,19 @@ export async function getHistoryRoute(request, env) {
         totalCount += h.length;
       }
       
+      // 转换为前端期望的 domains 数组格式
+      const domains = Object.entries(history).map(([domain, records]) => ({
+        domain,
+        history: records
+      }));
+      
       return jsonResponse({
         days,
         limit,
         totalDomains: Object.keys(history).length,
         totalCount,
-        history
+        history,
+        domains
       });
     }
   } catch (error) {

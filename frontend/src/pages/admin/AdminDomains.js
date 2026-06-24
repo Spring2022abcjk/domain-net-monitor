@@ -20,6 +20,41 @@ export class AdminDomains {
     this.loading = false
     this.showAddModal = false
     this.newDomainInput = ''
+    this.__addDomainHandler = () => { this.showAddModal = true; this.newDomainInput = '' }
+    this.__cancelAddHandler = () => { this.showAddModal = false; this.newDomainInput = '' }
+    this.__confirmAddHandler = () => this.handleAddDomain()
+    this.__batchDeleteHandler = () => this.handleBatchDelete()
+    this.__selectAllHandler = (e) => {
+      if (e.target.checked) {
+        this.selectedDomains = this.domains.map(d => d.domain)
+      } else {
+        this.selectedDomains = []
+      }
+      this.render()
+      this.bindEvents()
+    }
+    this.__tableDelegateHandler = (e) => {
+      const deleteBtn = e.target.closest('.dm-delete-btn')
+      if (deleteBtn) {
+        this._handleDeleteDomain(deleteBtn.dataset.domain)
+        return
+      }
+      const checkbox = e.target.closest('.dm-domain-checkbox')
+      if (checkbox) {
+        const domain = checkbox.getAttribute('data-domain')
+        if (checkbox.checked) {
+          this.selectedDomains.push(domain)
+        } else {
+          this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
+        }
+        return
+      }
+      const toggle = e.target.closest('.dm-toggle input[type="checkbox"]')
+      if (toggle && toggle.id) {
+        const domain = toggle.id.replace('toggle-', '').replace(/-/g, '.')
+        this.handleToggleDefault(domain)
+      }
+    }
   }
 
   /**
@@ -149,8 +184,7 @@ export class AdminDomains {
         title: '默认展示',
         render: (value, row) => Toggle({
           checked: value,
-          id: `toggle-${row.domain.replace(/\./g, '-')}`,
-          onChange: () => this.handleToggleDefault(row.domain)
+          id: `toggle-${row.domain.replace(/\./g, '-')}`
         })
       },
       {
@@ -158,8 +192,8 @@ export class AdminDomains {
         title: '操作',
         render: (_, row) => `
           <button
-            class="dm-btn dm-btn-danger dm-btn-sm"
-            onclick="window.__deleteDomainHandler('${row.domain.replace(/'/g, "\\'")}') "
+            class="dm-delete-btn dm-btn dm-btn-danger dm-btn-sm"
+            data-domain="${row.domain.replace(/'/g, "\\'")}"
           >
             删除
           </button>
@@ -230,87 +264,44 @@ export class AdminDomains {
    * 绑定事件
    */
   bindEvents() {
-    // 添加域名按钮
-    document.getElementById('addDomainBtn')?.addEventListener('click', () => {
-      this.showAddModal = true
-      this.newDomainInput = ''
-    })
-
-    // 空状态添加按钮
-    document.getElementById('emptyAddBtn')?.addEventListener('click', () => {
-      this.showAddModal = true
-      this.newDomainInput = ''
-    })
-
-    // 取消添加
-    document.getElementById('cancelAddBtn')?.addEventListener('click', () => {
-      this.showAddModal = false
-      this.newDomainInput = ''
-    })
-
-    // 确认添加
-    document.getElementById('confirmAddBtn')?.addEventListener('click', () => {
-      this.handleAddDomain()
-    })
-
-    // 批量删除
-    document.getElementById('batchDeleteBtn')?.addEventListener('click', () => {
-      this.handleBatchDelete()
-    })
-
-    // 全选
+    const addBtn = document.getElementById('addDomainBtn')
+    const emptyBtn = document.getElementById('emptyAddBtn')
+    const cancelBtn = document.getElementById('cancelAddBtn')
+    const closeBtn = document.getElementById('modal-close-btn')
+    const confirmBtn = document.getElementById('confirmAddBtn')
+    const batchBtn = document.getElementById('batchDeleteBtn')
     const selectAll = document.getElementById('selectAll')
-    selectAll?.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        this.selectedDomains = this.domains.map(d => d.domain)
-      } else {
-        this.selectedDomains = []
-      }
-      this.render()
-      this.bindEvents()
-    })
+    const tableBody = document.querySelector('tbody')
 
-    // 单选
-    document.querySelectorAll('.dm-domain-checkbox').forEach(cb => {
-      cb.addEventListener('change', (e) => {
-        const domain = e.target.getAttribute('data-domain')
-        if (e.target.checked) {
-          this.selectedDomains.push(domain)
-        } else {
-          this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
-        }
-      })
-    })
+    addBtn?.removeEventListener('click', this.__addDomainHandler)
+    emptyBtn?.removeEventListener('click', this.__addDomainHandler)
+    cancelBtn?.removeEventListener('click', this.__cancelAddHandler)
+    closeBtn?.removeEventListener('click', this.__cancelAddHandler)
+    confirmBtn?.removeEventListener('click', this.__confirmAddHandler)
+    batchBtn?.removeEventListener('click', this.__batchDeleteHandler)
+    selectAll?.removeEventListener('change', this.__selectAllHandler)
+    tableBody?.removeEventListener('click', this.__tableDelegateHandler)
 
-    // 获取弹窗输入
+    addBtn?.addEventListener('click', this.__addDomainHandler)
+    emptyBtn?.addEventListener('click', this.__addDomainHandler)
+    cancelBtn?.addEventListener('click', this.__cancelAddHandler)
+    closeBtn?.addEventListener('click', this.__cancelAddHandler)
+    confirmBtn?.addEventListener('click', this.__confirmAddHandler)
+    batchBtn?.addEventListener('click', this.__batchDeleteHandler)
+    selectAll?.addEventListener('change', this.__selectAllHandler)
+    tableBody?.addEventListener('click', this.__tableDelegateHandler)
+
     const input = document.getElementById('newDomainInput')
     if (input) {
       this.newDomainInput = input.value
     }
-
-    // 绑定全局处理器
-    this.bindGlobalHandlers()
   }
 
   /**
-   * 绑定全局事件处理器
+   * 绑定全局事件处理器（由 AdminLayout 调用，当前无全局事件）
    */
   bindGlobalHandlers() {
-    // 删除域名
-    window.__deleteDomainHandler = async (domain) => {
-      if (!confirm(`确定要删除域名 ${domain} 吗？此操作不可恢复。`)) return
-
-      try {
-        await del(`/api/admin/domains/${encodeURIComponent(domain)}`)
-        show.success('域名已删除')
-        await this.loadData()
-        this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
-        this.render()
-        this.bindEvents()
-      } catch (error) {
-        show.error(error.message || '删除失败')
-      }
-    }
+    // All handlers moved to bindEvents() with event delegation
   }
 
   /**
@@ -420,11 +411,32 @@ export class AdminDomains {
     }
   }
 
+  async _handleDeleteDomain(domain) {
+    if (!confirm(`确定要删除域名 ${domain} 吗？此操作不可恢复。`)) return
+    try {
+      await del(`/api/admin/domains/${encodeURIComponent(domain)}`)
+      show.success('域名已删除')
+      await this.loadData()
+      this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
+      this.render()
+      this.bindEvents()
+    } catch (error) {
+      show.error(error.message || '删除失败')
+    }
+  }
+
   /**
    * 清理资源
    */
   destroy() {
-    window.__deleteDomainHandler = null
+    document.getElementById('addDomainBtn')?.removeEventListener('click', this.__addDomainHandler)
+    document.getElementById('emptyAddBtn')?.removeEventListener('click', this.__addDomainHandler)
+    document.getElementById('cancelAddBtn')?.removeEventListener('click', this.__cancelAddHandler)
+    document.getElementById('modal-close-btn')?.removeEventListener('click', this.__cancelAddHandler)
+    document.getElementById('confirmAddBtn')?.removeEventListener('click', this.__confirmAddHandler)
+    document.getElementById('batchDeleteBtn')?.removeEventListener('click', this.__batchDeleteHandler)
+    document.getElementById('selectAll')?.removeEventListener('change', this.__selectAllHandler)
+    document.querySelector('tbody')?.removeEventListener('click', this.__tableDelegateHandler)
   }
 }
 

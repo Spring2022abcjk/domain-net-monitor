@@ -22,14 +22,16 @@ export function isValidAdminToken(request, env) {
     return false;
   }
   
-  if (!env.CLOUDFLARE_API_TOKEN) {
-    console.warn('CLOUDFLARE_API_TOKEN not configured');
+  // ADMIN_API_TOKEN 优先，CLOUDFLARE_API_TOKEN 向后兼容
+  const expectedToken = env.ADMIN_API_TOKEN || env.CLOUDFLARE_API_TOKEN;
+  if (!expectedToken) {
+    console.warn('ADMIN_API_TOKEN not configured');
     return false;
   }
   
   // 恒定时间比较（防止时序攻击）
   const tokenBytes = new TextEncoder().encode(token);
-  const expectedBytes = new TextEncoder().encode(env.CLOUDFLARE_API_TOKEN);
+  const expectedBytes = new TextEncoder().encode(expectedToken);
   
   if (tokenBytes.length !== expectedBytes.length) {
     return false;

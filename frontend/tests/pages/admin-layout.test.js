@@ -46,6 +46,10 @@ export async function runAdminLayoutTests() {
     assertEqual(layout.includes('childComponent'), true, 'Supports child component')
     assertEqual(layout.includes('isLoggedIn'), true, 'Checks authentication')
     assertEqual(layout.includes('clearAuth'), true, 'Has logout logic')
+    assertEqual(layout.includes('removeEventListener'), true, 'Has event cleanup')
+    assertEqual(layout.includes('__sidebarToggleHandler'), true, 'Stores menu handler reference')
+    assertEqual(layout.includes('__sidebarCloseHandler'), true, 'Stores sidebar close handler reference')
+    assertEqual(layout.includes('__topbarLogoutHandler'), true, 'Stores logout handler reference')
   })
   
   // ===== Sidebar 测试 =====

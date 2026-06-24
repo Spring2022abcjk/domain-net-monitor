@@ -16,6 +16,9 @@ export class AdminConfig {
     this.loading = false
     this.saving = false
     this.testing = false
+    this.__saveHandler = () => this.handleSave()
+    this.__resetHandler = () => this.handleReset()
+    this.__testDohHandler = () => this.handleTestDoh()
   }
 
   /**
@@ -29,6 +32,7 @@ export class AdminConfig {
    * 加载配置
    */
   async loadConfig() {
+    if (this.config) return
     try {
       this.loading = true
       const [configRes, dohRes] = await Promise.all([
@@ -217,17 +221,17 @@ export class AdminConfig {
    * 绑定事件
    */
   bindEvents() {
-    document.getElementById('saveConfigBtn')?.addEventListener('click', () => {
-      this.handleSave()
-    })
+    const saveBtn = document.getElementById('saveConfigBtn')
+    const resetBtn = document.getElementById('resetConfigBtn')
+    const testDohBtn = document.getElementById('testDohBtn')
 
-    document.getElementById('resetConfigBtn')?.addEventListener('click', () => {
-      this.handleReset()
-    })
+    saveBtn?.removeEventListener('click', this.__saveHandler)
+    resetBtn?.removeEventListener('click', this.__resetHandler)
+    testDohBtn?.removeEventListener('click', this.__testDohHandler)
 
-    document.getElementById('testDohBtn')?.addEventListener('click', () => {
-      this.handleTestDoh()
-    })
+    saveBtn?.addEventListener('click', this.__saveHandler)
+    resetBtn?.addEventListener('click', this.__resetHandler)
+    testDohBtn?.addEventListener('click', this.__testDohHandler)
   }
 
   /**
@@ -387,7 +391,9 @@ export class AdminConfig {
    * 清理资源
    */
   destroy() {
-    // 清理逻辑（如有需要）
+    document.getElementById('saveConfigBtn')?.removeEventListener('click', this.__saveHandler)
+    document.getElementById('resetConfigBtn')?.removeEventListener('click', this.__resetHandler)
+    document.getElementById('testDohBtn')?.removeEventListener('click', this.__testDohHandler)
   }
 }
 

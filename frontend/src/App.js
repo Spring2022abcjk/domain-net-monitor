@@ -1,6 +1,7 @@
 import Header from './components/Header.js'
 import Footer from './components/Footer.js'
 import { getCurrentPage, init as initRouter } from './router/index.js'
+import { setApiBaseUrl } from './utils/api.js'
 
 /**
  * 根组件
@@ -34,6 +35,11 @@ export default {
    */
   init() {
     console.log('[App] Root component initialized')
+    // 全局 API 端点初始化
+    if (import.meta.env.VITE_API_BASE_URL) {
+      setApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
+      console.log('[App] API base URL:', import.meta.env.VITE_API_BASE_URL)
+    }
     // 初始化路由
     initRouter()
   }

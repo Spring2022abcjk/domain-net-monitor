@@ -1,13 +1,10 @@
 /**
  * 管理后台顶部栏组件
  * 任务 16：面包屑导航、用户信息、退出按钮
- * @param {Object} props - 属性
- * @param {Function} [props.onMenuClick] - 菜单按钮点击（移动端）
- * @param {Function} [props.onLogout] - 退出登录回调
  */
 import { getCurrentUser } from '../../utils/storage.js'
 
-export function Topbar({ onMenuClick, onLogout }) {
+export function Topbar() {
   const user = getCurrentUser()
   
   // 面包屑生成（根据当前路径）
@@ -18,8 +15,8 @@ export function Topbar({ onMenuClick, onLogout }) {
       <!-- 左侧：菜单按钮 + 面包屑 -->
       <div class="flex items-center gap-4">
         <button 
+          id="topbar-menu-btn"
           class="lg:hidden text-gray-500 hover:text-gray-700"
-          onclick="window.__sidebarToggleHandler && window.__sidebarToggleHandler()"
           aria-label="切换菜单"
         >
           <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,8 +47,8 @@ export function Topbar({ onMenuClick, onLogout }) {
         ` : ''}
         
         <button 
+          id="topbar-logout-btn"
           class="dm-btn dm-btn-secondary dm-btn-sm flex items-center gap-2"
-          onclick="window.__topbarOnLogout && window.__topbarOnLogout()"
           aria-label="退出登录"
         >
           <span>🚪</span>

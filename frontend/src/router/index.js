@@ -74,8 +74,9 @@ function findChildRoute(parentRoute, fullPath) {
  * @param {Object} [parentRoute] - 父路由（嵌套场景）
  */
 async function renderRoute(route, params, query, parentRoute = null) {
-  // 权限检查：需要认证但未登录
-  if (route.meta?.requiresAuth && !isLoggedIn()) {
+  // 权限检查：需要认证但未登录（子路由从父路由继承 requiresAuth）
+  const requiresAuth = route.meta?.requiresAuth || parentRoute?.meta?.requiresAuth
+  if (requiresAuth && !isLoggedIn()) {
     navigateTo('/login')
     return
   }
@@ -105,10 +106,23 @@ async function renderRoute(route, params, query, parentRoute = null) {
   
   // === 处理嵌套路由 ===
   if (parentRoute && route !== parentRoute) {
-    // 有父路由和子路由：创建父布局 + 子页面
-    const parentComponent = parentRoute.component
+    let ParentComponent
     
-    // 动态导入子组件
+    // 动态导入父组件（嵌套路由的布局）
+    if (typeof parentRoute.component === 'function') {
+      try {
+        const module = await parentRoute.component()
+        console.log('[Router] Loaded parent module:', parentRoute.name, module)
+        ParentComponent = module.default || module[Object.keys(module)[0]]
+        console.log('[Router] ParentComponent resolved:', ParentComponent)
+      } catch (error) {
+        console.error('[Router] Failed to load parent component:', error)
+        throw error
+      }
+    } else {
+      ParentComponent = parentRoute.component
+    }
+    
     let ChildComponent
     if (typeof route.component === 'function') {
       try {
@@ -124,7 +138,7 @@ async function renderRoute(route, params, query, parentRoute = null) {
       ChildComponent = route.component
     }
     
-    currentPageInstance = new parentComponent(ChildComponent)
+    currentPageInstance = new ParentComponent(ChildComponent)
   } else {
     // 普通路由（支持懒加载）
     let PageComponent

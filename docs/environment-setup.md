@@ -8,28 +8,24 @@
 |--------|------|------|------|------|------|
 | `ALLOWED_ORIGINS` | Var | 开发 | ⚠️ | CORS 白名单（开发环境允许所有） | `*` |
 | `ALLOWED_ORIGINS` | Secret | 生产 | ✅ | CORS 白名单（逗号分隔） | `https://your-single.your-domain.pages.dev` |
-| `CLOUDFLARE_API_TOKEN` | Secret | 生产 | ✅ | 管理员认证 Token | `YOUR_CLOUDFLARE_API_TOKEN...` |
+| `ADMIN_API_TOKEN` | Secret | 生产 | ✅ | 管理员登录 Token（用户登录后台时填写） | `adm_xxx` |
+| `CLOUDFLARE_API_TOKEN` | 环境变量 | 本机 | ✅ | wrangler CLI 部署凭证（cfat_xxx 格式） | `cfat_xxx` |
 
 ## 生成 Token
 
-### 方法 1：使用 OpenSSL（推荐）
+### Cloudflare API Token（部署用）
+
+1. 访问 https://dash.cloudflare.com/profile/api-tokens
+2. 创建自定义 Token，权限：Workers Scripts: Edit + KV Storage: Edit + Cloudflare Pages: Edit
+3. 复制 `cfat_xxx` 格式的 Token，设为本机环境变量 `CLOUDFLARE_API_TOKEN`
+
+### 管理员登录 Token（用户填写的密码）
+
+管理员 Token 可以是任意字符串，供用户登录后台时在 Token 字段填写。生成方式：
 
 ```bash
 openssl rand -hex 32
 ```
-
-输出示例：
-```
-ff10a24df88c7be158ff06f34e36707044b681f02ef090b569806d779e721703
-```
-
-### 方法 2：使用 Cloudflare API Token
-
-如果你已经有 Cloudflare API Token，可以直接使用。
-
-1. 访问 https://dash.cloudflare.com/profile/api-tokens
-2. 创建新的 API Token（建议只读权限）
-3. 复制 Token
 
 ## 注入环境变量
 
@@ -55,21 +51,21 @@ wrangler secret put ALLOWED_ORIGINS --env production
 https://your-single.your-domain.pages.dev
 ```
 
-#### 步骤 2：注入 API Token
+#### 步骤 2：注入管理员登录 Token
 
 ```bash
-wrangler secret put CLOUDFLARE_API_TOKEN --env production
+wrangler secret put ADMIN_API_TOKEN --env production
 ```
 
-输入生成的 Token：
+输入管理员 Token（用户登录后台时填写）：
 ```
-ff10a24df88c7be158ff06f34e36707044b681f02ef090b569806d779e721703
+adm_89277b034e74e28002bce3b35916cb066cd1f364469d9324
 ```
 
 #### 步骤 3：部署到生产环境
 
 ```bash
-wrangler deploy --env production
+wrangler deploy -c wrangler.local.toml
 ```
 
 ## 验证配置

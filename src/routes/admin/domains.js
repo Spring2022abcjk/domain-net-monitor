@@ -1,6 +1,6 @@
 // src/routes/admin/domains.js
 
-import { getDomainList, addDomain, removeDomain } from '../../storage/kv.js';
+import { getDomainList, addDomain, removeDomain, getResult } from '../../storage/kv.js';
 import { getDefaultDomains, setDefaultDomains } from '../../storage/default-domains.js';
 import { cleanDomain, jsonResponse } from '../../utils/helper.js';
 
@@ -64,10 +64,28 @@ export async function handleDomains(request, env) {
  */
 async function handleGetDomains(request, env) {
   const list = await getDomainList(env);
+  const defaults = await getDefaultDomains(env);
+  
+  // 丰富域名数据：域名 + 是否默认 + 最新检测结果
+  const domains = await Promise.all(list.map(async (domain) => {
+    let cached = null;
+    try {
+      cached = await getResult(env, domain);
+    } catch (e) {
+      // 缓存读取失败不阻塞
+    }
+    
+    return {
+      domain,
+      isDefault: defaults.includes(domain),
+      status: cached ? 'active' : 'unknown',
+      lastChecked: cached?.timestamp || null
+    };
+  }));
   
   return jsonResponse({
-    domains: list,
-    count: list.length
+    domains,
+    count: domains.length
   }, 200);
 }
 

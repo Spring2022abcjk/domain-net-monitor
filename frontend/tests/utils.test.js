@@ -176,6 +176,22 @@ async function runUtilsTests() {
     await new Promise(resolve => setTimeout(resolve, 150))
     assertEqual(callCount, 1, 'Calls once after delay')
   })
+
+  // ========== debounce.cancel 测试 ==========
+  await runSuite('Utils - debounce.cancel', async () => {
+    let callCount = 0
+    const fn = () => callCount++
+    const debouncedFn = debounce(fn, 100)
+
+    debouncedFn()
+    assertEqual(callCount, 0, 'Not called before delay')
+
+    debouncedFn.cancel()
+    assertEqual(typeof debouncedFn.cancel, 'function', 'cancel is a function')
+
+    await new Promise(resolve => setTimeout(resolve, 150))
+    assertEqual(callCount, 0, 'Cancelled function never calls')
+  })
   
   // ========== throttle 测试 ==========
   await runSuite('Utils - throttle', async () => {

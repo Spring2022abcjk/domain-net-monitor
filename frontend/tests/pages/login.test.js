@@ -99,6 +99,9 @@ export async function runLoginTests() {
     assertEqual(loginCode.includes('async init()'), true, 'Has init method')
     assertEqual(loginCode.includes('render()'), true, 'Has render method')
     assertEqual(loginCode.includes('bindEvents()'), true, 'Has bindEvents method')
+    assertEqual(loginCode.includes('destroy()'), true, 'Has destroy method')
+    assertEqual(loginCode.includes('_redirectTimer'), true, 'Stores redirect timer reference')
+    assertEqual(loginCode.includes('clearTimeout(this._redirectTimer)'), true, 'Clears redirect timer in destroy')
     
     // 检查组件使用
     assertEqual(loginCode.includes('Card({'), true, 'Uses Card component')
@@ -139,9 +142,9 @@ export async function runLoginTests() {
     
     // 检查认证检查
     assertEqual(
-      routerCode.includes('route.meta?.requiresAuth && !isLoggedIn()'),
+      routerCode.includes('requiresAuth'),
       true,
-      'Checks auth for protected routes'
+      'Checks requiresAuth for protected routes'
     )
   })
   

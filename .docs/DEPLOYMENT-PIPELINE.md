@@ -75,7 +75,8 @@ workspace/
 | **前端公开** | `VITE_API_BASE_URL` | `.env` / `.env.example` | ✅ 模板 | 构建时注入 |
 | **Worker 本地** | `ALLOWED_ORIGINS` | `.dev.vars` | ❌ | 本地开发 |
 | **Worker 生产** | `ALLOWED_ORIGINS` | Wrangler Secrets | ❌ | 生产环境 |
-| **API Token** | `CLOUDFLARE_API_TOKEN` | 环境变量 | ❌ | 部署凭证 |
+| **API Token (部署)** | `CLOUDFLARE_API_TOKEN` | 环境变量 | 否 | Wrangler 部署凭证 |
+| **API Token (登录)** | `ADMIN_API_TOKEN` | Worker Secret | 否 | 管理后台登录认证 |
 | **Account ID** | `CLOUDFLARE_ACCOUNT_ID` | 环境变量 | ❌ | 账户标识 |
 | **KV ID** | `DOMAIN_MONITOR_KV` | `wrangler.toml` | ✅ | KV 绑定 |
 
@@ -159,6 +160,9 @@ jobs:
 
 ```bash
 # 1. 设置环境变量（一次性）
+# ADMIN_API_TOKEN: 管理员登录密钥 (生成后注入)
+# CLOUDFLARE_API_TOKEN: 部署凭证 (Wrangler CLI)
+
 export CLOUDFLARE_API_TOKEN="your-token"
 export CLOUDFLARE_ACCOUNT_ID="your-account-id"
 

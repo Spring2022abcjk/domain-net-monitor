@@ -14,7 +14,10 @@ export class AdminLayout {
   constructor(childComponent) {
     this.childComponent = childComponent
     this.childInstance = null
-    this.sidebarOpen = false // 移动端控制
+    this.sidebarOpen = false
+    this.__sidebarToggleHandler = () => this.toggleSidebar()
+    this.__topbarLogoutHandler = () => this.handleLogout()
+    this.__sidebarCloseHandler = () => this.closeSidebar()
   }
   
   /**
@@ -59,16 +62,10 @@ export class AdminLayout {
   render() {
     return `
       <div class="dm-admin-layout flex h-screen bg-gray-100">
-        ${Sidebar({ 
-          open: this.sidebarOpen,
-          onClose: () => this.toggleSidebar()
-        })}
+        ${Sidebar({ open: this.sidebarOpen })}
         
         <div class="flex-1 flex flex-col overflow-hidden">
-          ${Topbar({
-            onMenuClick: () => this.toggleSidebar(),
-            onLogout: () => this.handleLogout()
-          })}
+          ${Topbar()}
           
           <main id="admin-content" class="flex-1 overflow-auto p-6">
             ${this.childInstance?.render ? this.childInstance.render() : '<div class="text-center py-12">加载中...</div>'}
@@ -78,8 +75,8 @@ export class AdminLayout {
         <!-- 移动端遮罩 -->
         ${this.sidebarOpen ? `
           <div 
+            id="sidebar-overlay"
             class="dm-sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-            onclick="window.__sidebarCloseHandler()"
           ></div>
         ` : ''}
       </div>
@@ -87,16 +84,32 @@ export class AdminLayout {
   }
   
   /**
-   * 绑定事件
+   * 绑定事件 — 组件只渲染 HTML，事件在此统一绑定
    */
   bindEvents() {
-    window.__sidebarCloseHandler = () => {
-      this.sidebarOpen = false
-      this.render()
-      this.bindEvents()
-    }
-    
-    window.__topbarOnLogout = () => this.handleLogout()
+    const menuBtn = document.getElementById('topbar-menu-btn')
+    const logoutBtn = document.getElementById('topbar-logout-btn')
+    const closeBtn = document.getElementById('sidebar-close-btn')
+    const overlay = document.getElementById('sidebar-overlay')
+
+    menuBtn?.removeEventListener('click', this.__sidebarToggleHandler)
+    logoutBtn?.removeEventListener('click', this.__topbarLogoutHandler)
+    closeBtn?.removeEventListener('click', this.__sidebarCloseHandler)
+    overlay?.removeEventListener('click', this.__sidebarCloseHandler)
+
+    menuBtn?.addEventListener('click', this.__sidebarToggleHandler)
+    logoutBtn?.addEventListener('click', this.__topbarLogoutHandler)
+    closeBtn?.addEventListener('click', this.__sidebarCloseHandler)
+    overlay?.addEventListener('click', this.__sidebarCloseHandler)
+  }
+  
+  /**
+   * 关闭侧边栏（移动端）
+   */
+  closeSidebar() {
+    this.sidebarOpen = false
+    this.render()
+    this.bindEvents()
   }
   
   /**
@@ -132,8 +145,10 @@ export class AdminLayout {
    * 销毁页面
    */
   destroy() {
-    window.__sidebarCloseHandler = null
-    window.__topbarOnLogout = null
+    document.getElementById('topbar-menu-btn')?.removeEventListener('click', this.__sidebarToggleHandler)
+    document.getElementById('topbar-logout-btn')?.removeEventListener('click', this.__topbarLogoutHandler)
+    document.getElementById('sidebar-close-btn')?.removeEventListener('click', this.__sidebarCloseHandler)
+    document.getElementById('sidebar-overlay')?.removeEventListener('click', this.__sidebarCloseHandler)
     if (this.childInstance?.destroy) {
       this.childInstance.destroy()
     }

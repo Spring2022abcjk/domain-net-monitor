@@ -16,8 +16,8 @@ export function Modal({ title, content, footer, closable = true }) {
             <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
             ${closable ? `
               <button 
+                id="modal-close-btn"
                 class="text-gray-400 hover:text-gray-600"
-                onclick="window.__modalCloseHandler && window.__modalCloseHandler()"
               >
                 ✕
               </button>
