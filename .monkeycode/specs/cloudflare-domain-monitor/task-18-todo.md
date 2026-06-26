@@ -104,13 +104,15 @@
 | 编号 | 类型 | 描述 | 优先级 | 预计工时 | 状态 |
 |------|------|------|--------|---------|------|
 | TECH-18-01 | 代码组织 | render 方法过长 | P2 | 1h | 🔴 待处理 |
-| TECH-18-02 | 代码模式 | 重复 bindEvents 模式 | P2 | 1.5h | 🟡 部分修复 |
-| TECH-18-03 | 性能优化 | 配置缓存 | P2 | 2h | 🔴 待处理 |
+| TECH-18-02 | 代码模式 | 重复 bindEvents 模式 | P2 | 1.5h | 🟢 已完成（Task 26-27，组件+页面全部 addEventListener 化） |
+| TECH-18-03 | 性能优化 | 配置缓存 | P2 | 2h | 🟢 已完成（Task 27.7，AdminConfig.init 中 if this.config return） |
 | TECH-18-04 | 兼容性 | URL 验证 polyfill | P3 | 0.5h | 🔴 待处理 |
 | TECH-18-05 | 用户体验 | DoH 测试超时 | P3 | 1h | 🔴 待处理 |
 | TECH-18-06 | 用户体验 | 配置变更检测 | P3 | 2h | 🔴 待处理 |
 
-**技术债务总计**: 8 小时（不含 P4 可选功能）
+**技术债务总计**: 4.5 小时（不含 P4 可选功能，TECH-18-02/03 已完成）
+
+> **2026-06-24 更新**: AdminDashboard 最后一个 `window.__dashboardRefreshHandler` 已迁移为 addEventListener 模式。至此 `frontend/src/` 下 `window.__*` 模式彻底清零。
 
 ---
 
