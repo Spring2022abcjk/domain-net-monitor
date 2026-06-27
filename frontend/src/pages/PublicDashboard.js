@@ -175,9 +175,7 @@ export class PublicDashboard {
   }
   
   handleViewDetail(domain) {
-    // TODO: 跳转到域名详情页（任务 16）
-    show.info('域名详情页开发中，敬请期待')
-    console.debug('Viewing domain:', domain)
+    window.location.hash = '#/domain/' + encodeURIComponent(domain)
   }
   
   destroy() {

@@ -10,6 +10,12 @@ export const routes = [
     meta: { requiresAuth: false, title: '首页' }
   },
   {
+    name: 'domain-detail',
+    path: '/domain/:domain',
+    component: () => import('../pages/DomainDetail.js'),
+    meta: { requiresAuth: false, title: '域名详情' }
+  },
+  {
     name: 'login',
     path: '/login',
     component: () => import('../pages/Login.js'),

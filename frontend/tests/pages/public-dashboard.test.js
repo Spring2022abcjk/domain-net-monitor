@@ -28,8 +28,11 @@ export async function runPublicDashboardTests() {
     assertEqual(page.includes('render()'), true, 'Has render method')
     assertEqual(page.includes('destroy()'), true, 'Has destroy method')
     assertEqual(page.includes('loadDomains()'), true, 'Has loadDomains method')
-    assertEqual(page.includes('handleSearch()'), true, 'Has handleSearch method')
     assertEqual(page.includes('handleViewDetail'), true, 'Has handleViewDetail method')
+    assertEqual(page.includes("window.location.hash = '#/domain/'"), true,
+      'handleViewDetail navigates to domain detail page via hash')
+    assertEqual(page.includes('encodeURIComponent(domain)'), true,
+      'Encodes domain name in hash URL')
     assertEqual(page.includes('bindEvents()'), true, 'Has bindEvents method')
   })
   

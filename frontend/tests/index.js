@@ -10,6 +10,8 @@ import { runStructureTests } from './project-structure.test.js'
 import { runLoginTests } from './pages/login.test.js'
 import { runLoginIntegrationTests } from './pages/login-integration.test.js'
 import { runAPIIntegrationTests } from './api-integration.test.js'
+import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
+import { runDomainDetailTests } from './pages/domain-detail.test.js'
 
 console.log('')
 console.log('╔════════════════════════════════════════╗')
@@ -27,7 +29,9 @@ const testGroups = [
       runRouterTests,
       runStructureTests,
       runLoginTests,
-      runLoginIntegrationTests
+      runLoginIntegrationTests,
+      runPublicDashboardTests,
+      runDomainDetailTests
     ]
   },
   {
