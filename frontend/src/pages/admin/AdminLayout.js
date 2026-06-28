@@ -101,6 +101,10 @@ export class AdminLayout {
     logoutBtn?.addEventListener('click', this.__topbarLogoutHandler)
     closeBtn?.addEventListener('click', this.__sidebarCloseHandler)
     overlay?.addEventListener('click', this.__sidebarCloseHandler)
+
+    if (this.childInstance?.bindEvents) {
+      this.childInstance.bindEvents()
+    }
   }
   
   /**

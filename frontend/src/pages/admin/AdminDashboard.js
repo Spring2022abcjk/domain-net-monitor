@@ -14,6 +14,14 @@ export class AdminDashboard {
     this.stats = null
     this.recentDomains = []
     this.error = null
+    this.__refreshHandler = async () => {
+      await this.loadData()
+      const container = document.getElementById('admin-content')
+      if (container) {
+        container.innerHTML = this.render()
+        this.bindEvents()
+      }
+    }
   }
   
   /**
@@ -50,7 +58,7 @@ export class AdminDashboard {
       return `
         <div class="text-center py-12">
           <div class="text-red-600 mb-4">${this.error}</div>
-          <button class="dm-btn dm-btn-primary" onclick="window.__dashboardRefreshHandler && window.__dashboardRefreshHandler()">
+          <button class="dm-btn dm-btn-primary" id="dashboard-refresh-btn">
             刷新
           </button>
         </div>
@@ -65,7 +73,7 @@ export class AdminDashboard {
       <div class="space-y-6">
         <div class="flex items-center justify-between">
           <h1 class="text-2xl font-bold text-gray-900">仪表盘</h1>
-          <button class="dm-btn dm-btn-secondary dm-btn-sm" onclick="window.__dashboardRefreshHandler && window.__dashboardRefreshHandler()">
+          <button class="dm-btn dm-btn-secondary dm-btn-sm" id="dashboard-refresh-btn">
             刷新数据
           </button>
         </div>
@@ -167,14 +175,17 @@ export class AdminDashboard {
    * 绑定刷新事件
    */
   bindEvents() {
-    window.__dashboardRefreshHandler = () => this.loadData()
+    const btn = document.getElementById('dashboard-refresh-btn')
+    btn?.removeEventListener('click', this.__refreshHandler)
+    btn?.addEventListener('click', this.__refreshHandler)
   }
   
   /**
    * 清理资源
    */
   destroy() {
-    window.__dashboardRefreshHandler = null
+    document.getElementById('dashboard-refresh-btn')
+      ?.removeEventListener('click', this.__refreshHandler)
   }
 }
 
