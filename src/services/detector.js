@@ -1,8 +1,18 @@
 // src/services/detector.js
 
-import { DNS_TYPE_HTTPS, DNS_TYPE_AAAA, STATUS_OK, STATUS_PARTIAL, STATUS_NO, STATUS_ERROR, KV_KEY_HISTORY_COUNT, KV_KEY_RESULT_COUNT, REQUEST_TIMEOUT } from '../config.js';
-import { getConfig } from '../storage/config.js';
-import { fetchWithTimeout } from '../utils/helper.js';
+import {
+  DNS_TYPE_HTTPS,
+  DNS_TYPE_AAAA,
+  STATUS_OK,
+  STATUS_PARTIAL,
+  STATUS_NO,
+  STATUS_ERROR,
+  KV_KEY_HISTORY_COUNT,
+  KV_KEY_RESULT_COUNT,
+  REQUEST_TIMEOUT,
+} from '../config.js'
+import { getConfig } from '../storage/config.js'
+import { fetchWithTimeout } from '../utils/helper.js'
 
 /**
  * 递增 KV 计数器（非原子操作，并发时可能略微低计）
@@ -11,9 +21,9 @@ import { fetchWithTimeout } from '../utils/helper.js';
  * @param {string} key - 计数器键名
  */
 async function incrementCount(kv, key) {
-  const data = await kv.get(key);
-  const count = data ? parseInt(data, 10) : 0;
-  await kv.put(key, String(count + 1));
+  const data = await kv.get(key)
+  const count = data ? parseInt(data, 10) : 0
+  await kv.put(key, String(count + 1))
 }
 
 /**
@@ -25,19 +35,23 @@ async function incrementCount(kv, key) {
  * @returns {Promise<Object>} DoH 响应 JSON
  */
 export async function queryDoh(domain, recordType, dohUrl, timeout = REQUEST_TIMEOUT) {
-  const url = `${dohUrl}?name=${encodeURIComponent(domain)}&type=${recordType}`;
+  const url = `${dohUrl}?name=${encodeURIComponent(domain)}&type=${recordType}`
 
-  const response = await fetchWithTimeout(url, {
-    headers: {
-      'Accept': 'application/dns-json'
-    }
-  }, timeout);
+  const response = await fetchWithTimeout(
+    url,
+    {
+      headers: {
+        Accept: 'application/dns-json',
+      },
+    },
+    timeout,
+  )
 
   if (!response.ok) {
-    throw new Error(`DoH response status: ${response.status}`);
+    throw new Error(`DoH response status: ${response.status}`)
   }
 
-  return await response.json();
+  return await response.json()
 }
 
 /**
@@ -47,87 +61,84 @@ export async function queryDoh(domain, recordType, dohUrl, timeout = REQUEST_TIM
  * @returns {Promise<Object>} 检测结果
  */
 export async function detectDomain(domain, env) {
-  const config = await getConfig(env);
-  const dohPrimary = config.doh.primary;
-  const dohBackup = config.doh.backup;
+  const config = await getConfig(env)
+  const dohPrimary = config.doh.primary
+  const dohBackup = config.doh.backup
 
   const result = {
     domain,
     timestamp: Date.now(),
     https_rr: { status: STATUS_NO, details: null },
     ech: { status: STATUS_NO, value: null },
-    ipv6: { status: STATUS_NO, details: null }
-  };
+    ipv6: { status: STATUS_NO, details: null },
+  }
 
   // ========== 1. 检测 HTTPS RR（RFC 9460）==========
   try {
-    const httpsData = await queryDoh(domain, DNS_TYPE_HTTPS, dohPrimary);
+    const httpsData = await queryDoh(domain, DNS_TYPE_HTTPS, dohPrimary)
     if (httpsData.Answer && httpsData.Answer.length > 0) {
       result.https_rr = {
         status: STATUS_OK,
-        details: httpsData.Answer
-      };
+        details: httpsData.Answer,
+      }
 
       // 检查 ECH（Encrypted Client Hello）
-      const httpsRecord = httpsData.Answer[0].data;
+      const httpsRecord = httpsData.Answer[0].data
       if (httpsRecord && httpsRecord.includes('ech')) {
         result.ech = {
           status: STATUS_OK,
-          value: true
-        };
+          value: true,
+        }
       }
     }
   } catch (error) {
-    console.error(`HTTPS RR query failed for ${domain}:`, error.message);
+    console.error(`HTTPS RR query failed for ${domain}:`, error.message)
     result.https_rr = {
       status: STATUS_ERROR,
-      error: error.message
-    };
+      error: error.message,
+    }
   }
 
   // ========== 2. 检测 IPv6（AAAA 记录）==========
   try {
-    const ipv6Data = await queryDoh(domain, DNS_TYPE_AAAA, dohPrimary);
+    const ipv6Data = await queryDoh(domain, DNS_TYPE_AAAA, dohPrimary)
     if (ipv6Data.Answer && ipv6Data.Answer.length > 0) {
       result.ipv6 = {
         status: STATUS_OK,
-        count: ipv6Data.Answer.length
-      };
+        count: ipv6Data.Answer.length,
+      }
     }
   } catch (error) {
     // 尝试备用 DoH
     try {
-      const ipv6Data = await queryDoh(domain, DNS_TYPE_AAAA, dohBackup);
+      const ipv6Data = await queryDoh(domain, DNS_TYPE_AAAA, dohBackup)
       if (ipv6Data.Answer && ipv6Data.Answer.length > 0) {
         result.ipv6 = {
           status: STATUS_OK,
-          count: ipv6Data.Answer.length
-        };
+          count: ipv6Data.Answer.length,
+        }
       }
     } catch (backupError) {
-      console.error(`IPv6 query failed for ${domain}:`, backupError.message);
+      console.error(`IPv6 query failed for ${domain}:`, backupError.message)
       result.ipv6 = {
         status: STATUS_ERROR,
-        error: backupError.message
-      };
+        error: backupError.message,
+      }
     }
   }
 
   // ========== 3. 计算整体状态 ==========
-  if (result.https_rr.status === STATUS_OK &&
-      result.ech.status === STATUS_OK &&
-      result.ipv6.status === STATUS_OK) {
-    result.overall = STATUS_OK;
-  } else if (result.https_rr.status === STATUS_ERROR ||
-             result.ipv6.status === STATUS_ERROR) {
-    result.overall = STATUS_ERROR;
+  if (result.https_rr.status === STATUS_OK && result.ech.status === STATUS_OK && result.ipv6.status === STATUS_OK) {
+    result.overall = STATUS_OK
+  } else if (result.https_rr.status === STATUS_ERROR || result.ipv6.status === STATUS_ERROR) {
+    result.overall = STATUS_ERROR
   } else if (result.https_rr.status === STATUS_OK) {
-    result.overall = STATUS_PARTIAL;
+    result.overall = STATUS_PARTIAL
   } else {
-    result.overall = STATUS_NO;
+    result.overall = STATUS_NO
   }
 
-  return result;
+  return result
 }
 
 /**
@@ -136,12 +147,12 @@ export async function detectDomain(domain, env) {
  * @param {Object} result - 检测结果
  */
 export async function saveResult(env, result) {
-  const kv = env.DOMAIN_MONITOR_KV;
-  const key = `result:${result.domain}`;
-  const exists = await kv.get(key);
-  await kv.put(key, JSON.stringify(result));
+  const kv = env.DOMAIN_MONITOR_KV
+  const key = `result:${result.domain}`
+  const exists = await kv.get(key)
+  await kv.put(key, JSON.stringify(result))
   if (!exists) {
-    await incrementCount(kv, KV_KEY_RESULT_COUNT);
+    await incrementCount(kv, KV_KEY_RESULT_COUNT)
   }
 }
 
@@ -151,25 +162,25 @@ export async function saveResult(env, result) {
  * @param {Object} result - 检测结果
  */
 export async function addToHistory(env, result) {
-  const kv = env.DOMAIN_MONITOR_KV;
-  const key = `history:${result.domain}`;
-  const config = await getConfig(env);
-  const maxEntries = config.historyMaxEntries || 100;
+  const kv = env.DOMAIN_MONITOR_KV
+  const key = `history:${result.domain}`
+  const config = await getConfig(env)
+  const maxEntries = config.historyMaxEntries || 100
 
-  const data = await kv.get(key);
-  const history = data ? JSON.parse(data) : [];
+  const data = await kv.get(key)
+  const history = data ? JSON.parse(data) : []
 
-  history.unshift(result);
+  history.unshift(result)
 
   // 限制保留条数（从配置读取，默认 100）
   if (history.length > maxEntries) {
-    history.length = maxEntries;
+    history.length = maxEntries
   }
 
-  await kv.put(key, JSON.stringify(history));
+  await kv.put(key, JSON.stringify(history))
 
   // 首次记录该域名历史时增加计数
   if (history.length === 1 && !data) {
-    await incrementCount(kv, KV_KEY_HISTORY_COUNT);
+    await incrementCount(kv, KV_KEY_HISTORY_COUNT)
   }
 }

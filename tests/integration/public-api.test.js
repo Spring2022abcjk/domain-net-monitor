@@ -15,7 +15,7 @@ export async function runPublicApiTests() {
     assertEqual(isValidDomain('sub.example.com'), true, 'Valid subdomain')
     assertEqual(isValidDomain('test-domain.com'), true, 'Domain with hyphen')
     assertEqual(isValidDomain('a.co'), true, 'Short TLD')
-    
+
     // Invalid domains
     assertEqual(isValidDomain(''), false, 'Empty string')
     assertEqual(isValidDomain(null), false, 'Null value')

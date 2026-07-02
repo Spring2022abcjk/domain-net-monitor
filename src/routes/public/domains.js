@@ -11,7 +11,7 @@ import { jsonResponse } from '../../utils/helper.js'
  */
 export async function handleGetPublicDomains(request, env) {
   try {
-    const domainList = await env.DOMAIN_MONITOR_KV.get('domain_list', { type: 'json' }) || []
+    const domainList = (await env.DOMAIN_MONITOR_KV.get('domain_list', { type: 'json' })) || []
     const domains = []
     for (const domain of domainList) {
       const stats = await env.DOMAIN_MONITOR_KV.get(`stats:${domain}`, { type: 'json' })
@@ -19,14 +19,17 @@ export async function handleGetPublicDomains(request, env) {
         domain,
         firstSeen: stats?.firstSeen || null,
         lastChecked: stats?.lastChecked || null,
-        status: stats?.status || 'unknown'
+        status: stats?.status || 'unknown',
       })
     }
-    
-    return jsonResponse({
-      domains,
-      count: domains.length
-    }, 200)
+
+    return jsonResponse(
+      {
+        domains,
+        count: domains.length,
+      },
+      200,
+    )
   } catch (error) {
     console.error('Error in handleGetPublicDomains:', error.message)
     return jsonResponse(null, 500, 'Internal server error')

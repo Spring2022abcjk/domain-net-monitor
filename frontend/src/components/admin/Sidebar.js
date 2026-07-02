@@ -11,37 +11,37 @@ export function Sidebar({ open = false }) {
       path: '/admin/dashboard',
       icon: '📊',
       label: '仪表盘',
-      active: window.location.hash === '#/admin/dashboard'
+      active: window.location.hash === '#/admin/dashboard',
     },
     {
       path: '/admin/domains',
       icon: '🌐',
       label: '域名管理',
-      active: window.location.hash.startsWith('#/admin/domains')
+      active: window.location.hash.startsWith('#/admin/domains'),
     },
     {
       path: '/admin/config',
       icon: '⚙️',
       label: '系统配置',
-      active: window.location.hash.startsWith('#/admin/config')
+      active: window.location.hash.startsWith('#/admin/config'),
     },
     {
       path: '/admin/history',
       icon: '📜',
       label: '历史记录',
-      active: window.location.hash.startsWith('#/admin/history')
+      active: window.location.hash.startsWith('#/admin/history'),
     },
     {
       path: '/admin/stats',
       icon: '📈',
       label: '统计概览',
-      active: window.location.hash.startsWith('#/admin/stats')
-    }
+      active: window.location.hash.startsWith('#/admin/stats'),
+    },
   ]
-  
+
   const activeClass = 'bg-blue-50 text-blue-700 border-r-4 border-blue-700'
   const inactiveClass = 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-  
+
   return `
     <aside 
       class="dm-sidebar fixed lg:static inset-y-0 left-0 z-30 w-60 bg-white border-r border-gray-200 transform ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col"
@@ -52,19 +52,25 @@ export function Sidebar({ open = false }) {
           <span class="text-2xl">🔐</span>
           <span class="text-lg font-bold text-gray-900">域名监控</span>
         </div>
-        ${open ? `
+        ${
+          open
+            ? `
           <button 
             id="sidebar-close-btn"
             class="lg:hidden ml-auto text-gray-500 hover:text-gray-700"
           >
             ✕
           </button>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
       
       <!-- 导航菜单 -->
       <nav class="flex-1 overflow-y-auto py-4">
-        ${navItems.map(item => `
+        ${navItems
+          .map(
+            (item) => `
           <a
             href="#${item.path}"
             class="dm-nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${item.active ? activeClass : inactiveClass}"
@@ -73,7 +79,9 @@ export function Sidebar({ open = false }) {
             <span class="text-lg">${item.icon}</span>
             <span>${item.label}</span>
           </a>
-        `).join('')}
+        `,
+          )
+          .join('')}
       </nav>
       
       <!-- 底部信息 -->

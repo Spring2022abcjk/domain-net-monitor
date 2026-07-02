@@ -1,14 +1,9 @@
 // src/routes/admin/history.js
 
-import { jsonResponse, cleanDomain } from '../../utils/helper.js';
-import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js';
-import {
-  getHistory,
-  getAllHistory,
-  deleteHistory,
-  cleanupHistory
-} from '../../storage/history.js';
-import { getAllDomains } from '../../storage/domains.js';
+import { jsonResponse, cleanDomain } from '../../utils/helper.js'
+import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js'
+import { getHistory, getAllHistory, deleteHistory, cleanupHistory } from '../../storage/history.js'
+import { getAllDomains } from '../../storage/domains.js'
 
 /**
  * 查询历史记录
@@ -23,58 +18,58 @@ import { getAllDomains } from '../../storage/domains.js';
  */
 export async function getHistoryRoute(request, env) {
   if (!isValidAdminToken(request, env)) {
-    return createUnauthorizedResponse();
+    return createUnauthorizedResponse()
   }
 
   try {
-    const url = new URL(request.url);
-    const domain = url.searchParams.get('domain');
-    const days = parseInt(url.searchParams.get('days')) || 7;
-    const limit = parseInt(url.searchParams.get('limit')) || 50;
-    
+    const url = new URL(request.url)
+    const domain = url.searchParams.get('domain')
+    const days = parseInt(url.searchParams.get('days')) || 7
+    const limit = parseInt(url.searchParams.get('limit')) || 50
+
     if (domain) {
       // 查询单域名历史
-      const clean = cleanDomain(domain);
+      const clean = cleanDomain(domain)
       if (!clean) {
-        return jsonResponse(null, 400, 'Invalid domain format');
+        return jsonResponse(null, 400, 'Invalid domain format')
       }
-      
-      const history = await getHistory(env, clean, days, limit);
-      
+
+      const history = await getHistory(env, clean, days, limit)
+
       return jsonResponse({
         domain: clean,
         days,
         limit,
         count: history.length,
-        history
-      });
+        history,
+      })
     } else {
       // 查询所有域名汇总 - 简化：直接使用 getAllHistory
-      const history = await getAllHistory(env, null, days, limit);
-      
-      let totalCount = 0;
+      const history = await getAllHistory(env, null, days, limit)
+
+      let totalCount = 0
       for (const h of Object.values(history)) {
-        totalCount += h.length;
+        totalCount += h.length
       }
-      
+
       // 转换为前端期望的 domains 数组格式
       const domains = Object.entries(history).map(([domain, records]) => ({
         domain,
-        history: records
-      }));
-      
+        history: records,
+      }))
+
       return jsonResponse({
         days,
         limit,
         totalDomains: Object.keys(history).length,
         totalCount,
         history,
-        domains
-      });
+        domains,
+      })
     }
   } catch (error) {
-    console.error('History query failed:', error.message);
-    return jsonResponse(null, 500, `Operation failed: ${error.message}`);
+    console.error('History query failed:', error.message)
+    return jsonResponse(null, 500, `Operation failed: ${error.message}`)
   }
 }
 
@@ -88,22 +83,22 @@ export async function getHistoryRoute(request, env) {
  */
 export async function deleteHistoryRoute(request, env, domain) {
   if (!isValidAdminToken(request, env)) {
-    return createUnauthorizedResponse();
+    return createUnauthorizedResponse()
   }
 
   try {
-    const clean = cleanDomain(domain);
-    
+    const clean = cleanDomain(domain)
+
     if (!clean) {
-      return jsonResponse(null, 400, 'Invalid domain format');
+      return jsonResponse(null, 400, 'Invalid domain format')
     }
-    
-    const result = await deleteHistory(env, clean);
-    
-    return jsonResponse(result, 200, 'History deleted successfully');
+
+    const result = await deleteHistory(env, clean)
+
+    return jsonResponse(result, 200, 'History deleted successfully')
   } catch (error) {
-    console.error('History delete failed:', error.message);
-    return jsonResponse(null, 500, `Operation failed: ${error.message}`);
+    console.error('History delete failed:', error.message)
+    return jsonResponse(null, 500, `Operation failed: ${error.message}`)
   }
 }
 
@@ -118,18 +113,18 @@ export async function deleteHistoryRoute(request, env, domain) {
  */
 export async function cleanupHistoryRoute(request, env) {
   if (!isValidAdminToken(request, env)) {
-    return createUnauthorizedResponse();
+    return createUnauthorizedResponse()
   }
 
   try {
-    const url = new URL(request.url);
-    const retentionDays = parseInt(url.searchParams.get('retentionDays')) || 30;
-    
-    const result = await cleanupHistory(env, retentionDays);
-    
-    return jsonResponse(result, 200, 'Cleanup completed successfully');
+    const url = new URL(request.url)
+    const retentionDays = parseInt(url.searchParams.get('retentionDays')) || 30
+
+    const result = await cleanupHistory(env, retentionDays)
+
+    return jsonResponse(result, 200, 'Cleanup completed successfully')
   } catch (error) {
-    console.error('History cleanup failed:', error.message);
-    return jsonResponse(null, 500, `Operation failed: ${error.message}`);
+    console.error('History cleanup failed:', error.message)
+    return jsonResponse(null, 500, `Operation failed: ${error.message}`)
   }
 }

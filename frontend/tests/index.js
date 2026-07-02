@@ -33,32 +33,30 @@ const testGroups = [
       runLoginIntegrationTests,
       runAdminDashboardTests,
       runPublicDashboardTests,
-      runDomainDetailTests
-    ]
+      runDomainDetailTests,
+    ],
   },
   {
     name: 'Integration Tests',
-    tests: [
-      runAPIIntegrationTests
-    ]
-  }
+    tests: [runAPIIntegrationTests],
+  },
 ]
 
 async function runAllTests() {
   const startTime = Date.now()
-  
+
   for (const group of testGroups) {
     console.log('')
     console.log(`═══════════════════════════════════════════`)
     console.log(`  Running: ${group.name}`)
     console.log(`═══════════════════════════════════════════`)
     console.log('')
-    
+
     for (const test of group.tests) {
       await test()
     }
   }
-  
+
   const duration = Date.now() - startTime
   console.log('')
   console.log(`═══════════════════════════════════════════`)

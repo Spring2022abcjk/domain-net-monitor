@@ -20,13 +20,19 @@ export class AdminDomains {
     this.loading = false
     this.showAddModal = false
     this.newDomainInput = ''
-    this.__addDomainHandler = () => { this.showAddModal = true; this.newDomainInput = '' }
-    this.__cancelAddHandler = () => { this.showAddModal = false; this.newDomainInput = '' }
+    this.__addDomainHandler = () => {
+      this.showAddModal = true
+      this.newDomainInput = ''
+    }
+    this.__cancelAddHandler = () => {
+      this.showAddModal = false
+      this.newDomainInput = ''
+    }
     this.__confirmAddHandler = () => this.handleAddDomain()
     this.__batchDeleteHandler = () => this.handleBatchDelete()
     this.__selectAllHandler = (e) => {
       if (e.target.checked) {
-        this.selectedDomains = this.domains.map(d => d.domain)
+        this.selectedDomains = this.domains.map((d) => d.domain)
       } else {
         this.selectedDomains = []
       }
@@ -45,7 +51,7 @@ export class AdminDomains {
         if (checkbox.checked) {
           this.selectedDomains.push(domain)
         } else {
-          this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
+          this.selectedDomains = this.selectedDomains.filter((d) => d !== domain)
         }
         return
       }
@@ -114,13 +120,13 @@ export class AdminDomains {
             variant: 'danger',
             size: 'md',
             disabled: this.selectedDomains.length === 0,
-            id: 'batchDeleteBtn'
+            id: 'batchDeleteBtn',
           })}
           ${Button({
             text: '添加域名',
             variant: 'primary',
             size: 'md',
-            id: 'addDomainBtn'
+            id: 'addDomainBtn',
           })}
         </div>
       </div>
@@ -141,7 +147,7 @@ export class AdminDomains {
             text: '添加域名',
             variant: 'primary',
             size: 'md',
-            id: 'emptyAddBtn'
+            id: 'emptyAddBtn',
           })}
         </div>
       `
@@ -158,7 +164,7 @@ export class AdminDomains {
             data-domain="${row.domain}"
             ${this.selectedDomains.includes(row.domain) ? 'checked' : ''}
           />
-        `
+        `,
       },
       {
         key: 'domain',
@@ -167,25 +173,26 @@ export class AdminDomains {
           <a href="#/admin/history?domain=${encodeURIComponent(value)}" class="text-blue-600 hover:underline font-medium">
             ${value}
           </a>
-        `
+        `,
       },
       {
         key: 'status',
         title: '状态',
-        render: (value) => this.renderStatusBadge(value)
+        render: (value) => this.renderStatusBadge(value),
       },
       {
         key: 'lastChecked',
         title: '最近检测',
-        render: (value) => value ? formatDate(value) : '<span class="text-gray-400">暂无</span>'
+        render: (value) => (value ? formatDate(value) : '<span class="text-gray-400">暂无</span>'),
       },
       {
         key: 'isDefault',
         title: '默认展示',
-        render: (value, row) => Toggle({
-          checked: value,
-          id: `toggle-${row.domain.replace(/\./g, '-')}`
-        })
+        render: (value, row) =>
+          Toggle({
+            checked: value,
+            id: `toggle-${row.domain.replace(/\./g, '-')}`,
+          }),
       },
       {
         key: 'actions',
@@ -197,8 +204,8 @@ export class AdminDomains {
           >
             删除
           </button>
-        `
-      }
+        `,
+      },
     ]
 
     return Table({ columns, data: this.domains })
@@ -248,15 +255,15 @@ export class AdminDomains {
           ${Button({
             text: '取消',
             variant: 'secondary',
-            id: 'cancelAddBtn'
+            id: 'cancelAddBtn',
           })}
           ${Button({
             text: '添加',
             variant: 'primary',
-            id: 'confirmAddBtn'
+            id: 'confirmAddBtn',
           })}
         </div>
-      `
+      `,
     })
   }
 
@@ -315,10 +322,13 @@ export class AdminDomains {
     }
 
     // 解析多个域名
-    const domains = input.split(',').map(d => d.trim()).filter(Boolean)
+    const domains = input
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean)
 
     // 验证域名格式
-    const invalidDomains = domains.filter(d => !isValidDomain(d))
+    const invalidDomains = domains.filter((d) => !isValidDomain(d))
     if (invalidDomains.length > 0) {
       show.error(`以下域名格式不正确：${invalidDomains.join(', ')}`)
       return
@@ -393,7 +403,7 @@ export class AdminDomains {
    */
   async handleToggleDefault(domain) {
     try {
-      const isCurrentlyDefault = this.domains.find(d => d.domain === domain)?.isDefault
+      const isCurrentlyDefault = this.domains.find((d) => d.domain === domain)?.isDefault
 
       if (isCurrentlyDefault) {
         await del(`/api/admin/domains/${encodeURIComponent(domain)}/default`)
@@ -417,7 +427,7 @@ export class AdminDomains {
       await del(`/api/admin/domains/${encodeURIComponent(domain)}`)
       show.success('域名已删除')
       await this.loadData()
-      this.selectedDomains = this.selectedDomains.filter(d => d !== domain)
+      this.selectedDomains = this.selectedDomains.filter((d) => d !== domain)
       this.render()
       this.bindEvents()
     } catch (error) {

@@ -15,9 +15,9 @@ export function EmptyState({ title = '暂无数据', message = '', icon = 'empty
     `,
     error: `
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    `
+    `,
   }
-  
+
   return `
     <div class="dm-empty-state col-span-full text-center py-12">
       <div class="text-gray-400">

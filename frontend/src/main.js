@@ -10,15 +10,15 @@ function init() {
     console.error('[App] Mount point #app not found')
     return
   }
-  
+
   // 渲染根组件
   app.innerHTML = App.render()
-  
+
   // 初始化路由
   if (App.init) {
     App.init()
   }
-  
+
   console.log('[App] Initialized')
 }
 

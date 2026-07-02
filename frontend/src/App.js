@@ -13,12 +13,12 @@ export default {
    */
   render() {
     const currentPage = getCurrentPage()
-    
+
     // 路由初始化前，currentPage 可能为 null
     if (!currentPage || !currentPage.render) {
       return '<div class="min-h-screen flex items-center justify-center">加载中...</div>'
     }
-    
+
     return `
       <div class="min-h-screen flex flex-col">
         ${Header.render()}
@@ -29,7 +29,7 @@ export default {
       </div>
     `
   },
-  
+
   /**
    * 初始化应用
    */
@@ -42,5 +42,5 @@ export default {
     }
     // 初始化路由
     initRouter()
-  }
+  },
 }

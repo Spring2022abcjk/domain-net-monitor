@@ -15,58 +15,67 @@ export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix =
       </div>
     `
   }
-  
+
   const getColumnAlignClass = (align) => {
     switch (align) {
-      case 'center': return 'text-center'
-      case 'right': return 'text-right'
-      default: return 'text-left'
+      case 'center':
+        return 'text-center'
+      case 'right':
+        return 'text-right'
+      default:
+        return 'text-left'
     }
   }
-  
+
   return `
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            ${columns.map(col => `
+            ${columns
+              .map(
+                (col) => `
               <th 
                 class="px-6 py-3 ${getColumnAlignClass(col.align)} text-xs font-medium text-gray-500 uppercase tracking-wider"
                 ${col.width ? `style="width: ${col.width}"` : ''}
               >
                 ${col.title}
               </th>
-            `).join('')}
+            `,
+              )
+              .join('')}
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          ${data.map((row, index) => {
-            const customClass = rowClassName ? rowClassName(row, index) : ''
-            return `
+          ${data
+            .map((row, index) => {
+              const customClass = rowClassName ? rowClassName(row, index) : ''
+              return `
               <tr 
                 class="hover:bg-gray-50 ${customClass}" 
                 id="${rowIdPrefix}-${index}" 
                 data-row-index="${index}"
               >
-                ${columns.map(col => {
-                  const cellValue = row[col.key]
-                  let displayValue
-                  if (col.render && typeof col.render === 'function') {
-                    displayValue = col.render(cellValue, row, index, col)
-                  } else {
-                    displayValue = cellValue !== null && cellValue !== undefined 
-                      ? String(cellValue) 
-                      : '-'
-                  }
-                  return `
+                ${columns
+                  .map((col) => {
+                    const cellValue = row[col.key]
+                    let displayValue
+                    if (col.render && typeof col.render === 'function') {
+                      displayValue = col.render(cellValue, row, index, col)
+                    } else {
+                      displayValue = cellValue !== null && cellValue !== undefined ? String(cellValue) : '-'
+                    }
+                    return `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${getColumnAlignClass(col.align)}">
                       ${displayValue}
                     </td>
                   `
-                }).join('')}
+                  })
+                  .join('')}
               </tr>
             `
-          }).join('')}
+            })
+            .join('')}
         </tbody>
       </table>
     </div>

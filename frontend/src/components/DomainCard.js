@@ -20,30 +20,30 @@ export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetai
     const minutes = String(d.getMinutes()).padStart(2, '0')
     return `${year}-${month}-${day} ${hours}:${minutes}`
   }
-  
+
   // 状态白名单验证（防 XSS）
   const validStatuses = ['active', 'stopped', 'checking', 'unknown']
   const safeStatus = validStatuses.includes(status) ? status : 'unknown'
-  
+
   const statusColors = {
     active: 'bg-green-100 text-green-800',
     stopped: 'bg-red-100 text-red-800',
     checking: 'bg-yellow-100 text-yellow-800',
-    unknown: 'bg-gray-100 text-gray-800'
+    unknown: 'bg-gray-100 text-gray-800',
   }
-  
+
   const statusLabels = {
     active: '运行中',
     stopped: '已停止',
     checking: '检测中',
-    unknown: '未知'
+    unknown: '未知',
   }
-  
+
   const statusClass = statusColors[safeStatus] || statusColors.unknown
   const statusLabel = statusLabels[safeStatus] || statusLabels.unknown
-  
+
   const buttonId = generateElementId('btn-detail', domain)
-  
+
   return `
     <div class="dm-card p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-center justify-between mb-4">

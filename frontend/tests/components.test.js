@@ -12,47 +12,19 @@ const frontendRoot = join(process.cwd())
 async function runComponentsTests() {
   // ========== 组件文件存在测试 ==========
   await runSuite('Components - All Files Exist', async () => {
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/Button.js')),
-      true,
-      'Button.js exists'
-    )
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/Input.js')),
-      true,
-      'Input.js exists'
-    )
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/Card.js')),
-      true,
-      'Card.js exists'
-    )
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/Loading.js')),
-      true,
-      'Loading.js exists'
-    )
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/Table.js')),
-      true,
-      'Table.js exists'
-    )
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/Notification.js')),
-      true,
-      'Notification.js exists'
-    )
-    assertEqual(
-      existsSync(join(frontendRoot, 'src/components/index.js')),
-      true,
-      'index.js exists'
-    )
+    assertEqual(existsSync(join(frontendRoot, 'src/components/Button.js')), true, 'Button.js exists')
+    assertEqual(existsSync(join(frontendRoot, 'src/components/Input.js')), true, 'Input.js exists')
+    assertEqual(existsSync(join(frontendRoot, 'src/components/Card.js')), true, 'Card.js exists')
+    assertEqual(existsSync(join(frontendRoot, 'src/components/Loading.js')), true, 'Loading.js exists')
+    assertEqual(existsSync(join(frontendRoot, 'src/components/Table.js')), true, 'Table.js exists')
+    assertEqual(existsSync(join(frontendRoot, 'src/components/Notification.js')), true, 'Notification.js exists')
+    assertEqual(existsSync(join(frontendRoot, 'src/components/index.js')), true, 'index.js exists')
   })
-  
+
   // ========== Button 组件测试 ==========
   await runSuite('Components - Button', async () => {
     const button = readFileSync(join(frontendRoot, 'src/components/Button.js'), 'utf-8')
-    
+
     assertEqual(button.includes('export function Button'), true, 'Has Button function')
     assertEqual(button.includes('dm-btn'), true, 'Uses dm-btn class')
     assertEqual(button.includes('dm-btn-primary'), true, 'Supports primary variant')
@@ -63,11 +35,11 @@ async function runComponentsTests() {
     assertEqual(button.includes('id='), true, 'Supports id attribute')
     assertEqual(button.includes('data-'), true, 'Supports data attributes')
   })
-  
+
   // ========== Input 组件测试 ==========
   await runSuite('Components - Input', async () => {
     const input = readFileSync(join(frontendRoot, 'src/components/Input.js'), 'utf-8')
-    
+
     assertEqual(input.includes('export function Input'), true, 'Has Input function')
     assertEqual(input.includes('dm-input'), true, 'Uses dm-input class')
     assertEqual(input.includes('label'), true, 'Supports label')
@@ -78,31 +50,31 @@ async function runComponentsTests() {
     assertEqual(input.includes('pattern'), true, 'Supports pattern validation')
     assertEqual(input.includes('minlength'), true, 'Supports minlength')
     assertEqual(input.includes('maxlength'), true, 'Supports maxlength')
-    assertEqual(input.includes('oninput') || input.includes("onInput"), false, 'No inline event handler attributes')
+    assertEqual(input.includes('oninput') || input.includes('onInput'), false, 'No inline event handler attributes')
   })
-  
+
   // ========== Card 组件测试 ==========
   await runSuite('Components - Card', async () => {
     const card = readFileSync(join(frontendRoot, 'src/components/Card.js'), 'utf-8')
-    
+
     assertEqual(card.includes('export function Card'), true, 'Has Card function')
     assertEqual(card.includes('dm-card'), true, 'Uses dm-card class')
     assertEqual(card.includes('hoverable'), true, 'Supports hoverable')
   })
-  
+
   // ========== Loading 组件测试 ==========
   await runSuite('Components - Loading', async () => {
     const loading = readFileSync(join(frontendRoot, 'src/components/Loading.js'), 'utf-8')
-    
+
     assertEqual(loading.includes('export function Loading'), true, 'Has Loading function')
     assertEqual(loading.includes('animate-spin'), true, 'Has spin animation')
     assertEqual(loading.includes('svg'), true, 'Uses SVG spinner')
   })
-  
+
   // ========== Table 组件测试 ==========
   await runSuite('Components - Table', async () => {
     const table = readFileSync(join(frontendRoot, 'src/components/Table.js'), 'utf-8')
-    
+
     assertEqual(table.includes('export function Table'), true, 'Has Table function')
     assertEqual(table.includes('columns'), true, 'Supports columns definition')
     assertEqual(table.includes('data'), true, 'Supports data array')
@@ -112,13 +84,13 @@ async function runComponentsTests() {
     assertEqual(table.includes('align'), true, 'Supports column alignment')
     assertEqual(table.includes('text-center'), true, 'Supports center alignment')
     assertEqual(table.includes('text-right'), true, 'Supports right alignment')
-    assertEqual(table.includes('onclick') || table.includes("onClick"), false, 'No inline onclick handlers')
+    assertEqual(table.includes('onclick') || table.includes('onClick'), false, 'No inline onclick handlers')
   })
-  
+
   // ========== Notification 组件测试 ==========
   await runSuite('Components - Notification', async () => {
     const notification = readFileSync(join(frontendRoot, 'src/components/Notification.js'), 'utf-8')
-    
+
     assertEqual(notification.includes('export { show'), true, 'Has show function')
     assertEqual(notification.includes('success'), true, 'Has success method')
     assertEqual(notification.includes('error'), true, 'Has error method')
@@ -126,26 +98,26 @@ async function runComponentsTests() {
     assertEqual(notification.includes('info'), true, 'Has info method')
     assertEqual(notification.includes('animate-slide-in-right'), true, 'Has slide-in animation')
   })
-  
+
   // ========== 组件索引测试 ==========
   await runSuite('Components - Index Exports', async () => {
     const index = readFileSync(join(frontendRoot, 'src/components/index.js'), 'utf-8')
-    
-    assertEqual(index.includes("export { default as Header }"), true, 'Exports Header')
-    assertEqual(index.includes("export { default as Button }"), true, 'Exports Button')
-    assertEqual(index.includes("export { default as Input }"), true, 'Exports Input')
-    assertEqual(index.includes("export { default as Card }"), true, 'Exports Card')
-    assertEqual(index.includes("export { default as Loading }"), true, 'Exports Loading')
-    assertEqual(index.includes("export { default as Table }"), true, 'Exports Table')
-    assertEqual(index.includes("export { default as Notification }"), true, 'Exports Notification')
+
+    assertEqual(index.includes('export { default as Header }'), true, 'Exports Header')
+    assertEqual(index.includes('export { default as Button }'), true, 'Exports Button')
+    assertEqual(index.includes('export { default as Input }'), true, 'Exports Input')
+    assertEqual(index.includes('export { default as Card }'), true, 'Exports Card')
+    assertEqual(index.includes('export { default as Loading }'), true, 'Exports Loading')
+    assertEqual(index.includes('export { default as Table }'), true, 'Exports Table')
+    assertEqual(index.includes('export { default as Notification }'), true, 'Exports Notification')
   })
-  
+
   // ========== dm- 前缀测试 ==========
   await runSuite('Components - Use dm- Prefix', async () => {
     const button = readFileSync(join(frontendRoot, 'src/components/Button.js'), 'utf-8')
     const input = readFileSync(join(frontendRoot, 'src/components/Input.js'), 'utf-8')
     const card = readFileSync(join(frontendRoot, 'src/components/Card.js'), 'utf-8')
-    
+
     assertEqual(button.includes('dm-btn'), true, 'Button uses dm- prefix')
     assertEqual(input.includes('dm-input'), true, 'Input uses dm- prefix')
     assertEqual(card.includes('dm-card'), true, 'Card uses dm- prefix')

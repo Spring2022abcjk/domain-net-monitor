@@ -29,7 +29,7 @@ export class PublicDashboard {
       if (btn) this.handleViewDetail(btn.dataset.domain)
     }
   }
-  
+
   async init() {
     this.loading = true
     await this.loadDomains()
@@ -37,12 +37,12 @@ export class PublicDashboard {
     this.bindEvents()
     this.loading = false
   }
-  
+
   async loadDomains() {
     try {
       // 优先使用用户登录配置的端点
       const userEndpoint = getApiEndpoint()
-      
+
       // 如果没有用户配置，使用 Vite 注入的环境变量
       if (userEndpoint) {
         setApiBaseUrl(userEndpoint)
@@ -55,7 +55,7 @@ export class PublicDashboard {
         show.info('请先在管理后台配置 API 端点')
         return
       }
-      
+
       const res = await get('/api/public/domains')
       this.domains = res.data.domains || []
       this.filteredDomains = this.domains
@@ -63,7 +63,7 @@ export class PublicDashboard {
       console.error('Failed to load domains:', error)
       this.domains = []
       this.filteredDomains = []
-      
+
       // 根据错误类型提供不同提示
       if (error.status === 404) {
         show.error('API 端点不存在，请确认后端服务已部署')
@@ -76,26 +76,31 @@ export class PublicDashboard {
       }
     }
   }
-  
+
   render() {
-    const searchBox = SearchBox({ 
+    const searchBox = SearchBox({
       value: this.searchQuery,
-      id: 'domain-search'
+      id: 'domain-search',
     })
-    
-    const domainCards = this.filteredDomains.length > 0 
-      ? this.filteredDomains.map(d => DomainCard({
-          domain: d.domain,
-          status: d.status,
-          firstSeen: d.firstSeen,
-          lastChecked: d.lastChecked
-        })).join('')
-      : EmptyState({
-          title: '暂无监控域名',
-          message: '请先在管理后台添加域名',
-          icon: 'empty'
-        })
-    
+
+    const domainCards =
+      this.filteredDomains.length > 0
+        ? this.filteredDomains
+            .map((d) =>
+              DomainCard({
+                domain: d.domain,
+                status: d.status,
+                firstSeen: d.firstSeen,
+                lastChecked: d.lastChecked,
+              }),
+            )
+            .join('')
+        : EmptyState({
+            title: '暂无监控域名',
+            message: '请先在管理后台添加域名',
+            icon: 'empty',
+          })
+
     return `
       <div class="min-h-screen flex flex-col bg-gray-50">
         <!-- Header -->
@@ -134,7 +139,7 @@ export class PublicDashboard {
       </div>
     `
   }
-  
+
   bindEvents() {
     const searchBtn = document.getElementById('btn-search')
     const searchInput = document.getElementById('domain-search')
@@ -150,34 +155,32 @@ export class PublicDashboard {
     searchInput?.addEventListener('keydown', this.__searchKeyHandler)
     container?.addEventListener('click', this.__domainClickHandler)
   }
-  
+
   triggerSearch() {
     const searchInput = document.getElementById('domain-search')
     if (searchInput) {
       this.debouncedSearch()
     }
   }
-  
+
   _doSearch() {
     const searchInput = document.getElementById('domain-search')
     this.searchQuery = searchInput ? searchInput.value.trim().toLowerCase() : ''
-    
+
     if (!this.searchQuery) {
       this.filteredDomains = this.domains
     } else {
-      this.filteredDomains = this.domains.filter(d => 
-        d.domain.toLowerCase().includes(this.searchQuery)
-      )
+      this.filteredDomains = this.domains.filter((d) => d.domain.toLowerCase().includes(this.searchQuery))
     }
-    
+
     this.render()
     this.bindEvents()
   }
-  
+
   handleViewDetail(domain) {
     window.location.hash = '#/domain/' + encodeURIComponent(domain)
   }
-  
+
   destroy() {
     document.getElementById('btn-search')?.removeEventListener('click', this.__searchClickHandler)
     document.getElementById('domain-search')?.removeEventListener('input', this.__searchInputHandler)

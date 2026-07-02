@@ -11,7 +11,7 @@ export async function runSuite(name, fn) {
   console.log('\n' + '='.repeat(50))
   console.log(`Running: ${name}`)
   console.log('='.repeat(50))
-  
+
   try {
     await fn()
     console.log(`✅ Suite "${name}" passed\n`)

@@ -87,7 +87,11 @@ export async function runAdminStatsTests() {
   await runSuite('Task 20 - AdminStats Responsive Layout', () => {
     const content = readFileSync(join(ROOT, 'src/pages/admin/AdminStats.js'), 'utf-8')
 
-    assertEqual(content.includes('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'), true, 'Has responsive grid (4 cols)')
+    assertEqual(
+      content.includes('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'),
+      true,
+      'Has responsive grid (4 cols)',
+    )
     assertEqual(content.includes('grid grid-cols-1 md:grid-cols-2 gap-6'), true, 'Has responsive grid (2 cols)')
     assertEqual(content.includes('Card'), true, 'Uses Card component')
   })
@@ -117,8 +121,8 @@ export async function runAdminStatsTests() {
     const content = readFileSync(join(ROOT, 'src/pages/admin/AdminStats.js'), 'utf-8')
 
     assertEqual(content.includes('|| 0'), true, 'Handles null numbers')
-    assertEqual(content.includes('|| \'0.00%\''), true, 'Handles null percentage')
-    assertEqual(content.includes('|| \'0.0 days\''), true, 'Handles null uptime')
+    assertEqual(content.includes("|| '0.00%'"), true, 'Handles null percentage')
+    assertEqual(content.includes("|| '0.0 days'"), true, 'Handles null uptime')
   })
 }
 

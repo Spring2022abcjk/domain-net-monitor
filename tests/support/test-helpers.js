@@ -5,39 +5,39 @@
  * 提供常用的测试工具函数，减少重复代码
  */
 
-import { assert, assertEqual } from '../test-runner.js';
+import { assert, assertEqual } from '../test-runner.js'
 
-export { assertEqual };
+export { assertEqual }
 
 /**
  * 创建 Mock KV 存储
  * @returns {Object} Mock KV 对象，模拟 Cloudflare KV API
  */
 export function createMockKV() {
-  const store = {};
+  const store = {}
   return {
     async get(key) {
-      return store[key] || null;
+      return store[key] || null
     },
     async put(key, value) {
-      store[key] = value;
+      store[key] = value
     },
     async delete(key) {
-      delete store[key];
+      delete store[key]
     },
     async list({ prefix }) {
       const keys = Object.keys(store)
-        .filter(key => key.startsWith(prefix))
-        .map(key => ({ name: key }));
-      return { keys };
+        .filter((key) => key.startsWith(prefix))
+        .map((key) => ({ name: key }))
+      return { keys }
     },
     /**
      * 清空 KV 存储（用于重置测试状态）
      */
     clear() {
-      Object.keys(store).forEach(key => delete store[key]);
-    }
-  };
+      Object.keys(store).forEach((key) => delete store[key])
+    },
+  }
 }
 
 /**
@@ -50,8 +50,8 @@ export function createMockEnv(overrides = {}) {
     DOMAIN_MONITOR_KV: createMockKV(),
     CLOUDFLARE_API_TOKEN: 'test_secret_token_123',
     ALLOWED_ORIGINS: '*',
-    ...overrides
-  };
+    ...overrides,
+  }
 }
 
 /**
@@ -65,28 +65,28 @@ export function createMockEnv(overrides = {}) {
 export function createMockRequest(url, method = 'GET', body = null, headers = {}) {
   const options = {
     method,
-    headers
-  };
-  if (body) {
-    options.body = JSON.stringify(body);
-    options.headers['Content-Type'] = 'application/json';
+    headers,
   }
-  return new Request(url, options);
+  if (body) {
+    options.body = JSON.stringify(body)
+    options.headers['Content-Type'] = 'application/json'
+  }
+  return new Request(url, options)
 }
 
 /**
  * 从 API 响应中提取 data 字段
  * @param {Response} response - 响应对象
  * @returns {Promise<Object>} data 字段内容
- * 
+ *
  * @example
  * const response = await handleDomains(request, env);
  * const data = await getData(response);
  * assertEqual(data.domains.length, 2, 'Two domains');
  */
 export async function getData(response) {
-  const body = await response.json();
-  return body.data;
+  const body = await response.json()
+  return body.data
 }
 
 /**
@@ -96,7 +96,7 @@ export async function getData(response) {
  * @param {string} [message] - 描述信息
  */
 export function assertStatus(response, expected, message = 'Status code') {
-  assertEqual(response.status, expected, message);
+  assertEqual(response.status, expected, message)
 }
 
 /**
@@ -106,8 +106,8 @@ export function assertStatus(response, expected, message = 'Status code') {
  * @param {string} [message] - 描述信息
  */
 export async function assertCode(response, expected, message = 'Error code') {
-  const body = await response.json();
-  assertEqual(body.code, expected, message);
+  const body = await response.json()
+  assertEqual(body.code, expected, message)
 }
 
 /**
@@ -117,8 +117,8 @@ export async function assertCode(response, expected, message = 'Error code') {
  * @param {string} [message] - 描述信息
  */
 export async function assertMessage(response, expected, message = 'Error message') {
-  const body = await response.json();
-  assertEqual(body.msg, expected, message);
+  const body = await response.json()
+  assertEqual(body.msg, expected, message)
 }
 
 /**
@@ -126,7 +126,7 @@ export async function assertMessage(response, expected, message = 'Error message
  * @param {Response} response - 响应对象
  * @param {number} status - 期望的状态码
  * @param {Object} dataAssertions - data 字段断言键值对
- * 
+ *
  * @example
  * await assertResponse(response, 200, {
  *   'domains.length': 2,
@@ -134,11 +134,11 @@ export async function assertMessage(response, expected, message = 'Error message
  * });
  */
 export async function assertResponse(response, status, dataAssertions) {
-  assertStatus(response, status, 'Response status');
-  const data = await getData(response);
-  
+  assertStatus(response, status, 'Response status')
+  const data = await getData(response)
+
   for (const [key, expected] of Object.entries(dataAssertions)) {
-    const actual = key.split('.').reduce((obj, k) => obj?.[k], data);
-    assertEqual(actual, expected, `${key} assertion`);
+    const actual = key.split('.').reduce((obj, k) => obj?.[k], data)
+    assertEqual(actual, expected, `${key} assertion`)
   }
 }

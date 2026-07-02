@@ -1,5 +1,5 @@
-import { queryDoH } from '../doh/client.js';
-import { DNS_TYPE_HTTPS, STATUS_OK, STATUS_NO, STATUS_ERROR } from '../config.js';
+import { queryDoH } from '../doh/client.js'
+import { DNS_TYPE_HTTPS, STATUS_OK, STATUS_NO, STATUS_ERROR } from '../config.js'
 
 /**
  * ECH 能力检测
@@ -9,46 +9,46 @@ import { DNS_TYPE_HTTPS, STATUS_OK, STATUS_NO, STATUS_ERROR } from '../config.js
  */
 export async function detectEch(domain) {
   try {
-    const dohResponse = await queryDoH(domain, DNS_TYPE_HTTPS);
+    const dohResponse = await queryDoH(domain, DNS_TYPE_HTTPS)
 
     if (!dohResponse || dohResponse.Status !== 0) {
       return {
         status: STATUS_ERROR,
-        message: `DoH query failed`
-      };
+        message: `DoH query failed`,
+      }
     }
 
     if (!dohResponse.Answer || dohResponse.Answer.length === 0) {
       return {
         status: STATUS_NO,
-        message: 'No HTTPS RR records found, ECH not supported'
-      };
+        message: 'No HTTPS RR records found, ECH not supported',
+      }
     }
 
-    const hasEchConfig = dohResponse.Answer.some(record => {
+    const hasEchConfig = dohResponse.Answer.some((record) => {
       if (record.type !== DNS_TYPE_HTTPS || !record.data) {
-        return false;
+        return false
       }
 
-      const dataStr = JSON.stringify(record).toLowerCase();
-      return dataStr.includes('ech') || dataStr.includes('encrypted_client_hello');
-    });
+      const dataStr = JSON.stringify(record).toLowerCase()
+      return dataStr.includes('ech') || dataStr.includes('encrypted_client_hello')
+    })
 
     if (hasEchConfig) {
       return {
         status: STATUS_OK,
-        message: 'ECH configuration found in HTTPS RR record'
-      };
+        message: 'ECH configuration found in HTTPS RR record',
+      }
     }
 
     return {
       status: STATUS_NO,
-      message: 'No ECH configuration found in HTTPS RR record'
-    };
+      message: 'No ECH configuration found in HTTPS RR record',
+    }
   } catch (error) {
     return {
       status: STATUS_ERROR,
-      message: `DoH query failed: ${error.message}`
-    };
+      message: `DoH query failed: ${error.message}`,
+    }
   }
 }

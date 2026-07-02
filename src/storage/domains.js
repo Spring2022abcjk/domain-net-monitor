@@ -1,6 +1,6 @@
 // src/storage/domains.js
 
-import { getDomainList, setDomainList } from './kv.js';
+import { getDomainList, setDomainList } from './kv.js'
 
 /**
  * 获取所有域名（从 KV 读取）
@@ -8,7 +8,7 @@ import { getDomainList, setDomainList } from './kv.js';
  * @returns {Promise<string[]>} 域名数组
  */
 export async function getAllDomains(env) {
-  return await getDomainList(env);
+  return await getDomainList(env)
 }
 
 /**
@@ -17,14 +17,14 @@ export async function getAllDomains(env) {
  * @param {string} domain - 域名
  */
 export async function addDomain(env, domain) {
-  const domains = await getDomainList(env);
-  
+  const domains = await getDomainList(env)
+
   if (!domains.includes(domain)) {
-    domains.push(domain);
-    await setDomainList(env, domains);
+    domains.push(domain)
+    await setDomainList(env, domains)
   }
-  
-  return domains;
+
+  return domains
 }
 
 /**
@@ -33,8 +33,8 @@ export async function addDomain(env, domain) {
  * @param {string} domain - 域名
  */
 export async function removeDomain(env, domain) {
-  const domains = await getDomainList(env);
-  const filtered = domains.filter(d => d !== domain);
-  await setDomainList(env, filtered);
-  return filtered;
+  const domains = await getDomainList(env)
+  const filtered = domains.filter((d) => d !== domain)
+  await setDomainList(env, filtered)
+  return filtered
 }

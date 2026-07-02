@@ -7,33 +7,31 @@
 function matchRoute(path, pattern) {
   const patternParts = pattern.split('/').filter(Boolean)
   const pathParts = path.split('/').filter(Boolean)
-  
+
   if (patternParts.length !== pathParts.length) return null
-  
+
   const params = {}
   for (let i = 0; i < patternParts.length; i++) {
     const patternPart = patternParts[i]
     const pathPart = pathParts[i]
-    
+
     if (patternPart.startsWith(':')) {
       params[patternPart.slice(1)] = decodeURIComponent(pathPart)
     } else if (patternPart !== pathPart) {
       return null
     }
   }
-  
+
   return params
 }
 
 // 模拟 findChildRoute 函数（来自 index.js）
 function findChildRoute(parentRoute, fullPath) {
   if (!parentRoute.children) return null
-  
+
   const parentPath = parentRoute.path
-  const childPath = fullPath.startsWith(parentPath + '/') 
-    ? fullPath.slice(parentPath.length + 1)
-    : fullPath
-  
+  const childPath = fullPath.startsWith(parentPath + '/') ? fullPath.slice(parentPath.length + 1) : fullPath
+
   for (const child of parentRoute.children) {
     if (child.path === childPath) return child
   }
@@ -45,7 +43,7 @@ function findRoute(path) {
   let matchedRoute = null
   let parentRoute = null
   let params = {}
-  
+
   const routes = [
     { name: 'public', path: '/', children: undefined },
     { name: 'login', path: '/login', children: undefined },
@@ -57,15 +55,15 @@ function findRoute(path) {
         { name: 'admin-domains', path: 'domains' },
         { name: 'admin-config', path: 'config' },
         { name: 'admin-history', path: 'history' },
-        { name: 'admin-stats', path: 'stats' }
-      ]
+        { name: 'admin-stats', path: 'stats' },
+      ],
     },
-    { name: 'notfound', path: '*', children: undefined }
+    { name: 'notfound', path: '*', children: undefined },
   ]
-  
+
   for (const route of routes) {
     if (route.path === '*') continue
-    
+
     // === 修复后的逻辑：先检查嵌套路由 ===
     if (route.children && path.startsWith(route.path + '/')) {
       parentRoute = route
@@ -76,7 +74,7 @@ function findRoute(path) {
         break
       }
     }
-    
+
     // 普通路由匹配
     const routeParams = matchRoute(path, route.path)
     if (routeParams) {
@@ -85,11 +83,11 @@ function findRoute(path) {
       break
     }
   }
-  
+
   if (!matchedRoute) {
-    matchedRoute = routes.find(r => r.path === '*')
+    matchedRoute = routes.find((r) => r.path === '*')
   }
-  
+
   return { matchedRoute, parentRoute, params }
 }
 
@@ -167,7 +165,7 @@ test('未知路由：返回 404', () => {
 test('带查询参数的路由', () => {
   // 实际场景中，hashchange 事件会先提取 path 部分
   const hash = '#/admin/domains?page=1&size=10'
-  const path = parseHash(hash)  // 提取出 '/admin/domains'
+  const path = parseHash(hash) // 提取出 '/admin/domains'
   const result = findRoute(path)
   assert(result.matchedRoute.name === 'admin-domains', '应该匹配 admin-domains')
   assert(result.parentRoute.name === 'admin', '父路由应该是 admin')
@@ -179,10 +177,10 @@ test('动态参数路由（模拟）', () => {
 })
 
 // 运行测试
-console.log("╔══════════════════════════════════════════════════════╗")
-console.log("║           路由系统单元测试                            ║")
-console.log("╚══════════════════════════════════════════════════════╝")
-console.log("")
+console.log('╔══════════════════════════════════════════════════════╗')
+console.log('║           路由系统单元测试                            ║')
+console.log('╚══════════════════════════════════════════════════════╝')
+console.log('')
 
 let passed = 0
 let failed = 0
@@ -201,19 +199,19 @@ tests.forEach(({ name, fn }) => {
   }
 })
 
-console.log("")
-console.log("═══════════════════════════════════════════════════════")
+console.log('')
+console.log('═══════════════════════════════════════════════════════')
 console.log(`结果：${passed} 通过 / ${tests.length} 总计`)
 if (failed > 0) {
   console.log(`失败：${failed}`)
-  console.log("")
-  console.log("错误详情:")
+  console.log('')
+  console.log('错误详情:')
   errors.forEach(({ name, error }) => {
     console.log(`  - ${name}: ${error.message}`)
   })
 } else {
-  console.log("✅ 所有测试通过！")
+  console.log('✅ 所有测试通过！')
 }
-console.log("═══════════════════════════════════════════════════════")
+console.log('═══════════════════════════════════════════════════════')
 
 process.exit(failed > 0 ? 1 : 0)

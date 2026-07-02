@@ -18,11 +18,11 @@
  * @param {number} [props.min] - 最小值（number 类型）
  * @param {number} [props.max] - 最大值（number 类型）
  */
-export function Input({ 
-  type, 
-  id, 
-  placeholder, 
-  value = '', 
+export function Input({
+  type,
+  id,
+  placeholder,
+  value = '',
   required = false,
   label,
   error,
@@ -34,7 +34,7 @@ export function Input({
   minlength,
   maxlength,
   min,
-  max
+  max,
 }) {
   return `
     <div class="mb-4">

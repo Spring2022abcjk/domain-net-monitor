@@ -35,13 +35,10 @@ export class AdminConfig {
     if (this.config) return
     try {
       this.loading = true
-      const [configRes, dohRes] = await Promise.all([
-        get('/api/admin/config'),
-        get('/api/admin/doh')
-      ])
+      const [configRes, dohRes] = await Promise.all([get('/api/admin/config'), get('/api/admin/doh')])
       this.config = {
         ...configRes.data,
-        doh: dohRes.data
+        doh: dohRes.data,
       }
       this.loading = false
     } catch (error) {
@@ -84,14 +81,14 @@ export class AdminConfig {
               text: '恢复默认',
               variant: 'secondary',
               size: 'md',
-              id: 'resetConfigBtn'
+              id: 'resetConfigBtn',
             })}
             ${Button({
               text: this.saving ? '保存中...' : '保存配置',
               variant: 'primary',
               size: 'md',
               id: 'saveConfigBtn',
-              loading: this.saving
+              loading: this.saving,
             })}
           </div>
         </form>
@@ -112,7 +109,7 @@ export class AdminConfig {
           label: '检测间隔（秒）',
           value: String(this.config.refreshInterval || 43200),
           min: '1',
-          required: true
+          required: true,
         })}
         <p class="mt-2 text-sm text-gray-500">
           默认值：43200 秒（12 小时），最小值：1 秒
@@ -135,7 +132,7 @@ export class AdminConfig {
           value: String(this.config.historyRetention || 7),
           min: '1',
           max: '365',
-          required: true
+          required: true,
         })}
         <p class="mt-2 text-sm text-gray-500">
           默认值：7 天，范围：1-365 天。超过设定天数的历史记录将被自动清理
@@ -160,7 +157,7 @@ export class AdminConfig {
           label: 'DoH 主服务器',
           value: primaryValue,
           placeholder: 'https://...',
-          required: true
+          required: true,
         })}
         ${Input({
           type: 'url',
@@ -168,14 +165,14 @@ export class AdminConfig {
           label: 'DoH 备用服务器',
           value: backupValue,
           placeholder: 'https://...',
-          required: true
+          required: true,
         })}
         <div class="mt-4">
           ${Button({
             text: this.testing ? '测试中...' : '测试连接',
             variant: 'secondary',
             size: 'md',
-            id: 'testDohBtn'
+            id: 'testDohBtn',
           })}
         </div>
       </div>
@@ -199,7 +196,7 @@ export class AdminConfig {
             label: '时间窗口（毫秒）',
             value: String(windowMs),
             min: '1000',
-            required: false
+            required: false,
           })}
           ${Input({
             type: 'number',
@@ -207,7 +204,7 @@ export class AdminConfig {
             label: '最大请求数',
             value: String(maxRequests),
             min: '1',
-            required: false
+            required: false,
           })}
         </div>
         <p class="mt-2 text-sm text-gray-500">
@@ -291,8 +288,8 @@ export class AdminConfig {
         historyRetention,
         rateLimit: {
           windowMs: rateLimitWindow,
-          maxRequests: rateLimitMax
-        }
+          maxRequests: rateLimitMax,
+        },
       }
 
       await put('/api/admin/config', config)
@@ -300,7 +297,7 @@ export class AdminConfig {
       // 保存 DoH 配置
       await put('/api/admin/doh', {
         primary: dohPrimary,
-        backup: dohBackup
+        backup: dohBackup,
       })
 
       show.success('配置保存成功')
@@ -328,12 +325,12 @@ export class AdminConfig {
       historyRetention: 7,
       rateLimit: {
         windowMs: 60000,
-        maxRequests: 10
+        maxRequests: 10,
       },
       doh: {
         primary: 'https://cloudflare-dns.com/dns-query',
-        backup: 'https://dns.google/resolve'
-      }
+        backup: 'https://dns.google/resolve',
+      },
     }
 
     this.render()
@@ -357,7 +354,7 @@ export class AdminConfig {
 
       const [primaryRes, backupRes] = await Promise.all([
         post('/api/admin/doh/test', { url: dohPrimary }),
-        post('/api/admin/doh/test', { url: dohBackup })
+        post('/api/admin/doh/test', { url: dohBackup }),
       ])
 
       const primaryStatus = primaryRes.data?.success ? '✅ 可用' : '❌ 不可用'

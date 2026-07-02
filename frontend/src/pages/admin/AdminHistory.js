@@ -71,13 +71,13 @@ export class AdminHistory {
               text: '导出 CSV',
               variant: 'secondary',
               size: 'md',
-              id: 'exportCsvBtn'
+              id: 'exportCsvBtn',
             })}
             ${Button({
               text: '清理历史',
               variant: 'danger',
               size: 'md',
-              id: 'cleanupHistoryBtn'
+              id: 'cleanupHistoryBtn',
             })}
           </div>
         </div>
@@ -106,7 +106,9 @@ export class AdminHistory {
    */
   renderFilterBar() {
     const domainOptions = this.historyData.domains
-      .map(d => `<option value="${d.domain}" ${this.selectedDomain === d.domain ? 'selected' : ''}>${d.domain}</option>`)
+      .map(
+        (d) => `<option value="${d.domain}" ${this.selectedDomain === d.domain ? 'selected' : ''}>${d.domain}</option>`,
+      )
       .join('')
 
     return `
@@ -120,8 +122,8 @@ export class AdminHistory {
               value: this.selectedDomain,
               options: [
                 { value: '', label: '全部域名' },
-                ...this.historyData.domains.map(d => ({ value: d.domain, label: d.domain }))
-              ]
+                ...this.historyData.domains.map((d) => ({ value: d.domain, label: d.domain })),
+              ],
             })}
           </div>
           <div>
@@ -134,8 +136,8 @@ export class AdminHistory {
                 { value: '7', label: '最近 7 天' },
                 { value: '30', label: '最近 30 天' },
                 { value: '90', label: '最近 90 天' },
-                { value: '365', label: '最近 1 年' }
-              ]
+                { value: '365', label: '最近 1 年' },
+              ],
             })}
           </div>
           <div class="flex items-end">
@@ -144,7 +146,7 @@ export class AdminHistory {
               variant: 'primary',
               size: 'md',
               id: 'queryBtn',
-              class: 'w-full'
+              class: 'w-full',
             })}
           </div>
         </div>
@@ -158,14 +160,14 @@ export class AdminHistory {
    */
   getFilteredHistory() {
     let historyData = []
-    
+
     if (this.selectedDomain) {
-      const domainData = this.historyData.domains.find(d => d.domain === this.selectedDomain)
+      const domainData = this.historyData.domains.find((d) => d.domain === this.selectedDomain)
       if (domainData && domainData.history) {
-        historyData = domainData.history.map(h => ({ ...h, domain: this.selectedDomain }))
+        historyData = domainData.history.map((h) => ({ ...h, domain: this.selectedDomain }))
       }
     } else {
-      this.historyData.domains.forEach(d => {
+      this.historyData.domains.forEach((d) => {
         if (d.history && d.history.length > 0) {
           const latestRecord = d.history[0]
           historyData.push({
@@ -173,7 +175,7 @@ export class AdminHistory {
             domain: d.domain,
             https_rr: latestRecord.https_rr,
             ipv6: latestRecord.ipv6,
-            ech: latestRecord.ech
+            ech: latestRecord.ech,
           })
         } else if (d.latestCheck) {
           historyData.push({
@@ -181,17 +183,17 @@ export class AdminHistory {
             domain: d.domain,
             https_rr: { status: 'no' },
             ipv6: { status: 'no' },
-            ech: { status: 'no' }
+            ech: { status: 'no' },
           })
         }
       })
     }
-    
+
     // 应用时间范围筛选
     const days = parseInt(this.daysFilter) || 7
-    const cutoffTime = Date.now() - (days * 24 * 60 * 60 * 1000)
-    
-    return historyData.filter(h => {
+    const cutoffTime = Date.now() - days * 24 * 60 * 60 * 1000
+
+    return historyData.filter((h) => {
       const timestamp = typeof h.timestamp === 'number' ? h.timestamp : new Date(h.timestamp).getTime()
       return timestamp >= cutoffTime
     })
@@ -205,40 +207,31 @@ export class AdminHistory {
       {
         key: 'timestamp',
         title: '检测时间',
-        render: (value) => formatDate(value)
+        render: (value) => formatDate(value),
       },
       {
         key: 'domain',
         title: '域名',
-        render: (value) => `<span class="font-medium text-gray-900">${value}</span>`
+        render: (value) => `<span class="font-medium text-gray-900">${value}</span>`,
       },
       {
         key: 'https_rr',
         title: 'HTTPS RR',
-        render: (value) => this.renderStatusBadge(
-          value?.status === 'ok' || value?.status === 'partial',
-          '支持',
-          '不支持'
-        )
+        render: (value) =>
+          this.renderStatusBadge(value?.status === 'ok' || value?.status === 'partial', '支持', '不支持'),
       },
       {
         key: 'ipv6',
         title: 'IPv6',
-        render: (value) => this.renderStatusBadge(
-          value?.status === 'ok' || value?.status === 'partial',
-          '支持',
-          '不支持'
-        )
+        render: (value) =>
+          this.renderStatusBadge(value?.status === 'ok' || value?.status === 'partial', '支持', '不支持'),
       },
       {
         key: 'ech',
         title: 'ECH',
-        render: (value) => this.renderStatusBadge(
-          value?.status === 'ok' || value?.status === 'partial',
-          '支持',
-          '不支持'
-        )
-      }
+        render: (value) =>
+          this.renderStatusBadge(value?.status === 'ok' || value?.status === 'partial', '支持', '不支持'),
+      },
     ]
 
     const historyToDisplay = this.getFilteredHistory()
@@ -325,24 +318,21 @@ export class AdminHistory {
 
       // 生成 CSV 内容
       const headers = ['检测时间', '域名', 'HTTPS RR', 'IPv6', 'ECH']
-      const rows = historyToExport.map(h => [
+      const rows = historyToExport.map((h) => [
         new Date(h.timestamp).toLocaleString(),
         h.domain,
         h.httpsRR === 'success' ? '成功' : '失败',
         h.ipv6 ? '支持' : '不支持',
-        h.ech ? '支持' : '不支持'
+        h.ech ? '支持' : '不支持',
       ])
 
-      const csvContent = [
-        headers.join(','),
-        ...rows.map(row => row.join(','))
-      ].join('\n')
+      const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n')
 
       // 创建下载
       const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
       const url = URL.createObjectURL(blob)
-      
+
       link.setAttribute('href', url)
       link.setAttribute('download', `历史记录_${new Date().toISOString().split('T')[0]}.csv`)
       link.style.visibility = 'hidden'

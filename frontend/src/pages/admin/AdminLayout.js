@@ -19,7 +19,7 @@ export class AdminLayout {
     this.__topbarLogoutHandler = () => this.handleLogout()
     this.__sidebarCloseHandler = () => this.closeSidebar()
   }
-  
+
   /**
    * 初始化：检查认证、创建子页面实例
    * @param {Object} params - 路由参数
@@ -32,7 +32,7 @@ export class AdminLayout {
       window.location.hash = '/login'
       return
     }
-    
+
     // 子页面不存在时显示 Dashboard
     if (!this.childComponent) {
       try {
@@ -44,18 +44,18 @@ export class AdminLayout {
         return
       }
     }
-    
+
     // 创建子页面实例
     this.childInstance = new this.childComponent()
     await this.childInstance.init(params, queryParams)
-    
+
     // 绑定全局事件处理器
     this.bindGlobalHandlers()
-    
+
     this.render()
     this.bindEvents()
   }
-  
+
   /**
    * 渲染布局框架 + 子页面内容
    */
@@ -73,16 +73,20 @@ export class AdminLayout {
         </div>
         
         <!-- 移动端遮罩 -->
-        ${this.sidebarOpen ? `
+        ${
+          this.sidebarOpen
+            ? `
           <div 
             id="sidebar-overlay"
             class="dm-sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
           ></div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `
   }
-  
+
   /**
    * 绑定事件 — 组件只渲染 HTML，事件在此统一绑定
    */
@@ -106,7 +110,7 @@ export class AdminLayout {
       this.childInstance.bindEvents()
     }
   }
-  
+
   /**
    * 关闭侧边栏（移动端）
    */
@@ -115,7 +119,7 @@ export class AdminLayout {
     this.render()
     this.bindEvents()
   }
-  
+
   /**
    * 切换侧边栏（移动端）
    */
@@ -124,18 +128,18 @@ export class AdminLayout {
     this.render()
     this.bindEvents()
   }
-  
+
   /**
    * 退出登录
    */
   async handleLogout() {
     if (!confirm('确定要退出登录吗？')) return
-    
+
     clearAuth()
     show.success('已退出登录')
     window.location.hash = '/login'
   }
-  
+
   /**
    * 绑定全局子路由刷新处理器
    */
@@ -144,7 +148,7 @@ export class AdminLayout {
       this.childInstance.bindGlobalHandlers()
     }
   }
-  
+
   /**
    * 销毁页面
    */

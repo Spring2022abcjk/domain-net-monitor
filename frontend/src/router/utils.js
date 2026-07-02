@@ -11,16 +11,16 @@
 export function matchRoute(path, pattern) {
   const patternParts = pattern.split('/').filter(Boolean)
   const pathParts = path.split('/').filter(Boolean)
-  
+
   if (patternParts.length !== pathParts.length) {
     return null
   }
-  
+
   const params = {}
   for (let i = 0; i < patternParts.length; i++) {
     const patternPart = patternParts[i]
     const pathPart = pathParts[i]
-    
+
     if (patternPart.startsWith(':')) {
       // 动态参数
       params[patternPart.slice(1)] = decodeURIComponent(pathPart)
@@ -29,7 +29,7 @@ export function matchRoute(path, pattern) {
       return null
     }
   }
-  
+
   return params
 }
 
@@ -54,16 +54,16 @@ export function getQueryParams(hash) {
  */
 export function navigate(path, params = {}, query = {}) {
   let finalPath = path
-  
+
   if (params && Object.keys(params).length > 0) {
     for (const [key, value] of Object.entries(params)) {
       finalPath = finalPath.replace(`:${key}`, encodeURIComponent(value))
     }
   }
-  
+
   const queryParams = new URLSearchParams(query)
   const queryString = queryParams.toString()
-  
+
   if (queryString) {
     window.location.hash = `${finalPath}?${queryString}`
   } else {

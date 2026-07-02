@@ -1,9 +1,9 @@
-import { REQUEST_TIMEOUT } from '../config.js';
+import { REQUEST_TIMEOUT } from '../config.js'
 
 export const RATE_LIMIT = {
   windowMs: 60000,
-  maxRequests: 10
-};
+  maxRequests: 10,
+}
 
 /**
  * 基于 KV 的分布式限流器（跨边缘节点生效）
@@ -14,57 +14,57 @@ export const RATE_LIMIT = {
  * @returns {Promise<import('../types.js').RateLimitResult>} 限流结果
  */
 export async function rateLimiterKV(kv, request) {
-  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-  const key = `ratelimit:${ip}`;
-  const now = Math.floor(Date.now() / 1000);
-  
-  const data = await kv.get(key);
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown'
+  const key = `ratelimit:${ip}`
+  const now = Math.floor(Date.now() / 1000)
+
+  const data = await kv.get(key)
   if (!data) {
-    await kv.put(key, JSON.stringify({ start: now, count: 1 }), { expirationTtl: 60 });
-    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+    await kv.put(key, JSON.stringify({ start: now, count: 1 }), { expirationTtl: 60 })
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 }
   }
-  
-  const record = JSON.parse(data);
+
+  const record = JSON.parse(data)
   if (now - record.start > 60) {
-    await kv.put(key, JSON.stringify({ start: now, count: 1 }), { expirationTtl: 60 });
-    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+    await kv.put(key, JSON.stringify({ start: now, count: 1 }), { expirationTtl: 60 })
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 }
   }
-  
+
   if (record.count >= RATE_LIMIT.maxRequests) {
-    return { allowed: false, remaining: 0 };
+    return { allowed: false, remaining: 0 }
   }
-  
-  record.count++;
-  await kv.put(key, JSON.stringify(record), { expirationTtl: 60 });
-  return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count };
+
+  record.count++
+  await kv.put(key, JSON.stringify(record), { expirationTtl: 60 })
+  return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count }
 }
 
-const requestCounts = new Map();
+const requestCounts = new Map()
 
 /**
  * 内存限流器（单元测试回退用）
  * @deprecated 生产环境使用 rateLimiterKV
  */
 export function rateLimiter(request) {
-  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-  const key = `rate:${ip}`;
-  const now = Date.now();
-  
-  const record = requestCounts.get(key);
-  
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown'
+  const key = `rate:${ip}`
+  const now = Date.now()
+
+  const record = requestCounts.get(key)
+
   if (!record || now - record.windowStart > RATE_LIMIT.windowMs) {
-    requestCounts.set(key, { windowStart: now, count: 1 });
-    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+    requestCounts.set(key, { windowStart: now, count: 1 })
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 }
   }
-  
+
   if (record.count >= RATE_LIMIT.maxRequests) {
-    return { allowed: false, remaining: 0 };
+    return { allowed: false, remaining: 0 }
   }
-  
-  record.count++;
-  requestCounts.set(key, record);
-  
-  return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count };
+
+  record.count++
+  requestCounts.set(key, record)
+
+  return { allowed: true, remaining: RATE_LIMIT.maxRequests - record.count }
 }
 
 /**
@@ -76,8 +76,8 @@ export function rateLimitHeaders(rateLimitResult) {
   return {
     'X-RateLimit-Limit': RATE_LIMIT.maxRequests.toString(),
     'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
-    'X-RateLimit-Window': (RATE_LIMIT.windowMs / 1000).toString() + 's'
-  };
+    'X-RateLimit-Window': (RATE_LIMIT.windowMs / 1000).toString() + 's',
+  }
 }
 
 /**
@@ -88,25 +88,25 @@ export function rateLimitHeaders(rateLimitResult) {
  */
 export function cleanDomain(domain) {
   if (!domain || typeof domain !== 'string') {
-    return null;
+    return null
   }
 
-  let result = domain.trim();
+  let result = domain.trim()
 
   if (result.length === 0) {
-    return null;
+    return null
   }
 
-  result = result.replace(/^https?:\/\//i, '');
-  result = result.replace(/\/.*$/, '');
-  result = result.replace(/:\d+$/, '');
+  result = result.replace(/^https?:\/\//i, '')
+  result = result.replace(/\/.*$/, '')
+  result = result.replace(/:\d+$/, '')
 
-  const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?)*$/;
+  const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/
   if (!domainRegex.test(result)) {
-    return null;
+    return null
   }
 
-  return result.toLowerCase();
+  return result.toLowerCase()
 }
 
 /**
@@ -118,21 +118,21 @@ export function cleanDomain(domain) {
  * @throws {Error} 超时或网络错误时抛出异常
  */
 export async function fetchWithTimeout(url, options = {}, timeout = REQUEST_TIMEOUT) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
 
-  options.signal = controller.signal;
+  options.signal = controller.signal
 
   try {
-    const response = await fetch(url, options);
-    return response;
+    const response = await fetch(url, options)
+    return response
   } catch (error) {
     if (error.name === 'AbortError') {
-      throw new Error(`Request timeout after ${timeout}ms`);
+      throw new Error(`Request timeout after ${timeout}ms`, { cause: error })
     }
-    throw error;
+    throw error
   } finally {
-    clearTimeout(timeoutId);
+    clearTimeout(timeoutId)
   }
 }
 
@@ -148,16 +148,16 @@ export function jsonResponse(data, status = 200, message = 'success', extraHeade
   const body = {
     code: status,
     data: data,
-    msg: message
-  };
+    msg: message,
+  }
 
   return new Response(JSON.stringify(body), {
     status: status,
     headers: {
       'Content-Type': 'application/json',
-      ...extraHeaders
-    }
-  });
+      ...extraHeaders,
+    },
+  })
 }
 
 /**
@@ -166,18 +166,21 @@ export function jsonResponse(data, status = 200, message = 'success', extraHeade
  * @returns {Response} 429 Too Many Requests 响应
  */
 export function rateLimitExceededResponse(extraHeaders = {}) {
-  return new Response(JSON.stringify({
-    code: 429,
-    data: null,
-    msg: 'Too many requests. Please try again later.'
-  }), {
-    status: 429,
-    headers: {
-      'Content-Type': 'application/json',
-      ...extraHeaders,
-      'Retry-After': '60'
-    }
-  });
+  return new Response(
+    JSON.stringify({
+      code: 429,
+      data: null,
+      msg: 'Too many requests. Please try again later.',
+    }),
+    {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        ...extraHeaders,
+        'Retry-After': '60',
+      },
+    },
+  )
 }
 
 /**
@@ -188,31 +191,31 @@ export function rateLimitExceededResponse(extraHeaders = {}) {
  * @returns {import('../types.js').CorsHeaders} CORS 响应头对象
  */
 export function getCorsHeaders(request, env) {
-  const allowedOrigins = env.ALLOWED_ORIGINS || '*';
-  const origin = request.headers.get('Origin') || '';
-  
+  const allowedOrigins = env.ALLOWED_ORIGINS || '*'
+  const origin = request.headers.get('Origin') || ''
+
   if (allowedOrigins === '*') {
     return {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-API-Token',
-      'Access-Control-Max-Age': '86400'
-    };
+      'Access-Control-Max-Age': '86400',
+    }
   }
-  
-  const origins = allowedOrigins.split(',').map(o => o.trim());
-  
+
+  const origins = allowedOrigins.split(',').map((o) => o.trim())
+
   if (origins.includes(origin)) {
     return {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-API-Token',
       'Access-Control-Max-Age': '86400',
-      'Vary': 'Origin'
-    };
+      Vary: 'Origin',
+    }
   }
-  
-  return {};
+
+  return {}
 }
 
 /**
@@ -222,12 +225,12 @@ export function getCorsHeaders(request, env) {
  * @returns {Response} CORS 预检响应
  */
 export function handleOptionsRequest(request, env) {
-  const corsHeaders = getCorsHeaders(request, env);
-  
+  const corsHeaders = getCorsHeaders(request, env)
+
   return new Response(null, {
     status: 204,
-    headers: corsHeaders
-  });
+    headers: corsHeaders,
+  })
 }
 
 /**

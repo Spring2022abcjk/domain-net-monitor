@@ -97,29 +97,29 @@ export function isLoggedIn() {
 export function getCurrentUser() {
   const token = getApiToken()
   if (!token) return null
-  
+
   try {
     // 如果是 JWT，可以解析 payload
     const parts = token.split('.')
     if (parts.length === 3) {
       const payload = JSON.parse(atob(parts[1]))
-      
+
       // 检查是否过期
       if (payload.exp && payload.exp < Date.now() / 1000) {
         console.warn('[Storage] Token expired')
         return null
       }
-      
+
       return {
         id: payload.sub,
         name: payload.name,
-        exp: payload.exp
+        exp: payload.exp,
       }
     }
   } catch (e) {
     console.warn('[Storage] Failed to parse token:', e)
   }
-  
+
   return null
 }
 

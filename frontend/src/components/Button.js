@@ -9,31 +9,31 @@
  * @param {string} [props.id] - 按钮 ID（用于事件绑定）
  * @param {string} [props.data] - 自定义 data 属性对象
  */
-export function Button({ 
-  text, 
-  variant = 'primary', 
-  size = 'md', 
-  disabled = false, 
+export function Button({
+  text,
+  variant = 'primary',
+  size = 'md',
+  disabled = false,
   loading = false,
   id = '',
-  data = {}
+  data = {},
 }) {
   const variantClasses = {
     primary: 'dm-btn dm-btn-primary',
     secondary: 'dm-btn dm-btn-secondary',
-    danger: 'dm-btn dm-btn-danger'
+    danger: 'dm-btn dm-btn-danger',
   }
-  
+
   const sizeClasses = {
     sm: 'px-3 py-1 text-sm',
     md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg'
+    lg: 'px-6 py-3 text-lg',
   }
-  
+
   const dataAttributes = Object.entries(data)
     .map(([key, value]) => `data-${key}="${String(value).replace(/"/g, '&quot;')}"`)
     .join(' ')
-  
+
   return `
     <button 
       ${id ? `id="${id}"` : ''}

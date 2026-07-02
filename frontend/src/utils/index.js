@@ -9,14 +9,14 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
   if (isNaN(d.getTime())) {
     return '无效日期'
   }
-  
+
   const year = d.getFullYear()
   const month = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
   const hours = String(d.getHours()).padStart(2, '0')
   const minutes = String(d.getMinutes()).padStart(2, '0')
   const seconds = String(d.getSeconds()).padStart(2, '0')
-  
+
   return format
     .replace('YYYY', year)
     .replace('MM', month)
@@ -35,12 +35,12 @@ export function formatRelativeTime(date) {
   const now = new Date()
   const d = new Date(date)
   const diff = now - d
-  
+
   const seconds = Math.floor(diff / 1000)
   const minutes = Math.floor(seconds / 60)
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
-  
+
   if (days > 0) return `${days}天前`
   if (hours > 0) return `${hours}小时前`
   if (minutes > 0) return `${minutes}分钟前`
@@ -79,7 +79,7 @@ export function isValidURL(url) {
  */
 export function debounce(fn, delay = 300) {
   let timer = null
-  const debounced = function(...args) {
+  const debounced = function (...args) {
     if (timer) clearTimeout(timer)
     timer = setTimeout(() => fn.apply(this, args), delay)
   }
@@ -100,11 +100,11 @@ export function debounce(fn, delay = 300) {
  */
 export function throttle(fn, limit = 300) {
   let inThrottle = false
-  return function(...args) {
+  return function (...args) {
     if (!inThrottle) {
       fn.apply(this, args)
       inThrottle = true
-      setTimeout(() => inThrottle = false, limit)
+      setTimeout(() => (inThrottle = false), limit)
     }
   }
 }
@@ -119,15 +119,15 @@ export function deepClone(obj, hash = new WeakMap()) {
   if (obj === null || typeof obj !== 'object') {
     return obj
   }
-  
+
   if (obj instanceof Date) {
     return new Date(obj.getTime())
   }
-  
+
   if (obj instanceof RegExp) {
     return new RegExp(obj.source, obj.flags)
   }
-  
+
   if (obj instanceof Map) {
     const clonedMap = new Map()
     hash.set(obj, clonedMap)
@@ -136,7 +136,7 @@ export function deepClone(obj, hash = new WeakMap()) {
     }
     return clonedMap
   }
-  
+
   if (obj instanceof Set) {
     const clonedSet = new Set()
     hash.set(obj, clonedSet)
@@ -145,19 +145,19 @@ export function deepClone(obj, hash = new WeakMap()) {
     }
     return clonedSet
   }
-  
+
   if (obj instanceof ArrayBuffer) {
     return obj.slice(0)
   }
-  
+
   if (ArrayBuffer.isView(obj)) {
     return new obj.constructor(obj.slice(0))
   }
-  
+
   if (hash.has(obj)) {
     return hash.get(obj)
   }
-  
+
   if (Array.isArray(obj)) {
     const clonedArray = []
     hash.set(obj, clonedArray)
@@ -166,7 +166,7 @@ export function deepClone(obj, hash = new WeakMap()) {
     })
     return clonedArray
   }
-  
+
   const clonedObj = {}
   hash.set(obj, clonedObj)
   for (const key of Object.keys(obj)) {

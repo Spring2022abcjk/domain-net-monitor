@@ -1,9 +1,9 @@
 // src/routes/admin/stats.js
 
-import { jsonResponse } from '../../utils/helper.js';
-import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js';
-import { getDetailedStats } from '../../storage/stats.js';
-import { getConfig } from '../../storage/config.js';
+import { jsonResponse } from '../../utils/helper.js'
+import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js'
+import { getDetailedStats } from '../../storage/stats.js'
+import { getConfig } from '../../storage/config.js'
 
 /**
  * 获取统计数据
@@ -14,26 +14,27 @@ import { getConfig } from '../../storage/config.js';
  */
 export async function getStatsRoute(request, env) {
   if (!isValidAdminToken(request, env)) {
-    return createUnauthorizedResponse();
+    return createUnauthorizedResponse()
   }
 
   try {
-    const detailedStats = await getDetailedStats(env);
-    const config = await getConfig(env);
-    
+    const detailedStats = await getDetailedStats(env)
+    const config = await getConfig(env)
+
     const stats = {
       overview: {
         totalDomains: detailedStats.domains.total,
         defaultDomains: detailedStats.domains.defaultCount,
         historyDomains: detailedStats.history.domainCount,
-        cachedResults: detailedStats.cache.resultCount
+        cachedResults: detailedStats.cache.resultCount,
       },
       today: {
         requests: detailedStats.todayRequests,
         rateLimitHits: detailedStats.rateLimitHits,
-        rateLimitRate: detailedStats.todayRequests > 0
-          ? ((detailedStats.rateLimitHits / detailedStats.todayRequests) * 100).toFixed(2) + '%'
-          : '0%'
+        rateLimitRate:
+          detailedStats.todayRequests > 0
+            ? ((detailedStats.rateLimitHits / detailedStats.todayRequests) * 100).toFixed(2) + '%'
+            : '0%',
       },
       config: {
         refreshInterval: config.defaultRefreshInterval,
@@ -41,16 +42,16 @@ export async function getStatsRoute(request, env) {
         historyRetention: config.historyRetention,
         rateLimit: {
           windowMs: config.rateLimit.windowMs,
-          maxRequests: config.rateLimit.maxRequests
-        }
+          maxRequests: config.rateLimit.maxRequests,
+        },
       },
-      lastReset: new Date(detailedStats.lastReset).toISOString()
-    };
-    
-    return jsonResponse(stats);
+      lastReset: new Date(detailedStats.lastReset).toISOString(),
+    }
+
+    return jsonResponse(stats)
   } catch (error) {
-    console.error('Stats route failed:', error.message);
-    return jsonResponse(null, 500, `Operation failed: ${error.message}`);
+    console.error('Stats route failed:', error.message)
+    return jsonResponse(null, 500, `Operation failed: ${error.message}`)
   }
 }
 
@@ -61,15 +62,15 @@ export async function getStatsRoute(request, env) {
  */
 function formatDuration(seconds) {
   if (typeof seconds !== 'number' || seconds < 0 || !isFinite(seconds)) {
-    return 'Invalid duration';
+    return 'Invalid duration'
   }
   if (seconds >= 86400) {
-    return `${(seconds / 86400).toFixed(1)} days`;
+    return `${(seconds / 86400).toFixed(1)} days`
   } else if (seconds >= 3600) {
-    return `${(seconds / 3600).toFixed(1)} hours`;
+    return `${(seconds / 3600).toFixed(1)} hours`
   } else if (seconds >= 60) {
-    return `${(seconds / 60).toFixed(1)} minutes`;
+    return `${(seconds / 60).toFixed(1)} minutes`
   } else {
-    return `${seconds} seconds`;
+    return `${seconds} seconds`
   }
 }

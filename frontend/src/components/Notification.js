@@ -6,20 +6,20 @@
 const NOTIFICATION_TYPES = {
   success: {
     icon: '✅',
-    class: 'bg-green-50 border-green-200 text-green-800'
+    class: 'bg-green-50 border-green-200 text-green-800',
   },
   error: {
     icon: '❌',
-    class: 'bg-red-50 border-red-200 text-red-800'
+    class: 'bg-red-50 border-red-200 text-red-800',
   },
   warning: {
     icon: '⚠️',
-    class: 'bg-yellow-50 border-yellow-200 text-yellow-800'
+    class: 'bg-yellow-50 border-yellow-200 text-yellow-800',
   },
   info: {
     icon: 'ℹ️',
-    class: 'bg-blue-50 border-blue-200 text-blue-800'
-  }
+    class: 'bg-blue-50 border-blue-200 text-blue-800',
+  },
 }
 
 let notificationContainer = null
@@ -45,7 +45,7 @@ function getContainer() {
 function show(message, type = 'info', duration = 3000) {
   const config = NOTIFICATION_TYPES[type] || NOTIFICATION_TYPES.info
   const container = getContainer()
-  
+
   const notification = document.createElement('div')
   notification.className = `dm-notification ${config.class} border rounded-lg px-4 py-3 shadow-lg flex items-center gap-3 animate-slide-in-right`
   notification.innerHTML = `
@@ -55,9 +55,9 @@ function show(message, type = 'info', duration = 3000) {
       ✕
     </button>
   `
-  
+
   container.appendChild(notification)
-  
+
   setTimeout(() => {
     notification.remove()
   }, duration)
@@ -66,28 +66,28 @@ function show(message, type = 'info', duration = 3000) {
 /**
  * 便捷方法：显示错误通知
  */
-show.error = function(message, duration = 5000) {
+show.error = function (message, duration = 5000) {
   show(message, 'error', duration)
 }
 
 /**
  * 便捷方法：显示成功通知
  */
-show.success = function(message, duration = 3000) {
+show.success = function (message, duration = 3000) {
   show(message, 'success', duration)
 }
 
 /**
  * 便捷方法：显示警告通知
  */
-show.warning = function(message, duration = 3000) {
+show.warning = function (message, duration = 3000) {
   show(message, 'warning', duration)
 }
 
 /**
  * 便捷方法：显示信息通知
  */
-show.info = function(message, duration = 3000) {
+show.info = function (message, duration = 3000) {
   show(message, 'info', duration)
 }
 

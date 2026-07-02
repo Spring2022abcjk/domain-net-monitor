@@ -39,7 +39,7 @@ export function getCurrentPage() {
  * 处理 404
  */
 function handleNotFound() {
-  const notFoundRoute = routes.find(r => r.path === '/404')
+  const notFoundRoute = routes.find((r) => r.path === '/404')
   if (notFoundRoute) {
     renderRoute(notFoundRoute, {}, new URLSearchParams())
   }
@@ -53,13 +53,13 @@ function handleNotFound() {
  */
 function findChildRoute(parentRoute, fullPath) {
   if (!parentRoute.children) return null
-  
+
   // 提取子路径（去掉父路由路径部分）
   const parentPath = parentRoute.path
-  const childPath = fullPath.startsWith(parentPath + '/') 
-    ? fullPath.slice(parentPath.length + 1)  // +1 是去掉斜杠
+  const childPath = fullPath.startsWith(parentPath + '/')
+    ? fullPath.slice(parentPath.length + 1) // +1 是去掉斜杠
     : fullPath
-  
+
   for (const child of parentRoute.children) {
     if (child.path === childPath) return child
   }
@@ -80,34 +80,34 @@ async function renderRoute(route, params, query, parentRoute = null) {
     navigateTo('/login')
     return
   }
-  
+
   // 已登录访问登录页，重定向到首页
   if (route.path === '/login' && isLoggedIn()) {
     navigateTo('/admin/dashboard')
     return
   }
-  
+
   // 设置页面标题
   if (route.meta?.title) {
     document.title = route.meta.title
   } else if (parentRoute?.meta?.title) {
     document.title = parentRoute.meta.title
   }
-  
+
   // 清理旧页面
   cleanupCurrentPage()
-  
+
   // 渲染新页面
   const app = document.getElementById('app')
   if (!app) {
     console.error('[Router] App mount point not found')
     return
   }
-  
+
   // === 处理嵌套路由 ===
   if (parentRoute && route !== parentRoute) {
     let ParentComponent
-    
+
     // 动态导入父组件（嵌套路由的布局）
     if (typeof parentRoute.component === 'function') {
       try {
@@ -122,7 +122,7 @@ async function renderRoute(route, params, query, parentRoute = null) {
     } else {
       ParentComponent = parentRoute.component
     }
-    
+
     let ChildComponent
     if (typeof route.component === 'function') {
       try {
@@ -137,7 +137,7 @@ async function renderRoute(route, params, query, parentRoute = null) {
     } else {
       ChildComponent = route.component
     }
-    
+
     currentPageInstance = new ParentComponent(ChildComponent)
   } else {
     // 普通路由（支持懒加载）
@@ -157,12 +157,12 @@ async function renderRoute(route, params, query, parentRoute = null) {
     }
     currentPageInstance = new PageComponent()
   }
-  
+
   // 初始化页面
   if (currentPageInstance.init) {
     await currentPageInstance.init({ params, query })
   }
-  
+
   // 渲染（如果是 Layout，会自己 render 和 bindEvents）
   if (currentPageInstance.render) {
     app.innerHTML = currentPageInstance.render()
@@ -170,7 +170,7 @@ async function renderRoute(route, params, query, parentRoute = null) {
       currentPageInstance.bindEvents()
     }
   }
-  
+
   console.log('[Router] Rendered:', route.name, parentRoute ? `(parent: ${parentRoute.name})` : '')
 }
 
@@ -184,16 +184,16 @@ export async function init() {
     const [pathPart, queryPart] = hash.slice(1).split('?')
     const path = pathPart || '/'
     const query = new URLSearchParams(queryPart || '')
-    
+
     // 查找匹配的路由
     let matchedRoute = null
     let parentRoute = null
     let params = {}
-    
+
     // 优先匹配具体路由
     for (const route of routes) {
       if (route.path === '*') continue // 通配符最后处理
-      
+
       // 检查是否是嵌套路由的父路由（如 /admin）
       if (route.children && path.startsWith(route.path + '/')) {
         parentRoute = route
@@ -208,7 +208,7 @@ export async function init() {
           // 父路由匹配但子路由不存在，继续查找其他路由
         }
       }
-      
+
       // 普通路由匹配
       const routeParams = matchRoute(path, route.path)
       if (routeParams) {
@@ -217,10 +217,10 @@ export async function init() {
         break
       }
     }
-    
+
     // 未找到 match，使用通配符路由或 404
     if (!matchedRoute) {
-      const catchAllRoute = routes.find(r => r.path === '*')
+      const catchAllRoute = routes.find((r) => r.path === '*')
       if (catchAllRoute) {
         matchedRoute = catchAllRoute
       } else {
@@ -228,13 +228,13 @@ export async function init() {
         return
       }
     }
-    
+
     // 渲染路由
     await renderRoute(matchedRoute, params, query, parentRoute)
   })
-  
+
   // 触发初始路由
   window.dispatchEvent(new Event('hashchange'))
-  
+
   console.log('[Router] Initialized with', routes.length, 'routes')
 }

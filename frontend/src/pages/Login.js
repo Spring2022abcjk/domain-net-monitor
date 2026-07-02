@@ -7,13 +7,7 @@ import { Button } from '../components/Button.js'
 import { Card } from '../components/Card.js'
 import { show } from '../components/Notification.js'
 import { post } from '../utils/api.js'
-import { 
-  setApiEndpoint, 
-  setApiToken, 
-  isLoggedIn,
-  getApiEndpoint,
-  getApiToken
-} from '../utils/storage.js'
+import { setApiEndpoint, setApiToken, isLoggedIn, getApiEndpoint, getApiToken } from '../utils/storage.js'
 
 /**
  * 登录页面类
@@ -24,10 +18,10 @@ export class LoginPage {
     this._redirectTimer = null
     this.formData = {
       endpoint: '',
-      token: ''
+      token: '',
     }
   }
-  
+
   /**
    * 初始化页面
    */
@@ -46,11 +40,11 @@ export class LoginPage {
         console.warn('[Login] Token expired, clearing auth')
       }
     }
-    
+
     this.render()
     this.bindEvents()
   }
-  
+
   /**
    * 渲染页面
    */
@@ -75,7 +69,7 @@ export class LoginPage {
                 placeholder: 'https://your-worker.workers.dev',
                 required: true,
                 value: this.formData.endpoint,
-                autocomplete: 'url'
+                autocomplete: 'url',
               })}
               
               ${Input({
@@ -85,7 +79,7 @@ export class LoginPage {
                 placeholder: '输入你的 API Token',
                 required: true,
                 value: this.formData.token,
-                autocomplete: 'current-password'
+                autocomplete: 'current-password',
               })}
               
               ${Button({
@@ -95,7 +89,7 @@ export class LoginPage {
                 disabled: this.loading,
                 loading: this.loading,
                 id: 'submitBtn',
-                data: { fullwidth: 'true' }
+                data: { fullwidth: 'true' },
               })}
             </form>
             
@@ -112,62 +106,66 @@ export class LoginPage {
                 </a>
               </p>
             </div>
-          `
+          `,
         })}
       </div>
     `
   }
-  
+
   /**
    * 绑定事件
    */
   bindEvents() {
     const form = document.getElementById('loginForm')
     if (!form) return
-    
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
       await this.handleSubmit()
     })
   }
-  
+
   /**
    * 处理登录提交
    */
   async handleSubmit() {
     if (this.loading) return
-    
+
     const endpointInput = document.getElementById('apiEndpoint')
     const tokenInput = document.getElementById('apiToken')
     const submitBtn = document.getElementById('submitBtn')
-    
+
     if (!endpointInput || !tokenInput) return
-    
+
     const endpoint = endpointInput.value.trim()
     const token = tokenInput.value.trim()
-    
+
     if (!endpoint || !token) {
       show.error('请输入 API 端点和 Token')
       return
     }
-    
+
     this.loading = true
     this.setLoading(true)
-    
+
     try {
       // 验证 Token（通过 apiToken 参数传递）
-      const response = await post(`${endpoint}/api/admin/auth/verify`, {}, {
-        apiToken: token
-      })
-      
+      const response = await post(
+        `${endpoint}/api/admin/auth/verify`,
+        {},
+        {
+          apiToken: token,
+        },
+      )
+
       if (response.code === 200) {
         // 保存配置
         setApiEndpoint(endpoint)
         setApiToken(token)
-        
+
         show.success('登录成功')
         this.setLoading(false)
-        
+
         // 延迟跳转
         this._redirectTimer = setTimeout(() => {
           window.location.hash = '/admin/dashboard'
@@ -179,7 +177,7 @@ export class LoginPage {
       }
     } catch (error) {
       console.error('[Login] Login failed:', error)
-      
+
       // 错误分类处理
       if (error.message.includes('Failed to fetch')) {
         show.error('无法连接到 API 端点，请检查网络或 CORS 配置')
@@ -190,11 +188,11 @@ export class LoginPage {
       } else {
         show.error('登录失败：' + error.message)
       }
-      
+
       this.setLoading(false)
     }
   }
-  
+
   /**
    * 设置按钮加载状态
    */
@@ -210,7 +208,7 @@ export class LoginPage {
       }
     }
   }
-  
+
   /**
    * 销毁页面
    */

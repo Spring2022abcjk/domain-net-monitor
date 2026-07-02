@@ -23,14 +23,14 @@ export class AdminDashboard {
       }
     }
   }
-  
+
   /**
    * 初始化：加载数据
    */
   async init() {
     await this.loadData()
   }
-  
+
   /**
    * 加载数据
    */
@@ -39,7 +39,7 @@ export class AdminDashboard {
       // 获取统计信息
       const statsRes = await get('/api/admin/stats')
       this.stats = statsRes.data
-      
+
       // 获取最近域名
       const domainsRes = await get('/api/admin/domains')
       this.recentDomains = (domainsRes.data.domains || []).slice(0, 5)
@@ -49,7 +49,7 @@ export class AdminDashboard {
       this.error = '加载数据失败，请刷新页面重试'
     }
   }
-  
+
   /**
    * 渲染页面
    */
@@ -64,11 +64,11 @@ export class AdminDashboard {
         </div>
       `
     }
-    
+
     if (!this.stats) {
       return '<div class="text-center py-12">加载中...</div>'
     }
-    
+
     return `
       <div class="space-y-6">
         <div class="flex items-center justify-between">
@@ -89,7 +89,7 @@ export class AdminDashboard {
                 </div>
                 <span class="text-4xl">🌐</span>
               </div>
-            `
+            `,
           })}
           
           ${Card({
@@ -101,7 +101,7 @@ export class AdminDashboard {
                 </div>
                 <span class="text-4xl">✅</span>
               </div>
-            `
+            `,
           })}
           
           ${Card({
@@ -113,7 +113,7 @@ export class AdminDashboard {
                 </div>
                 <span class="text-4xl">❌</span>
               </div>
-            `
+            `,
           })}
           
           ${Card({
@@ -125,52 +125,56 @@ export class AdminDashboard {
                 </div>
                 <span class="text-4xl">📊</span>
               </div>
-            `
+            `,
           })}
         </div>
         
         <!-- 最近域名列表 -->
         <div>
           <h2 class="text-lg font-semibold text-gray-900 mb-4">最近域名</h2>
-          ${this.recentDomains.length > 0 ? Table({
-            columns: [
-              { 
-                key: 'domain', 
-                title: '域名',
-                render: (value) => `<span class="font-medium text-gray-900">${value}</span>`
-              },
-              { 
-                key: 'status', 
-                title: '状态',
-                render: (value) => `
+          ${
+            this.recentDomains.length > 0
+              ? Table({
+                  columns: [
+                    {
+                      key: 'domain',
+                      title: '域名',
+                      render: (value) => `<span class="font-medium text-gray-900">${value}</span>`,
+                    },
+                    {
+                      key: 'status',
+                      title: '状态',
+                      render: (value) => `
                   <span class="px-2 py-1 text-xs rounded-full ${
                     value === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }">
                     ${value === 'active' ? '运行中' : '已停止'}
                   </span>
-                `
-              },
-              { 
-                key: 'lastChecked', 
-                title: '最近检测',
-                render: (value) => {
-                  if (!value) return '<span class="text-gray-400">暂无</span>'
-                  const date = new Date(value)
-                  return `<span class="text-sm text-gray-600">${date.toLocaleString('zh-CN')}</span>`
-                }
-              }
-            ],
-            data: this.recentDomains
-          }) : `
+                `,
+                    },
+                    {
+                      key: 'lastChecked',
+                      title: '最近检测',
+                      render: (value) => {
+                        if (!value) return '<span class="text-gray-400">暂无</span>'
+                        const date = new Date(value)
+                        return `<span class="text-sm text-gray-600">${date.toLocaleString('zh-CN')}</span>`
+                      },
+                    },
+                  ],
+                  data: this.recentDomains,
+                })
+              : `
             <div class="text-center py-8 text-gray-500">
               暂无域名数据
             </div>
-          `}
+          `
+          }
         </div>
       </div>
     `
   }
-  
+
   /**
    * 绑定刷新事件
    */
@@ -179,13 +183,12 @@ export class AdminDashboard {
     btn?.removeEventListener('click', this.__refreshHandler)
     btn?.addEventListener('click', this.__refreshHandler)
   }
-  
+
   /**
    * 清理资源
    */
   destroy() {
-    document.getElementById('dashboard-refresh-btn')
-      ?.removeEventListener('click', this.__refreshHandler)
+    document.getElementById('dashboard-refresh-btn')?.removeEventListener('click', this.__refreshHandler)
   }
 }
 

@@ -13,7 +13,9 @@ export class DomainDetail {
     this.stats = null
     this.loading = true
     this.error = null
-    this.__backHandler = () => { window.location.hash = '#/' }
+    this.__backHandler = () => {
+      window.location.hash = '#/'
+    }
   }
 
   async init({ params }) {
@@ -63,13 +65,20 @@ export class DomainDetail {
       `
     }
 
-    const statusLabel = this.stats.status === 'active' ? '运行中' : (this.stats.status === 'stopped' ? '已停止' : '未知')
-    const statusClass = this.stats.status === 'active'
-      ? 'bg-green-100 text-green-800'
-      : (this.stats.status === 'stopped' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')
+    const statusLabel = this.stats.status === 'active' ? '运行中' : this.stats.status === 'stopped' ? '已停止' : '未知'
+    const statusClass =
+      this.stats.status === 'active'
+        ? 'bg-green-100 text-green-800'
+        : this.stats.status === 'stopped'
+          ? 'bg-red-100 text-red-800'
+          : 'bg-gray-100 text-gray-800'
 
-    const successRateClass = (this.stats.successRate || 0) >= 90
-      ? 'text-green-600' : ((this.stats.successRate || 0) >= 70 ? 'text-yellow-600' : 'text-red-600')
+    const successRateClass =
+      (this.stats.successRate || 0) >= 90
+        ? 'text-green-600'
+        : (this.stats.successRate || 0) >= 70
+          ? 'text-yellow-600'
+          : 'text-red-600'
 
     return `
       <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -90,13 +99,13 @@ export class DomainDetail {
             content: `
               <div class="text-sm font-medium text-gray-600">总检测次数</div>
               <div class="text-3xl font-bold text-blue-600 mt-1">${this.stats.totalChecks || 0}</div>
-            `
+            `,
           })}
           ${Card({
             content: `
               <div class="text-sm font-medium text-gray-600">成功率</div>
               <div class="text-3xl font-bold ${successRateClass} mt-1">${(this.stats.successRate || 0).toFixed(1)}%</div>
-            `
+            `,
           })}
           ${Card({
             content: `
@@ -106,7 +115,7 @@ export class DomainDetail {
                 <span class="text-gray-400 mx-1">/</span>
                 <span class="text-red-600">${this.stats.failureCount || 0}</span>
               </div>
-            `
+            `,
           })}
         </div>
 
@@ -117,7 +126,7 @@ export class DomainDetail {
                 <span class="text-gray-500">首次检测</span>
                 <span class="text-gray-800">${this.stats.firstSeen ? formatDate(new Date(this.stats.firstSeen)) : '--'}</span>
               </div>
-            `
+            `,
           })}
           ${Card({
             content: `
@@ -125,33 +134,39 @@ export class DomainDetail {
                 <span class="text-gray-500">最近检测</span>
                 <span class="text-gray-800">${this.stats.lastChecked ? formatDate(new Date(this.stats.lastChecked)) : '--'}</span>
               </div>
-            `
+            `,
           })}
         </div>
 
         <div>
           <h2 class="text-lg font-semibold text-gray-900 mb-3">最新检测记录</h2>
-          ${this.stats.latestResults && this.stats.latestResults.length > 0
-            ? Table({
-                columns: [
-                  {
-                    key: 'timestamp',
-                    title: '检测时间',
-                    render: (value) => formatDate(new Date(value))
-                  },
-                  {
-                    key: 'status',
-                    title: '状态',
-                    render: (value) => {
-                      const label = value === 'active' ? '正常' : (value === 'stopped' ? '异常' : '未知')
-                      const cls = value === 'active' ? 'bg-green-100 text-green-800' : (value === 'stopped' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')
-                      return `<span class="px-2 py-0.5 text-xs rounded-full ${cls}">${label}</span>`
-                    }
-                  }
-                ],
-                data: this.stats.latestResults
-              })
-            : `
+          ${
+            this.stats.latestResults && this.stats.latestResults.length > 0
+              ? Table({
+                  columns: [
+                    {
+                      key: 'timestamp',
+                      title: '检测时间',
+                      render: (value) => formatDate(new Date(value)),
+                    },
+                    {
+                      key: 'status',
+                      title: '状态',
+                      render: (value) => {
+                        const label = value === 'active' ? '正常' : value === 'stopped' ? '异常' : '未知'
+                        const cls =
+                          value === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : value === 'stopped'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
+                        return `<span class="px-2 py-0.5 text-xs rounded-full ${cls}">${label}</span>`
+                      },
+                    },
+                  ],
+                  data: this.stats.latestResults,
+                })
+              : `
               <div class="text-center py-8 text-gray-400">
                 暂无检测记录
               </div>
@@ -169,8 +184,7 @@ export class DomainDetail {
   }
 
   destroy() {
-    document.getElementById('domain-detail-back-btn')
-      ?.removeEventListener('click', this.__backHandler)
+    document.getElementById('domain-detail-back-btn')?.removeEventListener('click', this.__backHandler)
   }
 }
 
