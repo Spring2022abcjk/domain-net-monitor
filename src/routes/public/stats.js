@@ -22,7 +22,7 @@ export async function handleGetPublicStats(request, env, domain) {
       return jsonResponse(null, 400, 'Invalid domain format')
     }
     
-    const stats = await env.DOMAIN_MONITOR_KV.get(`stats:${domain}`, { type: 'json' })
+    const stats = await env.DOMAIN_MONITOR_KV.get(`stats:${domain}`, { type: 'json' }) || {}
 
     // 获取历史记录（只取最新 10 条）
     const history = await env.DOMAIN_MONITOR_KV.get(`history:${domain}`, { type: 'json' }) || []

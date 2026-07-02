@@ -16,7 +16,7 @@ export class DomainDetail {
     this.__backHandler = () => { window.location.hash = '#/' }
   }
 
-  async init(params) {
+  async init({ params }) {
     this.domain = decodeURIComponent(params.domain)
     document.title = `${this.domain} - 域名详情`
     await this.loadStats()
