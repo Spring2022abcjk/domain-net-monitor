@@ -9,7 +9,11 @@
     "tail": "wrangler tail",
     "test": "node tests/index.js",
     "test:unit": "node tests/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\""
   },
   "keywords": [
     "cloudflare",
@@ -24,6 +28,11 @@
   "license": "MIT",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260529.1",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.4",
     "typescript": "^6.0.3"
   }
 }
