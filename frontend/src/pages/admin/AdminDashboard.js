@@ -12,6 +12,7 @@ import { get } from '../../utils/api.js'
 export class AdminDashboard {
   constructor() {
     this.stats = null
+    /** @type {Array<{domain: string, status: string, lastChecked: number|null}>} */
     this.recentDomains = []
     this.error = null
     this.__refreshHandler = async () => {

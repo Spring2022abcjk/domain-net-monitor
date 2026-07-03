@@ -13,7 +13,9 @@ import { getApiEndpoint } from '../utils/storage.js'
 
 export class PublicDashboard {
   constructor() {
+    /** @type {Array<{domain: string, status: string, firstSeen: number|null, lastChecked: number|null}>} */
     this.domains = []
+    /** @type {Array<{domain: string, status: string, firstSeen: number|null, lastChecked: number|null}>} */
     this.filteredDomains = []
     this.searchQuery = ''
     this.loading = false

@@ -15,7 +15,9 @@ import { formatDate, isValidDomain } from '../../utils/index.js'
  */
 export class AdminDomains {
   constructor() {
+    /** @type {Array<{domain: string, status: string, lastChecked: number|null, isDefault: boolean}>} */
     this.domains = []
+    /** @type {Array<string>} */
     this.selectedDomains = []
     this.loading = false
     this.showAddModal = false
