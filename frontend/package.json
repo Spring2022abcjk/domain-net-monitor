@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
-    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\""
+    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\"",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "cloudflare",
@@ -33,6 +34,7 @@
     "globals": "^17.7.0",
     "prettier": "^3.9.4",
     "terser": "^5.26.0",
+    "typescript": "^6.0.3",
     "vite": "^5.0.0"
   }
 }

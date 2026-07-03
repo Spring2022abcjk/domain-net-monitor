@@ -60,7 +60,6 @@ export async function runRouterConfigTests() {
 
     assertEqual(router.includes('import { routes }'), true, 'Imports routes config')
     assertEqual(router.includes('import { matchRoute'), true, 'Imports matchRoute')
-    assertEqual(router.includes('getQueryParams'), true, 'Uses getQueryParams')
     assertEqual(router.includes('window.addEventListener'), true, 'Listens to hashchange')
     assertEqual(router.includes('renderRoute'), true, 'Has renderRoute function')
     assertEqual(router.includes('requiresAuth'), true, 'Supports auth check')

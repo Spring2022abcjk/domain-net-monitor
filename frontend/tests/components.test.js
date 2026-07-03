@@ -109,7 +109,7 @@ async function runComponentsTests() {
     assertEqual(index.includes('export { default as Card }'), true, 'Exports Card')
     assertEqual(index.includes('export { default as Loading }'), true, 'Exports Loading')
     assertEqual(index.includes('export { default as Table }'), true, 'Exports Table')
-    assertEqual(index.includes('export { default as Notification }'), true, 'Exports Notification')
+    assertEqual(index.includes("export { show, NOTIFICATION_TYPES }"), true, 'Exports Notification')
   })
 
   // ========== dm- 前缀测试 ==========
