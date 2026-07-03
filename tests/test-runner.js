@@ -34,7 +34,7 @@ function assertThrows(fn, message) {
     results.failed++
     results.failures.push(message)
     console.log(`  ✗ ${message} - No error thrown`)
-  } catch (e) {
+  } catch (_e) {
     results.passed++
     console.log(`  ✓ ${message}`)
   }

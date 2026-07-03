@@ -9,7 +9,7 @@
  */
 import { generateElementId } from '../utils/index.js'
 
-export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetail }) {
+export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetail: _onViewDetail }) {
   const formatDate = (timestamp) => {
     if (!timestamp) return '暂无数据'
     const d = new Date(timestamp)

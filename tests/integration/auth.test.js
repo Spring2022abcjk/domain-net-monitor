@@ -161,7 +161,7 @@ async function runUnauthorizedResponseTests() {
 async function runAuthMiddlewareTests() {
   await runSuite('Auth Middleware - Valid Token Passes', async () => {
     const env = createMockEnv()
-    const handler = async (req, env) => {
+    const handler = async (_req, _env) => {
       return new Response(JSON.stringify({ success: true }), {
         headers: { 'Content-Type': 'application/json' },
       })
@@ -181,7 +181,7 @@ async function runAuthMiddlewareTests() {
 
   await runSuite('Auth Middleware - Invalid Token Blocked', async () => {
     const env = createMockEnv()
-    const handler = async (req, env) => {
+    const handler = async (_req, _env) => {
       return new Response('Should not reach here')
     }
 
@@ -196,7 +196,7 @@ async function runAuthMiddlewareTests() {
 
   await runSuite('Auth Middleware - No Token Blocked', async () => {
     const env = createMockEnv()
-    const handler = async (req, env) => {
+    const handler = async (_req, _env) => {
       return new Response('Should not reach here')
     }
 
@@ -215,7 +215,7 @@ async function runAuthMiddlewareTests() {
 async function runRateLimitBypassTests() {
   await runSuite('Rate Limit Bypass - Admin Token Unlimited', async () => {
     const env = createMockEnv()
-    const handler = async (req, env) => {
+    const handler = async (_req, _env) => {
       return new Response(JSON.stringify({ count: 1 }), {
         headers: { 'Content-Type': 'application/json' },
       })
@@ -235,7 +235,7 @@ async function runRateLimitBypassTests() {
 
   await runSuite('Rate Limit Bypass - Headers Show Unlimited', async () => {
     const env = createMockEnv()
-    const handler = async (req, env) => {
+    const handler = async (_req, _env) => {
       return new Response('OK')
     }
 

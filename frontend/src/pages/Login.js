@@ -7,7 +7,7 @@ import { Button } from '../components/Button.js'
 import { Card } from '../components/Card.js'
 import { show } from '../components/Notification.js'
 import { post } from '../utils/api.js'
-import { setApiEndpoint, setApiToken, isLoggedIn, getApiEndpoint, getApiToken } from '../utils/storage.js'
+import { setApiEndpoint, setApiToken, isLoggedIn, getApiEndpoint } from '../utils/storage.js'
 
 /**
  * 登录页面类
@@ -133,7 +133,6 @@ export class LoginPage {
 
     const endpointInput = document.getElementById('apiEndpoint')
     const tokenInput = document.getElementById('apiToken')
-    const submitBtn = document.getElementById('submitBtn')
 
     if (!endpointInput || !tokenInput) return
 

@@ -3,7 +3,6 @@
  * 主要验证域名格式验证逻辑
  */
 
-import assert from 'node:assert/strict'
 import { runSuite, assertEqual } from '../test-runner.js'
 import { isValidDomain } from '../../src/utils/helper.js'
 

@@ -100,8 +100,7 @@ export async function runFeatureTests() {
         lastReset: Date.now(),
       }),
     )
-
-    const result = await detectScheduled(env)
+    await detectScheduled(env)
 
     // 验证统计已更新
     const statsData = await env.DOMAIN_MONITOR_KV.get('stats')

@@ -3,7 +3,7 @@
  * 任务 16：实现嵌套路由，支持 AdminLayout 包裹子页面
  */
 import { routes } from './routes.js'
-import { matchRoute, getQueryParams } from './utils.js'
+import { matchRoute } from './utils.js'
 import { isLoggedIn } from '../utils/storage.js'
 
 // 当前页面实例，用于清理

@@ -108,7 +108,7 @@ export async function detectDomain(domain, env) {
         count: ipv6Data.Answer.length,
       }
     }
-  } catch (error) {
+  } catch (_error) {
     // 尝试备用 DoH
     try {
       const ipv6Data = await queryDoh(domain, DNS_TYPE_AAAA, dohBackup)

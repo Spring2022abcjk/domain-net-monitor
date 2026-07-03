@@ -1,6 +1,6 @@
 import { queryDoH } from '../../src/doh/client.js'
 import { DNS_TYPE_HTTPS, DNS_TYPE_AAAA } from '../../src/config.js'
-import { assert, assertEqual, assertThrows, runSuite } from '../test-runner.js'
+import { assert, assertEqual, runSuite } from '../test-runner.js'
 
 const MOCK_DOH_RESPONSE = {
   Status: 0,
@@ -24,7 +24,7 @@ const MOCK_EMPTY_RESPONSE = {
 const ORIGINAL_FETCH = globalThis.fetch
 
 function mockFetch(mockData) {
-  globalThis.fetch = async (url) => {
+  globalThis.fetch = async (_url) => {
     return new Response(JSON.stringify(mockData), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ async function testQueryDoHBackup() {
   await runSuite('queryDoH() - Backup failover', async () => {
     let callCount = 0
 
-    globalThis.fetch = async (url) => {
+    globalThis.fetch = async (_url) => {
       callCount++
       if (callCount === 1) {
         throw new Error('Primary endpoint failed')

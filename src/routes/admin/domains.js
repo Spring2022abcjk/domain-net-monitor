@@ -72,7 +72,7 @@ async function handleGetDomains(request, env) {
       let cached = null
       try {
         cached = await getResult(env, domain)
-      } catch (e) {
+      } catch (_e) {
         // 缓存读取失败不阻塞
       }
 

@@ -4,7 +4,7 @@
 **优先级**: 中
 **预计工时**: 2 小时
 **创建日期**: 2026-07-02
-**更新日期**: 2026-07-02
+**更新日期**: 2026-07-03
 
 ---
 
@@ -297,7 +297,21 @@ npm run lint && npm run format:check && echo "PASS"
 
 ## 下一步
 
-1. 根据本文档依次实现 29.1 ~ 29.6
-2. 每步完成后执行对应验证脚本
-3. 全部通过后提交：先 commit 配置文件，再 commit 格式化变更
-4. 更新 `tasklist.md` 添加任务 29 条目
+1. ~~根据本文档依次实现 29.1 ~ 29.6~~
+2. ~~每步完成后执行对应验证脚本~~
+3. ~~全部通过后提交：先 commit 配置文件，再 commit 格式化变更~~
+4. ~~更新 `tasklist.md` 添加任务 29 条目~~
+
+### 补充任务：`no-unused-vars` 警告清零 (2026-07-03)
+
+全部 42 个警告（根 30 + 前端 12）已清零，处置策略：
+
+| 类别 | 数量 | 策略 |
+|------|------|------|
+| 未使用 import | 15 | 直接删除（`getAllDomains`、`describe`/`it`、`assert`、`assertThrows`） |
+| 未使用参数（API 契约） | 11 | 加 `_` 前缀（`env→_env`、`ctx→_ctx`、`req→_req` 等） |
+| 未使用 destructured 变量 | 1 | `apiToken→_apiToken` |
+| 死代码赋值 | 6 | 删除赋值保留副作用调用，或直接删行 |
+| catch 变量 | 3 | `caughtErrors: 'none'` 全局豁免 |
+
+同时强化规则：`no-unused-vars` 从 `'warn'` 升至 `'error'`，新增 `varsIgnorePattern: '^_'` 和 `caughtErrors: 'none'`。

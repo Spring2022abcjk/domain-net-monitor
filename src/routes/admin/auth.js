@@ -59,7 +59,7 @@ function handleVerify(request, env) {
  * @param {import('../../types.js').Env} env - 环境变量对象
  * @returns {Response} 响应
  */
-function handleLogout(request, env) {
+function handleLogout(request, _env) {
   // 验证 Token 存在（但不要求有效，允许强制登出）
   const token = extractToken(request)
   if (!token) {

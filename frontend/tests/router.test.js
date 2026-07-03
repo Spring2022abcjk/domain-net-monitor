@@ -93,7 +93,7 @@ function findRoute(path) {
 
 // 模拟实际的路径提取（从 hash 中提取 path，去掉查询参数）
 function parseHash(hash) {
-  const [pathPart, queryPart] = hash.slice(1).split('?')
+  const [pathPart] = hash.slice(1).split('?')
   return pathPart || '/'
 }
 

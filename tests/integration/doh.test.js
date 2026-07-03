@@ -1,8 +1,6 @@
 // tests/integration/doh.test.js
 
-import assert from 'node:assert/strict'
-import { describe, it } from 'node:test'
-import { createMockRequest, createMockEnv, assertEqual } from '../support/test-helpers.js'
+import { createMockRequest, createMockEnv, assert, assertEqual } from '../support/test-helpers.js'
 import { runSuite } from '../test-runner.js'
 
 /**

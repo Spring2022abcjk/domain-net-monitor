@@ -105,12 +105,6 @@ export class AdminHistory {
    * 渲染筛选栏
    */
   renderFilterBar() {
-    const domainOptions = this.historyData.domains
-      .map(
-        (d) => `<option value="${d.domain}" ${this.selectedDomain === d.domain ? 'selected' : ''}>${d.domain}</option>`,
-      )
-      .join('')
-
     return `
       <div class="bg-white rounded-lg shadow p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

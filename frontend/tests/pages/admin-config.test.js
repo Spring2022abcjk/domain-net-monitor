@@ -2,7 +2,7 @@
  * 任务 18 - 系统配置页面测试
  */
 
-import { runSuite, assertEqual, assert } from '../test-runner.js'
+import { runSuite, assertEqual } from '../test-runner.js'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'

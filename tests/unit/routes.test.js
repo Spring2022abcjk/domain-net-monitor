@@ -1,5 +1,5 @@
 import { handleRequest } from '../../src/routes/index.js'
-import { assert, assertEqual, runSuite } from '../test-runner.js'
+import { assertEqual, runSuite } from '../test-runner.js'
 
 // Mock KV 存储
 class MockKV {

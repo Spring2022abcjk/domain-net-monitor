@@ -6,7 +6,7 @@
  */
 
 import { getCorsHeaders, handleOptionsRequest } from '../../src/utils/helper.js'
-import { assert, assertEqual, runSuite } from '../test-runner.js'
+import { assertEqual, runSuite } from '../test-runner.js'
 
 /**
  * 创建 Mock Request

@@ -3,7 +3,6 @@
 import { jsonResponse, cleanDomain } from '../../utils/helper.js'
 import { isValidAdminToken, createUnauthorizedResponse } from '../../middleware/auth.js'
 import { getHistory, getAllHistory, deleteHistory, cleanupHistory } from '../../storage/history.js'
-import { getAllDomains } from '../../storage/domains.js'
 
 /**
  * 查询历史记录

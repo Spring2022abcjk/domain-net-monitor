@@ -96,7 +96,7 @@ export async function request(url, options = {}) {
   }
 
   // 移除 apiToken 从 options，避免传给 fetch
-  const { apiToken, ...fetchOptions } = options
+  const { apiToken: _apiToken, ...fetchOptions } = options
 
   const config = {
     ...fetchOptions,

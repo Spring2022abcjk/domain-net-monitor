@@ -1,6 +1,5 @@
 // tests/unit/detector-exports.test.js
 
-import assert from 'node:assert/strict'
 import { runSuite, assertEqual } from '../test-runner.js'
 
 /**

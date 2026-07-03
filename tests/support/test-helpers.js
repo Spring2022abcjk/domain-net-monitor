@@ -7,7 +7,7 @@
 
 import { assert, assertEqual } from '../test-runner.js'
 
-export { assertEqual }
+export { assert, assertEqual }
 
 /**
  * 创建 Mock KV 存储

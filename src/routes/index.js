@@ -27,7 +27,7 @@ import { incrementRequests, recordRateLimitHit } from '../storage/stats.js'
  * @param {ExecutionContext} ctx - 执行上下文
  * @returns {Promise<Response>} 响应对象
  */
-export async function handleRequest(request, env, corsHeaders = {}, ctx) {
+export async function handleRequest(request, env, corsHeaders = {}, _ctx) {
   const url = new URL(request.url)
   const path = url.pathname
   const method = request.method

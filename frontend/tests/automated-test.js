@@ -21,7 +21,7 @@ const colors = {
   gray: '\x1b[90m',
 }
 
-function log(symbol, message, color = colors.reset) {
+function log(symbol, message, _color = colors.reset) {
   console.log(`${symbol} ${message}${colors.reset}`)
 }
 
@@ -319,7 +319,7 @@ async function testApiReachability() {
     const response = await fetch(`${apiUrl}/health`, { method: 'GET', timeout: 5000 })
 
     if (response.ok) {
-      const data = await response.json()
+      await response.json()
       pass(`API 健康检查通过：${apiUrl}`)
       return true
     } else {

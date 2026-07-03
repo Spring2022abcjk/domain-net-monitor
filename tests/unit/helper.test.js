@@ -301,7 +301,7 @@ async function testFetchWithTimeout() {
       const response = await fetchWithTimeout('https://httpbin.org/get', {}, 5000)
       assert(response instanceof Response, 'Returns Response object')
       assertEqual(response.ok, true, 'Response is OK')
-    } catch (e) {
+    } catch (_e) {
       // 网络问题跳过此测试
       console.log('  ⊘ Skipping network test (unreachable)')
     }
@@ -310,8 +310,8 @@ async function testFetchWithTimeout() {
     try {
       await fetchWithTimeout('http://10.255.255.1/test', {}, 100)
       assert(false, 'Should have timed out')
-    } catch (e) {
-      assert(e.message.includes('timeout') || e.name === 'AbortError', 'Timeout throws error')
+    } catch (_e) {
+      assert(_e.message.includes('timeout') || _e.name === 'AbortError', 'Timeout throws error')
     }
   })
 }

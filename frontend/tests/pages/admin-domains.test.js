@@ -2,7 +2,7 @@
  * 任务 17 - 域名管理页面测试
  */
 
-import { runSuite, assertEqual, assert } from '../test-runner.js'
+import { runSuite, assertEqual } from '../test-runner.js'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
