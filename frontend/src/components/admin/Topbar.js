@@ -89,6 +89,7 @@ function generateBreadcrumbs(hash) {
     history: '历史记录',
   }
 
+  /** @type {Array<{path: string, label: string}>} */
   const crumbs = []
   let accumulatedPath = ''
 

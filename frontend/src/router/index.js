@@ -7,6 +7,7 @@ import { matchRoute } from './utils.js'
 import { isLoggedIn } from '../utils/storage.js'
 
 // 当前页面实例，用于清理
+/** @type {Object|null} */
 let currentPageInstance = null
 
 /**

@@ -22,6 +22,7 @@ const NOTIFICATION_TYPES = {
   },
 }
 
+/** @type {HTMLElement|null} */
 let notificationContainer = null
 
 /**
