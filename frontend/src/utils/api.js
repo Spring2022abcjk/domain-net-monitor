@@ -1,6 +1,7 @@
 /**
  * API 请求配置
  */
+import '/src/types/api.js'
 import { getApiToken, getApiEndpoint, setApiToken as syncApiToken } from './storage.js'
 
 const API_CONFIG = {
@@ -65,9 +66,9 @@ export function clearToken() {
 /**
  * API 请求封装
  * @param {string} url - 请求 URL
- * @param {Object} options - 请求选项
- * @param {string} options.apiToken - 可选的 API Token（用于登录验证）
- * @returns {Promise<Object>} 响应数据
+ * @param {Object} [options] - 请求选项
+ * @param {string} [options.apiToken] - 可选的 API Token（用于登录验证）
+ * @returns {Promise<ApiResponse>} 响应数据
  */
 export async function request(url, options = {}) {
   // 优先使用传入的 apiToken，否则从 localStorage 读取
@@ -138,7 +139,7 @@ export async function request(url, options = {}) {
  * GET 请求
  * @param {string} url - 请求 URL
  * @param {Object} [params] - 查询参数
- * @returns {Promise<Object>} 响应数据
+ * @returns {Promise<ApiResponse>} 响应数据
  */
 export function get(url, params) {
   if (!params || Object.keys(params).length === 0) {
@@ -167,7 +168,7 @@ export function get(url, params) {
  * @param {string} url - 请求 URL
  * @param {Object} body - 请求体
  * @param {Object} options - 可选参数（如 apiToken）
- * @returns {Promise<Object>} 响应数据
+ * @returns {Promise<ApiResponse>} 响应数据
  */
 export function post(url, body, options = {}) {
   return request(url, {
@@ -181,7 +182,7 @@ export function post(url, body, options = {}) {
  * PUT 请求
  * @param {string} url - 请求 URL
  * @param {Object} body - 请求体
- * @returns {Promise<Object>} 响应数据
+ * @returns {Promise<ApiResponse>} 响应数据
  */
 export function put(url, body) {
   return request(url, {
@@ -193,7 +194,7 @@ export function put(url, body) {
 /**
  * DELETE 请求
  * @param {string} url - 请求 URL
- * @returns {Promise<Object>} 响应数据
+ * @returns {Promise<ApiResponse>} 响应数据
  */
 export function del(url) {
   return request(url, { method: 'DELETE' })
