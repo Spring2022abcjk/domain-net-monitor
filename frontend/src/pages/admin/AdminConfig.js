@@ -6,6 +6,7 @@ import { Input } from '../../components/Input.js'
 import { Button } from '../../components/Button.js'
 import { show } from '../../components/Notification.js'
 import { get, put, post } from '../../utils/api.js'
+import { getInputValue } from '../../utils/dom.js'
 
 /**
  * 配置页面类
@@ -240,12 +241,12 @@ export class AdminConfig {
     this.bindEvents()
 
     try {
-      const refreshInterval = parseInt(document.getElementById('refreshInterval').value)
-      const historyRetention = parseInt(document.getElementById('historyRetention').value)
-      const rateLimitWindow = parseInt(document.getElementById('rateLimitWindow').value)
-      const rateLimitMax = parseInt(document.getElementById('rateLimitMax').value)
-      const dohPrimary = document.getElementById('dohPrimary').value
-      const dohBackup = document.getElementById('dohBackup').value
+      const refreshInterval = parseInt(getInputValue('refreshInterval'))
+      const historyRetention = parseInt(getInputValue('historyRetention'))
+      const rateLimitWindow = parseInt(getInputValue('rateLimitWindow'))
+      const rateLimitMax = parseInt(getInputValue('rateLimitMax'))
+      const dohPrimary = getInputValue('dohPrimary')
+      const dohBackup = getInputValue('dohBackup')
 
       // 验证检测间隔
       if (refreshInterval < 1) {
@@ -342,8 +343,8 @@ export class AdminConfig {
    * 处理测试 DoH 服务器连接
    */
   async handleTestDoh() {
-    const dohPrimary = document.getElementById('dohPrimary').value
-    const dohBackup = document.getElementById('dohBackup').value
+    const dohPrimary = getInputValue('dohPrimary')
+    const dohBackup = getInputValue('dohBackup')
 
     this.testing = true
     this.render()

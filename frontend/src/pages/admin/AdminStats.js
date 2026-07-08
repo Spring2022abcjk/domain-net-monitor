@@ -14,6 +14,8 @@ export class AdminStats {
   constructor() {
     this.stats = null
     this.loading = false
+    /** @type {(() => void)|null} */
+    this.__refreshHandler = null
   }
 
   /**
@@ -186,7 +188,7 @@ export class AdminStats {
    * 清理资源
    */
   destroy() {
-    document.getElementById('refreshStatsBtn')?.removeEventListener('click', this.__refreshHandler)
+    document.getElementById('refreshStatsBtn')?.removeEventListener('click', /** @type {EventListener} */ (this.__refreshHandler))
     this.__refreshHandler = null
   }
 }
