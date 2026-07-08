@@ -17,8 +17,8 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
   const minutes = String(d.getMinutes()).padStart(2, '0')
   const seconds = String(d.getSeconds()).padStart(2, '0')
 
-  return format
-    .replace('YYYY', year)
+  return String(format)
+    .replace('YYYY', String(year))
     .replace('MM', month)
     .replace('DD', day)
     .replace('HH', hours)
@@ -34,7 +34,7 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
 export function formatRelativeTime(date) {
   const now = new Date()
   const d = new Date(date)
-  const diff = now - d
+  const diff = now.getTime() - d.getTime()
 
   const seconds = Math.floor(diff / 1000)
   const minutes = Math.floor(seconds / 60)
@@ -74,12 +74,14 @@ export function isValidURL(url) {
 /**
  * 防抖函数
  * @param {Function} fn - 要执行的函数
- * @param {number} delay - 延迟毫秒数
- * @returns {Function} 防抖后的函数
+ * @param {number} [delay=300] - 延迟毫秒数
+ * @returns {Function & { cancel(): void }} 防抖后的函数
  */
 export function debounce(fn, delay = 300) {
+  /** @type {ReturnType<typeof setTimeout>|null} */
   let timer = null
-  const debounced = function (...args) {
+  /** @this {any} */
+  const debounced = function (/** @type {any[]} */ ...args) {
     if (timer) clearTimeout(timer)
     timer = setTimeout(() => fn.apply(this, args), delay)
   }
@@ -95,12 +97,13 @@ export function debounce(fn, delay = 300) {
 /**
  * 节流函数
  * @param {Function} fn - 要执行的函数
- * @param {number} limit - 时间限制（毫秒）
+ * @param {number} [limit=300] - 时间限制（毫秒）
  * @returns {Function} 节流后的函数
  */
 export function throttle(fn, limit = 300) {
   let inThrottle = false
-  return function (...args) {
+  /** @this {any} */
+  return function (/** @type {any[]} */ ...args) {
     if (!inThrottle) {
       fn.apply(this, args)
       inThrottle = true
@@ -112,7 +115,7 @@ export function throttle(fn, limit = 300) {
 /**
  * 深拷贝（支持 Date、RegExp、Map、Set、ArrayBuffer 等特殊类型）
  * @param {*} obj - 要拷贝的对象
- * @param {WeakMap} [hash] - 用于处理循环引用
+ * @param {WeakMap<object, any>} [hash] - 用于处理循环引用
  * @returns {*} 拷贝后的对象
  */
 export function deepClone(obj, hash = new WeakMap()) {
@@ -150,7 +153,14 @@ export function deepClone(obj, hash = new WeakMap()) {
     return obj.slice(0)
   }
 
+  if (obj instanceof DataView) {
+    const clonedView = new DataView(new ArrayBuffer(obj.byteLength))
+    new Uint8Array(clonedView.buffer).set(new Uint8Array(obj.buffer, obj.byteOffset, obj.byteLength))
+    return clonedView
+  }
+
   if (ArrayBuffer.isView(obj)) {
+    // @ts-expect-error TS2351/TS2339: TypedArray has constructor and slice(), but TS can't verify in checkJs
     return new obj.constructor(obj.slice(0))
   }
 
@@ -159,6 +169,7 @@ export function deepClone(obj, hash = new WeakMap()) {
   }
 
   if (Array.isArray(obj)) {
+    /** @type {any[]} */
     const clonedArray = []
     hash.set(obj, clonedArray)
     obj.forEach((item, index) => {
@@ -167,6 +178,7 @@ export function deepClone(obj, hash = new WeakMap()) {
     return clonedArray
   }
 
+  /** @type {Record<string, any>} */
   const clonedObj = {}
   hash.set(obj, clonedObj)
   for (const key of Object.keys(obj)) {
