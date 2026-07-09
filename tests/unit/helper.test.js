@@ -310,8 +310,8 @@ async function testFetchWithTimeout() {
     try {
       await fetchWithTimeout('http://10.255.255.1/test', {}, 100)
       assert(false, 'Should have timed out')
-    } catch (_e) {
-      assert(_e.message.includes('timeout') || _e.name === 'AbortError', 'Timeout throws error')
+    } catch (e) {
+      assert(e.message.includes('timeout') || e.name === 'AbortError', 'Timeout throws error')
     }
   })
 }
