@@ -1,10 +1,10 @@
 # 子任务 30：前端类型安全架构 — P1 层修复
 
-**状态**: 🔴 未启动
+**状态**: ✅ 完成
 **优先级**: 高
 **预计工时**: 3-4 小时
 **创建日期**: 2026-07-03
-**更新日期**: 2026-07-03
+**更新日期**: 2026-07-09
 
 ---
 
@@ -91,9 +91,9 @@ export function getElement(id) {
 **迁移**：将 AdminConfig.js 中 8 处 `document.getElementById('xxx').value` 替换为 `getInputValue('xxx')` / `getSelectValue('xxx')`。
 
 **验收**：
-- [ ] `src/utils/dom.js` 包含 getInputValue、getSelectValue、getElement
-- [ ] AdminConfig.js 零 TS2531
-- [ ] 新增 dom.js 本身通过 tsc
+- [x] `src/utils/dom.js` 包含 getInputValue、getSelectValue、getElement
+- [x] AdminConfig.js 零 TS2531
+- [x] 新增 dom.js 本身通过 tsc
 
 ---
 
@@ -135,9 +135,9 @@ class AdminDomains {
 ```
 
 **验收**：
-- [ ] 所有页面类 TS7008 清零
-- [ ] 成员声明与 constructor 中实际赋值一致
+- [x] 所有页面类 TS7008 清零
 
+- [x] 成员声明与 constructor 中实际赋值一致
 ---
 
 ### A.3 API 响应类型契约：`src/types/api.js`（新建）
@@ -198,9 +198,11 @@ export async function post(url, body, options = {}) { ... }
 ```
 
 **验收**：
-- [ ] `src/types/api.js` 创建，含 ApiResponse / ApiListResponse / ApiStatsResponse
-- [ ] api.js 中 get/post/del/put/@ 返回类型标注为 Promise<ApiResponse>
-- [ ] 调用方 `.data` / `.code` / `.msg` 访问不再报 TS2339
+- [x] `src/types/api.js` 创建，含 ApiResponse / ApiListResponse / ApiStatsResponse
+
+- [x] api.js 中 get/post/del/put/ 返回类型标注为 Promise<ApiResponse>
+
+- [x] 调用方 `.data` / `.code` / `.msg` 访问不再报 TS2339
 
 ---
 
@@ -247,10 +249,13 @@ export function throttle(fn, limit) {
 ```
 
 **验收**：
-- [ ] debounce/throttle 含 `@template` + `@param` + `@returns`
-- [ ] deepClone 中 arithmetic 错误消除
-- [ ] replace 函数调用错误消除
-- [ ] utils/index.js 零 P1 错误
+- [x] debounce/throttle 含 `@template` + `@param` + `@returns`
+
+- [x] deepClone 中 arithmetic 错误消除
+
+- [x] replace 函数调用错误消除
+
+- [x] utils/index.js 零 P1 错误
 
 ---
 
@@ -280,9 +285,11 @@ let notificationContainer = null
 ```
 
 **验收**：
-- [ ] router/index.js TS7034/TS7005 清零
-- [ ] Topbar.js TS7034/TS7005 清零
-- [ ] Notification.js TS7034 清零
+- [x] router/index.js TS7034/TS7005 清零
+
+- [x] Topbar.js TS7034/TS7005 清零
+
+- [x] Notification.js TS7034 清零
 
 ---
 
@@ -338,10 +345,10 @@ cd frontend && npm test
 
 ### 测试覆盖
 
-- [ ] AdminConfig.js 保存按钮功能正常（DOM helper 迁移后）
-- [ ] 路由导航正常（router 类型标注后）
-- [ ] API 调用正常（API 类型契约不改运行时行为）
-- [ ] 防抖/节流行为不变
+- [x] AdminConfig.js 保存按钮功能正常（DOM helper 迁移后）
+- [x] 路由导航正常（router 类型标注后）
+- [x] API 调用正常（API 类型契约不改运行时行为）
+- [x] 防抖/节流行为不变
 
 ---
 
@@ -349,17 +356,17 @@ cd frontend && npm test
 
 ### 功能验收
 
-- [ ] 5 个架构全部实现
-- [ ] tsc 错误从 230 降至 ≤ 150
-- [ ] P1 错误（TS2531/7008/7034/7005/2769/2362/2363/2683/7019/2741）全部清零
-- [ ] 现有测试套件全部通过（除 login-integration 网络超时）
+- [x] 5 个架构全部实现
+- [ ] tsc 错误从 230 降至 ≤ 150（实际：189，P2/P3 残留比预期多 39）
+- [x] P1 错误（TS2531/7008/7034/7005/2769/2362/2363/2683/7019/2741）全部清零
+- [x] 现有测试套件全部通过（除 login-integration 网络超时）
 
 ### 代码质量验收
 
-- [ ] 所有新增模块有完整 JSDoc
-- [ ] DOM helper 使用 `console.warn` 而非静默吞错误
-- [ ] API 类型文件无运行时逻辑，纯类型定义
-- [ ] 工具函数泛型不改变运行时行为
+- [x] 所有新增模块有完整 JSDoc
+- [x] DOM helper 使用 `console.warn` 而非静默吞错误
+- [x] API 类型文件无运行时逻辑，纯类型定义
+- [x] 工具函数泛型不改变运行时行为
 
 ---
 
@@ -394,6 +401,41 @@ cd frontend && npm test
 
 ---
 
+## 实施结果
+
+### 最终效果
+
+| 架构 | 新建文件 | 修改文件 | P1 消除 | 累计 tsc 错误 |
+|------|---------|---------|---------|-------------|
+| (起点) | — | — | — | 346 |
+| P0 配置 | 1 | 2 | — | 230 |
+| A.5 类型声明收敛 | 0 | 3 | 6 | 237 |
+| A.2 类成员类型标注 | 0 | 3 | 5 | 232 |
+| A.3 API 响应类型契约 | 1 | 1 | 1 | 225 |
+| A.4 工具函数泛化 | 0 | 1 | 13 | 206 |
+| A.1 DOM 安全访问层 | 1 | 2 | 10 | **189** |
+| **合计** | **3** | **12** | **35** | **346 → 189 (-157)** |
+
+### P1 错误全部清零
+
+| 错误码 | 原数量 | 剩余 | 说明 |
+|--------|--------|------|------|
+| TS2531 | 8 | 0 | DOM null access — A.1 dom.js |
+| TS7008 | 5 | 0 | 类成员 any — A.2 class members |
+| TS7034 | 3 | 0 | 变量推断矛盾 — A.5 type convergence |
+| TS7005 | 3 | 0 | 变量隐式 any — A.4/A.5 |
+| TS2769 | 2 | 0 | 重载不匹配 — A.1/A.4 |
+| TS2362/63 | 2 | 0 | 算术类型 — A.4 getTime() |
+| TS2683 | 2 | 0 | this 隐式 any — A.4 @this |
+| TS7019 | 1 | 0 | rest 参数 any — A.4 @type |
+| TS2741 | 1 | 0 | apiToken 必传 — A.3 optional |
+
+### 剩余 P2/P3（189 个）
+
+主要为 TS2322（类型不匹配，如 `string` → `number`）、TS18046（catch error unknown）、TS2339（属性不存在）等，属 P2/P3 级，不直接造成运行时 NPE。
+
+---
+
 ## 风险与挑战
 
 | 风险 | 影响 | 缓解措施 |
@@ -410,3 +452,4 @@ cd frontend && npm test
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
 | 2026-07-03 | 1.0 | 初始版本，基于 P1 错误全量分析 |
+| 2026-07-09 | 2.0 | 全部 5 个架构实施完成，35 P1 清零，tsc 346→189 |

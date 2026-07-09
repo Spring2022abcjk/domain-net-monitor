@@ -1,8 +1,8 @@
 # Cloudflare Worker 域名网络特性监控项目 - 主任务清单
 
-**版本**: 5.3
-**更新日期**: 2026-07-03
-**总进度**: 97% (29/30)  
+**版本**: 5.4
+**更新日期**: 2026-07-09
+**总进度**: 100% (30/30)  
 
 ---
 
@@ -391,11 +391,21 @@
 | 编号 | 任务 | 状态 | 完成度 | 子任务文档 |
 |------|------|------|--------|-----------|
 | 29 | ESLint + Prettier 代码规范基础设施 | ✅ 完成 | 100% | `subtask-29-eslint-prettier.md` |
-| 30 | 前端类型安全架构 — P1 层修复 | 🔴 未启动 | 0% | `subtask-30-p1-type-safety-architecture.md` |
+| 30 | 前端类型安全架构 — P1 层修复 | ✅ 完成 | 100% | `subtask-30-p1-type-safety-architecture.md` |
+| 31 | 前端类型安全架构 — P2/P3 层收尾 | 🔵 待规划 | 0% | — |
 
 ---
 
 ## 下一步
+
+### Task 30 成果（2026-07-09 完成）
+- P1 错误：35 → 0（全部清零）
+- tsc 总错误：346 → 189（-45%）
+- 新建文件：`frontend/src/types/api.js`、`frontend/src/utils/dom.js`、`frontend/tsconfig.json`
+- 修改文件：12 个（api.js, index.js, AdminConfig.js, AdminStats.js 等）
+
+### 剩余 P2/P3（189 个）
+主要为 TS2322（类型不匹配）、TS18046（catch unknown）、TS2339（属性不存在），建议规划 Task 31 分阶段处理。
 
 ### 遗留功能（未实现）
 1. **安全配置 UI**（P3）：后端 `GET /api/admin/config/security` 已实现，前端无对应管理界面
