@@ -29,4 +29,28 @@
  * @property {string} msg
  */
 
+/**
+ * @typedef {Object} HistoryDomain
+ * @property {string} domain
+ * @property {Array<Object>} [history]
+ * @property {number} [latestCheck]
+ */
+
+/**
+ * @typedef {Object} HistoryRecord
+ * @property {number|string} timestamp
+ * @property {string} domain
+ * @property {{status: string}} https_rr
+ * @property {{status: string}} ipv6
+ * @property {{status: string}} ech
+ */
+
+/**
+ * @typedef {Object} DomainItem
+ * @property {string} domain
+ * @property {boolean} isDefault
+ * @property {string} status
+ * @property {number|null} lastChecked
+ */
+
 export {}

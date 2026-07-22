@@ -11,7 +11,7 @@ import { isLoggedIn, clearAuth } from '../../utils/storage.js'
  * 管理后台布局类
  */
 export class AdminLayout {
-  /** @param {Function} childComponent */
+  /** @param {new (...args: any[]) => any} childComponent */
   constructor(childComponent) {
     this.childComponent = childComponent
     this.childInstance = null

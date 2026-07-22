@@ -10,6 +10,7 @@ import { show } from '../../components/Notification.js'
 import { get, post, del } from '../../utils/api.js'
 import { formatDate, isValidDomain } from '../../utils/index.js'
 import { getInputValue } from '../../utils/dom.js'
+/** @typedef {import('../../types/api.js').DomainItem} DomainItem */
 
 /**
  * 域名管理页面类
@@ -161,7 +162,7 @@ export class AdminDomains {
       {
         key: 'select',
         title: '<input type="checkbox" id="selectAll" class="rounded" />',
-        render: (/** @type {any} */ _, /** @type {any} */ row) => `
+        render: (/** @type {any} */ _, /** @type {DomainItem} */ row) => `
           <input
             type="checkbox"
             class="dm-domain-checkbox rounded"
@@ -192,7 +193,7 @@ export class AdminDomains {
       {
         key: 'isDefault',
         title: '默认展示',
-        render: (/** @type {boolean} */ value, /** @type {any} */ row) =>
+        render: (/** @type {boolean} */ value, /** @type {DomainItem} */ row) =>
           Toggle({
             checked: value,
             id: `toggle-${row.domain.replace(/\./g, '-')}`,
@@ -201,7 +202,7 @@ export class AdminDomains {
       {
         key: 'actions',
         title: '操作',
-        render: (/** @type {any} */ _, /** @type {any} */ row) => `
+        render: (/** @type {any} */ _, /** @type {DomainItem} */ row) => `
           <button
             class="dm-delete-btn dm-btn dm-btn-danger dm-btn-sm"
             data-domain="${row.domain.replace(/'/g, "\\'")}"

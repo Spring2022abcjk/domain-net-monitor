@@ -147,7 +147,7 @@ export class DomainDetail {
                     {
                       key: 'timestamp',
                       title: '检测时间',
-                      /** @param {string} value */
+                      /** @param {number|string} value */
                       render: (value) => formatDate(new Date(value)),
                     },
                     {
