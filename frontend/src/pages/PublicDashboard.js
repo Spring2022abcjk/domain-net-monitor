@@ -7,6 +7,7 @@ import { SearchBox } from '../components/SearchBox.js'
 import { Footer } from '../components/Footer.js'
 import { EmptyState } from '../components/EmptyState.js'
 import { get, setApiBaseUrl } from '../utils/api.js'
+import { getInputValue } from '../utils/dom.js'
 import { show } from '../components/Notification.js'
 import { debounce } from '../utils/index.js'
 import { getApiEndpoint } from '../utils/storage.js'
@@ -166,8 +167,7 @@ export class PublicDashboard {
   }
 
   _doSearch() {
-    const searchInput = document.getElementById('domain-search')
-    this.searchQuery = searchInput ? searchInput.value.trim().toLowerCase() : ''
+    this.searchQuery = getInputValue('domain-search').trim().toLowerCase()
 
     if (!this.searchQuery) {
       this.filteredDomains = this.domains

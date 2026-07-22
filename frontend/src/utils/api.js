@@ -68,6 +68,7 @@ export function clearToken() {
  * @param {string} url - 请求 URL
  * @param {Object} [options] - 请求选项
  * @param {string} [options.apiToken] - 可选的 API Token（用于登录验证）
+ * @param {Record<string,string>} [options.headers] - 额外请求头
  * @returns {Promise<ApiResponse>} 响应数据
  */
 export async function request(url, options = {}) {

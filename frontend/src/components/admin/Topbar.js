@@ -2,10 +2,11 @@
  * 管理后台顶部栏组件
  * 任务 16：面包屑导航、用户信息、退出按钮
  */
-import { getCurrentUser } from '../../utils/storage.js'
+import { getCurrentUser, getApiEndpoint, isLoggedIn } from '../../utils/storage.js'
 
 export function Topbar() {
   const user = getCurrentUser()
+  const endpoint = isLoggedIn() ? getApiEndpoint() : ''
 
   // 面包屑生成（根据当前路径）
   const crumbs = generateBreadcrumbs(window.location.hash)
@@ -49,11 +50,11 @@ export function Topbar() {
       <!-- 右侧：用户信息 + 退出 -->
       <div class="flex items-center gap-4">
         ${
-          user?.endpoint
+          endpoint
             ? `
           <div class="hidden md:flex items-center gap-2 text-sm text-gray-600">
             <span class="text-gray-400">|</span>
-            <span>${user.endpoint.replace(/^https?:\/\//, '').split('/')[0]}</span>
+            <span>${endpoint.replace(/^https?:\/\//, '').split('/')[0]}</span>
           </div>
         `
             : ''

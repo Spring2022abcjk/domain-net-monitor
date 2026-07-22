@@ -9,6 +9,7 @@ import { Toggle } from '../../components/Toggle.js'
 import { show } from '../../components/Notification.js'
 import { get, post, del } from '../../utils/api.js'
 import { formatDate, isValidDomain } from '../../utils/index.js'
+import { getInputValue } from '../../utils/dom.js'
 
 /**
  * 域名管理页面类
@@ -302,7 +303,7 @@ export class AdminDomains {
 
     const input = document.getElementById('newDomainInput')
     if (input) {
-      this.newDomainInput = input.value
+      this.newDomainInput = /** @type {HTMLInputElement} */ (input).value
     }
   }
 
@@ -317,7 +318,7 @@ export class AdminDomains {
    * 处理添加域名
    */
   async handleAddDomain() {
-    const input = document.getElementById('newDomainInput')?.value.trim()
+    const input = getInputValue('newDomainInput').trim()
     if (!input) {
       show.error('请输入域名')
       return

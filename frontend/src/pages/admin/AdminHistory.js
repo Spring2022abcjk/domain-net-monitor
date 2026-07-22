@@ -8,6 +8,7 @@ import { Input } from '../../components/Input.js'
 import { show } from '../../components/Notification.js'
 import { get, del } from '../../utils/api.js'
 import { formatDate } from '../../utils/index.js'
+import { getInputValue, getSelectValue } from '../../utils/dom.js'
 
 /**
  * 历史记录页面类
@@ -283,11 +284,8 @@ export class AdminHistory {
    * 处理查询
    */
   async handleQuery() {
-    const domainSelect = document.getElementById('domainSelect')
-    const daysSelect = document.getElementById('daysSelect')
-
-    this.selectedDomain = domainSelect?.value || ''
-    this.daysFilter = daysSelect?.value || '7'
+    this.selectedDomain = getSelectValue('domainSelect')
+    this.daysFilter = getSelectValue('daysSelect') || '7'
 
     await this.loadData()
     this.render()

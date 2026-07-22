@@ -2,11 +2,17 @@
  * localStorage 凭据管理
  */
 
+/**
+ * @typedef {Object} StorageConfig
+ * @property {string} [apiEndpoint] - API 端点
+ * @property {string} [apiToken] - API Token
+ */
+
 const STORAGE_KEY = 'domain_monitor_config'
 
 /**
  * 获取存储的配置
- * @returns {Object} 配置对象
+ * @returns {StorageConfig} 配置对象
  */
 export function getConfig() {
   const config = localStorage.getItem(STORAGE_KEY)

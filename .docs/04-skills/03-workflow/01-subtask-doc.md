@@ -1,1 +1,0 @@
-../../../.opencode/skills/subtask-doc.md

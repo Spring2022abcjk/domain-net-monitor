@@ -1,1 +1,0 @@
-../../../.opencode/skills/html-injection.md

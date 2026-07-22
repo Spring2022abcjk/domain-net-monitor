@@ -1,1 +1,0 @@
-../../../.opencode/skills/admin-api-404-debug.md

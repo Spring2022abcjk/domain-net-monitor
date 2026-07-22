@@ -1,5 +1,6 @@
 /**
  * 页脚组件
+ * @returns {string}
  */
 export function Footer() {
   const year = new Date().getFullYear()

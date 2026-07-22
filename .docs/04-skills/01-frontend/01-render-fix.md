@@ -1,1 +1,0 @@
-../../../.opencode/skills/frontend-render-fix.md

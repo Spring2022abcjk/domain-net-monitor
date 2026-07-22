@@ -1,1 +1,0 @@
-../../../.opencode/skills/vite-env-injection-fix.md

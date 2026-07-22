@@ -8,6 +8,7 @@ import { Card } from '../components/Card.js'
 import { show } from '../components/Notification.js'
 import { post } from '../utils/api.js'
 import { setApiEndpoint, setApiToken, isLoggedIn, getApiEndpoint } from '../utils/storage.js'
+import { getInputValue } from '../utils/dom.js'
 
 /**
  * 登录页面类
@@ -131,13 +132,8 @@ export class LoginPage {
   async handleSubmit() {
     if (this.loading) return
 
-    const endpointInput = document.getElementById('apiEndpoint')
-    const tokenInput = document.getElementById('apiToken')
-
-    if (!endpointInput || !tokenInput) return
-
-    const endpoint = endpointInput.value.trim()
-    const token = tokenInput.value.trim()
+    const endpoint = getInputValue('apiEndpoint')
+    const token = getInputValue('apiToken')
 
     if (!endpoint || !token) {
       show.error('请输入 API 端点和 Token')
@@ -199,11 +195,11 @@ export class LoginPage {
     const btn = document.getElementById('submitBtn')
     if (btn) {
       if (loading) {
-        btn.classList.add('loading')
-        btn.disabled = true
+        btn.classList.add('loading');
+        /** @type {HTMLButtonElement} */ (btn).disabled = true
       } else {
-        btn.classList.remove('loading')
-        btn.disabled = false
+        btn.classList.remove('loading');
+        /** @type {HTMLButtonElement} */ (btn).disabled = false
       }
     }
   }

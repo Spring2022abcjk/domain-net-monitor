@@ -392,7 +392,7 @@
 |------|------|------|--------|-----------|
 | 29 | ESLint + Prettier 代码规范基础设施 | ✅ 完成 | 100% | `subtask-29-eslint-prettier.md` |
 | 30 | 前端类型安全架构 — P1 层修复 | ✅ 完成 | 100% | `subtask-30-p1-type-safety-architecture.md` |
-| 31 | 前端类型安全架构 — P2/P3 层收尾 | 🔵 待规划 | 0% | — |
+| 31 | 前端类型安全架构 — P2/P3 层收尾 | 🔵 待规划 | 0% | `subtask-31-p2-p3-type-safety.md` |
 
 ---
 
@@ -405,7 +405,7 @@
 - 修改文件：12 个（api.js, index.js, AdminConfig.js, AdminStats.js 等）
 
 ### 剩余 P2/P3（189 个）
-主要为 TS2322（类型不匹配）、TS18046（catch unknown）、TS2339（属性不存在），建议规划 Task 31 分阶段处理。
+主要为 TS2339（属性不存在，54）、TS7006（隐式 any，50）、TS18046（catch unknown，21），详见 `subtask-31-p2-p3-type-safety.md`。
 
 ### 遗留功能（未实现）
 1. **安全配置 UI**（P3）：后端 `GET /api/admin/config/security` 已实现，前端无对应管理界面

@@ -1,1 +1,0 @@
-../../../.opencode/skills/test-template.md
