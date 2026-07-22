@@ -117,7 +117,7 @@ export class AdminHistory {
               value: this.selectedDomain,
               options: [
                 { value: '', label: '全部域名' },
-                ...this.historyData.domains.map((d) => ({ value: d.domain, label: d.domain })),
+                ...this.historyData.domains.map((/** @type {any} */ d) => ({ value: d.domain, label: d.domain })),
               ],
             })}
           </div>
@@ -157,12 +157,12 @@ export class AdminHistory {
     let historyData = []
 
     if (this.selectedDomain) {
-      const domainData = this.historyData.domains.find((d) => d.domain === this.selectedDomain)
+      const domainData = this.historyData.domains.find((/** @type {any} */ d) => d.domain === this.selectedDomain)
       if (domainData && domainData.history) {
-        historyData = domainData.history.map((h) => ({ ...h, domain: this.selectedDomain }))
+        historyData = domainData.history.map((/** @type {any} */ h) => ({ ...h, domain: this.selectedDomain }))
       }
     } else {
-      this.historyData.domains.forEach((d) => {
+      this.historyData.domains.forEach((/** @type {any} */ d) => {
         if (d.history && d.history.length > 0) {
           const latestRecord = d.history[0]
           historyData.push({
@@ -188,7 +188,7 @@ export class AdminHistory {
     const days = parseInt(this.daysFilter) || 7
     const cutoffTime = Date.now() - days * 24 * 60 * 60 * 1000
 
-    return historyData.filter((h) => {
+    return historyData.filter((/** @type {any} */ h) => {
       const timestamp = typeof h.timestamp === 'number' ? h.timestamp : new Date(h.timestamp).getTime()
       return timestamp >= cutoffTime
     })
@@ -202,29 +202,29 @@ export class AdminHistory {
       {
         key: 'timestamp',
         title: '检测时间',
-        render: (value) => formatDate(value),
+        render: (/** @type {any} */ value) => formatDate(value),
       },
       {
         key: 'domain',
         title: '域名',
-        render: (value) => `<span class="font-medium text-gray-900">${value}</span>`,
+        render: (/** @type {any} */ value) => `<span class="font-medium text-gray-900">${value}</span>`,
       },
       {
         key: 'https_rr',
         title: 'HTTPS RR',
-        render: (value) =>
+        render: (/** @type {any} */ value) =>
           this.renderStatusBadge(value?.status === 'ok' || value?.status === 'partial', '支持', '不支持'),
       },
       {
         key: 'ipv6',
         title: 'IPv6',
-        render: (value) =>
+        render: (/** @type {any} */ value) =>
           this.renderStatusBadge(value?.status === 'ok' || value?.status === 'partial', '支持', '不支持'),
       },
       {
         key: 'ech',
         title: 'ECH',
-        render: (value) =>
+        render: (/** @type {any} */ value) =>
           this.renderStatusBadge(value?.status === 'ok' || value?.status === 'partial', '支持', '不支持'),
       },
     ]
@@ -245,6 +245,9 @@ export class AdminHistory {
 
   /**
    * 渲染状态徽章
+   * @param {boolean} success
+   * @param {string} successText
+   * @param {string} failText
    */
   renderStatusBadge(success, successText, failText) {
     if (success) {

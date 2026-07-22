@@ -375,6 +375,7 @@ export class AdminConfig {
 
   /**
    * 验证 URL 格式
+   * @param {string} url - 要验证的 URL
    */
   isValidUrl(url) {
     try {

@@ -33,8 +33,8 @@ export class AdminDomains {
     }
     this.__confirmAddHandler = () => this.handleAddDomain()
     this.__batchDeleteHandler = () => this.handleBatchDelete()
-    this.__selectAllHandler = (e) => {
-      if (e.target.checked) {
+    this.__selectAllHandler = (/** @type {Event} */ e) => {
+      if (/** @type {HTMLInputElement} */ (e.target).checked) {
         this.selectedDomains = this.domains.map((d) => d.domain)
       } else {
         this.selectedDomains = []
@@ -42,23 +42,24 @@ export class AdminDomains {
       this.render()
       this.bindEvents()
     }
-    this.__tableDelegateHandler = (e) => {
-      const deleteBtn = e.target.closest('.dm-delete-btn')
+    this.__tableDelegateHandler = (/** @type {Event} */ e) => {
+      const target = /** @type {HTMLElement} */ (e.target)
+      const deleteBtn = target.closest('.dm-delete-btn')
       if (deleteBtn) {
         this._handleDeleteDomain(deleteBtn.dataset.domain)
         return
       }
-      const checkbox = e.target.closest('.dm-domain-checkbox')
+      const checkbox = target.closest('.dm-domain-checkbox')
       if (checkbox) {
         const domain = checkbox.getAttribute('data-domain')
-        if (checkbox.checked) {
+        if (/** @type {HTMLInputElement} */ (checkbox).checked) {
           this.selectedDomains.push(domain)
         } else {
           this.selectedDomains = this.selectedDomains.filter((d) => d !== domain)
         }
         return
       }
-      const toggle = e.target.closest('.dm-toggle input[type="checkbox"]')
+      const toggle = target.closest('.dm-toggle input[type="checkbox"]')
       if (toggle && toggle.id) {
         const domain = toggle.id.replace('toggle-', '').replace(/-/g, '.')
         this.handleToggleDefault(domain)
@@ -160,7 +161,7 @@ export class AdminDomains {
       {
         key: 'select',
         title: '<input type="checkbox" id="selectAll" class="rounded" />',
-        render: (_, row) => `
+        render: (/** @type {any} */ _, /** @type {any} */ row) => `
           <input
             type="checkbox"
             class="dm-domain-checkbox rounded"
@@ -172,7 +173,7 @@ export class AdminDomains {
       {
         key: 'domain',
         title: '域名',
-        render: (value) => `
+        render: (/** @type {string} */ value) => `
           <a href="#/admin/history?domain=${encodeURIComponent(value)}" class="text-blue-600 hover:underline font-medium">
             ${value}
           </a>
@@ -181,17 +182,17 @@ export class AdminDomains {
       {
         key: 'status',
         title: '状态',
-        render: (value) => this.renderStatusBadge(value),
+        render: (/** @type {string} */ value) => this.renderStatusBadge(value),
       },
       {
         key: 'lastChecked',
         title: '最近检测',
-        render: (value) => (value ? formatDate(value) : '<span class="text-gray-400">暂无</span>'),
+        render: (/** @type {number|null} */ value) => (value ? formatDate(value) : '<span class="text-gray-400">暂无</span>'),
       },
       {
         key: 'isDefault',
         title: '默认展示',
-        render: (value, row) =>
+        render: (/** @type {boolean} */ value, /** @type {any} */ row) =>
           Toggle({
             checked: value,
             id: `toggle-${row.domain.replace(/\./g, '-')}`,
@@ -200,7 +201,7 @@ export class AdminDomains {
       {
         key: 'actions',
         title: '操作',
-        render: (_, row) => `
+        render: (/** @type {any} */ _, /** @type {any} */ row) => `
           <button
             class="dm-delete-btn dm-btn dm-btn-danger dm-btn-sm"
             data-domain="${row.domain.replace(/'/g, "\\'")}"
@@ -216,6 +217,7 @@ export class AdminDomains {
 
   /**
    * 渲染状态徽章
+   * @param {string} status
    */
   renderStatusBadge(status) {
     if (status === 'active') {
@@ -403,6 +405,7 @@ export class AdminDomains {
 
   /**
    * 处理切换默认展示
+   * @param {string} domain
    */
   async handleToggleDefault(domain) {
     try {
@@ -424,6 +427,7 @@ export class AdminDomains {
     }
   }
 
+  /** @param {string} domain */
   async _handleDeleteDomain(domain) {
     if (!confirm(`确定要删除域名 ${domain} 吗？此操作不可恢复。`)) return
     try {

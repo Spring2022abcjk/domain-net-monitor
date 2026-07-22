@@ -16,6 +16,7 @@ export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix =
     `
   }
 
+  /** @param {string} align */
   const getColumnAlignClass = (align) => {
     switch (align) {
       case 'center':

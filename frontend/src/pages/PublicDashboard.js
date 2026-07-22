@@ -24,9 +24,11 @@ export class PublicDashboard {
     this.debouncedSearch = debounce(this._doSearch.bind(this), 300)
     this.__searchClickHandler = () => this.triggerSearch()
     this.__searchInputHandler = () => this.debouncedSearch()
+    /** @param {KeyboardEvent} e */
     this.__searchKeyHandler = (e) => {
       if (e.key === 'Enter') this.debouncedSearch()
     }
+    /** @param {Event} e */
     this.__domainClickHandler = (e) => {
       const btn = e.target.closest('[data-domain]')
       if (btn) this.handleViewDetail(btn.dataset.domain)
@@ -179,6 +181,7 @@ export class PublicDashboard {
     this.bindEvents()
   }
 
+  /** @param {string} domain */
   handleViewDetail(domain) {
     window.location.hash = '#/domain/' + encodeURIComponent(domain)
   }

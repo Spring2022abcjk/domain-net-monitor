@@ -190,6 +190,7 @@ export class LoginPage {
 
   /**
    * 设置按钮加载状态
+   * @param {boolean} loading - 是否处于加载状态
    */
   setLoading(loading) {
     const btn = document.getElementById('submitBtn')

@@ -147,11 +147,13 @@ export class DomainDetail {
                     {
                       key: 'timestamp',
                       title: '检测时间',
+                      /** @param {string} value */
                       render: (value) => formatDate(new Date(value)),
                     },
                     {
                       key: 'status',
                       title: '状态',
+                      /** @param {string} value */
                       render: (value) => {
                         const label = value === 'active' ? '正常' : value === 'stopped' ? '异常' : '未知'
                         const cls =

@@ -14,6 +14,12 @@ const API_CONFIG = {
  * API 错误类
  */
 export class APIError extends Error {
+  /**
+   * @param {string} message
+   * @param {number} status
+   * @param {number} code
+   * @param {any} data
+   */
   constructor(message, status, code, data) {
     super(message)
     this.name = 'APIError'
