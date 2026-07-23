@@ -160,14 +160,14 @@ async function renderRoute(route, params, query, parentRoute = null) {
   }
 
   // 初始化页面
-  if (currentPageInstance.init) {
+  if (currentPageInstance?.init) {
     await currentPageInstance.init({ params, query })
   }
 
   // 渲染（如果是 Layout，会自己 render 和 bindEvents）
-  if (currentPageInstance.render) {
+  if (currentPageInstance?.render) {
     app.innerHTML = currentPageInstance.render()
-    if (currentPageInstance.bindEvents) {
+    if (currentPageInstance?.bindEvents) {
       currentPageInstance.bindEvents()
     }
   }

@@ -18,6 +18,7 @@ export class DomainDetail {
     }
   }
 
+  /** @param {{ params: { domain: string } }} arg0 */
   async init({ params }) {
     this.domain = decodeURIComponent(params.domain)
     document.title = `${this.domain} - 域名详情`

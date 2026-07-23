@@ -5,6 +5,7 @@
  * @param {string} [props.size='md'] - 尺寸 (sm/md/lg)
  */
 export function Loading({ text = '加载中...', size = 'md' }) {
+  /** @type {Record<string, string>} */
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',

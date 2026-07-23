@@ -7,7 +7,7 @@
  * @param {boolean} [props.disabled=false] - 是否禁用
  * @param {boolean} [props.loading=false] - 加载状态
  * @param {string} [props.id] - 按钮 ID（用于事件绑定）
- * @param {string} [props.data] - 自定义 data 属性对象
+ * @param {Object<string, string>} [props.data] - 自定义 data 属性对象
  */
 export function Button({
   text,
@@ -18,12 +18,14 @@ export function Button({
   id = '',
   data = {},
 }) {
+  /** @type {Record<string, string>} */
   const variantClasses = {
     primary: 'dm-btn dm-btn-primary',
     secondary: 'dm-btn dm-btn-secondary',
     danger: 'dm-btn dm-btn-danger',
   }
 
+  /** @type {Record<string, string>} */
   const sizeClasses = {
     sm: 'px-3 py-1 text-sm',
     md: 'px-4 py-2 text-base',

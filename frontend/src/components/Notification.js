@@ -3,6 +3,7 @@
  * 支持全局调用：show.error('消息'), show.success('消息')
  */
 
+/** @type {Record<string, { icon: string, class: string }>} */
 const NOTIFICATION_TYPES = {
   success: {
     icon: '✅',

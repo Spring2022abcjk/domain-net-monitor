@@ -108,8 +108,9 @@ export class AdminConfig {
           type: 'number',
           id: 'refreshInterval',
           label: '检测间隔（秒）',
+          placeholder: '',
           value: String(this.config.refreshInterval || 43200),
-          min: '1',
+          min: 1,
           required: true,
         })}
         <p class="mt-2 text-sm text-gray-500">
@@ -130,9 +131,10 @@ export class AdminConfig {
           type: 'number',
           id: 'historyRetention',
           label: '保留天数（天）',
+          placeholder: '',
           value: String(this.config.historyRetention || 7),
-          min: '1',
-          max: '365',
+          min: 1,
+          max: 365,
           required: true,
         })}
         <p class="mt-2 text-sm text-gray-500">
@@ -195,16 +197,18 @@ export class AdminConfig {
             type: 'number',
             id: 'rateLimitWindow',
             label: '时间窗口（毫秒）',
+            placeholder: '',
             value: String(windowMs),
-            min: '1000',
+            min: 1000,
             required: false,
           })}
           ${Input({
             type: 'number',
             id: 'rateLimitMax',
             label: '最大请求数',
+            placeholder: '',
             value: String(maxRequests),
-            min: '1',
+            min: 1,
             required: false,
           })}
         </div>

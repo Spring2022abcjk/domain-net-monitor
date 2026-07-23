@@ -1,8 +1,14 @@
 /**
  * API 请求配置
  */
-import '/src/types/api.js'
 import { getApiToken, getApiEndpoint, setApiToken as syncApiToken } from './storage.js'
+
+/**
+ * @typedef {Object} ApiResponse
+ * @property {number} code - 业务状态码
+ * @property {any} data - 响应数据
+ * @property {string} msg - 状态消息
+ */
 
 const API_CONFIG = {
   baseUrl: '',
@@ -93,6 +99,7 @@ export async function request(url, options = {}) {
     fullUrl = API_CONFIG.baseUrl ? API_CONFIG.baseUrl + url : url
   }
 
+  /** @type {Record<string, string>} */
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,

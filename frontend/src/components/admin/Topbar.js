@@ -82,6 +82,7 @@ function generateBreadcrumbs(hash) {
   const path = hash.replace('#', '')
   const parts = path.split('/').filter(Boolean)
 
+  /** @type {Record<string, string>} */
   const crumbMap = {
     admin: '管理后台',
     dashboard: '仪表盘',

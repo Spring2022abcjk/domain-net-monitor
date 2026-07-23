@@ -16,6 +16,7 @@ export function matchRoute(path, pattern) {
     return null
   }
 
+  /** @type {Record<string, string>} */
   const params = {}
   for (let i = 0; i < patternParts.length; i++) {
     const patternPart = patternParts[i]

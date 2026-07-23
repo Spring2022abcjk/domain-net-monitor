@@ -116,6 +116,7 @@ export class AdminHistory {
               type: 'select',
               id: 'domainSelect',
               label: '选择域名',
+              placeholder: '',
               value: this.selectedDomain,
               options: [
                 { value: '', label: '全部域名' },
@@ -128,6 +129,7 @@ export class AdminHistory {
               type: 'select',
               id: 'daysSelect',
               label: '时间范围',
+              placeholder: '',
               value: this.daysFilter,
               options: [
                 { value: '7', label: '最近 7 天' },
@@ -143,7 +145,6 @@ export class AdminHistory {
               variant: 'primary',
               size: 'md',
               id: 'queryBtn',
-              class: 'w-full',
             })}
           </div>
         </div>
@@ -318,7 +319,7 @@ export class AdminHistory {
       const rows = historyToExport.map((h) => [
         new Date(h.timestamp).toLocaleString(),
         h.domain,
-        h.httpsRR === 'success' ? '成功' : '失败',
+        h.https_rr?.status === 'ok' ? '成功' : '失败',
         h.ipv6 ? '支持' : '不支持',
         h.ech ? '支持' : '不支持',
       ])

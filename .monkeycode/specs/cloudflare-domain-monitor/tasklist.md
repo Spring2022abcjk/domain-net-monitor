@@ -392,7 +392,7 @@
 |------|------|------|--------|-----------|
 | 29 | ESLint + Prettier 代码规范基础设施 | ✅ 完成 | 100% | `subtask-29-eslint-prettier.md` |
 | 30 | 前端类型安全架构 — P1 层修复 | ✅ 完成 | 100% | `subtask-30-p1-type-safety-architecture.md` |
-| 31 | 前端类型安全架构 — P2/P3 层收尾 | 🔵 待规划 | 0% | `subtask-31-p2-p3-type-safety.md` |
+| 31 | 前端类型安全架构 — P2/P3 层收尾 | ✅ 完成 | 100% | `subtask-31-p2-p3-type-safety.md` |
 
 ---
 

@@ -98,6 +98,7 @@ export class PublicDashboard {
                 status: d.status,
                 firstSeen: d.firstSeen,
                 lastChecked: d.lastChecked,
+                onViewDetail: () => this.handleViewDetail(d.domain),
               }),
             )
             .join('')

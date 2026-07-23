@@ -1,14 +1,9 @@
-/**
- * 域名状态卡片组件
- * @param {Object} props - 属性
- * @param {string} props.domain - 域名
- * @param {string} props.status - 状态 (active/stopped/checking/unknown)
- * @param {number|null} props.firstSeen - 首次检测时间戳
- * @param {number|null} props.lastChecked - 最近检测时间戳
- * @param {Function} [props.onViewDetail] - 查看详情回调
- */
 import { generateElementId } from '../utils/index.js'
 
+/**
+ * 域名状态卡片组件
+ * @param {{ domain: string, status: string, firstSeen: number|null, lastChecked: number|null, onViewDetail?: Function }} props - 属性
+ */
 export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetail: _onViewDetail }) {
   /** @param {number} timestamp */
   const formatDate = (timestamp) => {
@@ -26,6 +21,7 @@ export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetai
   const validStatuses = ['active', 'stopped', 'checking', 'unknown']
   const safeStatus = validStatuses.includes(status) ? status : 'unknown'
 
+  /** @type {Record<string, string>} */
   const statusColors = {
     active: 'bg-green-100 text-green-800',
     stopped: 'bg-red-100 text-red-800',
@@ -33,6 +29,7 @@ export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetai
     unknown: 'bg-gray-100 text-gray-800',
   }
 
+  /** @type {Record<string, string>} */
   const statusLabels = {
     active: '运行中',
     stopped: '已停止',
@@ -54,8 +51,8 @@ export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetai
         </span>
       </div>
       <div class="space-y-2 text-sm text-gray-600">
-        <p>首次检测：<span class="text-gray-900">${formatDate(firstSeen)}</span></p>
-        <p>最近检测：<span class="text-gray-900">${formatDate(lastChecked)}</span></p>
+        <p>首次检测：<span class="text-gray-900">${firstSeen ? formatDate(firstSeen) : '暂无'}</span></p>
+        <p>最近检测：<span class="text-gray-900">${lastChecked ? formatDate(lastChecked) : '暂无'}</span></p>
       </div>
       <div class="mt-4">
         <button 
