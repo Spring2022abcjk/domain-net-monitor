@@ -85,7 +85,7 @@ export class AdminDomains {
       this.domains = res.data.domains || []
       this.loading = false
     } catch (error) {
-      show.error('加载域名列表失败：' + (error.message || '未知错误'))
+      show.error('加载域名列表失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.loading = false
     }
   }
@@ -365,7 +365,7 @@ export class AdminDomains {
       this.newDomainInput = ''
       await this.loadData()
     } catch (error) {
-      show.error(error.message || '添加失败')
+      show.error((/** @type {Error} */ (error)).message || '添加失败')
     }
   }
 
@@ -400,7 +400,7 @@ export class AdminDomains {
       this.selectedDomains = []
       await this.loadData()
     } catch (error) {
-      show.error('批量删除失败：' + (error.message || '未知错误'))
+      show.error('批量删除失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
     }
   }
 
@@ -424,7 +424,7 @@ export class AdminDomains {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error('操作失败：' + (error.message || '未知错误'))
+      show.error('操作失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
     }
   }
 
@@ -439,7 +439,7 @@ export class AdminDomains {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error(error.message || '删除失败')
+      show.error((/** @type {Error} */ (error)).message || '删除失败')
     }
   }
 

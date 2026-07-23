@@ -174,14 +174,14 @@ export class LoginPage {
       console.error('[Login] Login failed:', error)
 
       // 错误分类处理
-      if (error.message.includes('Failed to fetch')) {
+      if ((/** @type {Error} */ (error)).message.includes('Failed to fetch')) {
         show.error('无法连接到 API 端点，请检查网络或 CORS 配置')
-      } else if (error.message.includes('401')) {
+      } else if ((/** @type {Error} */ (error)).message.includes('401')) {
         show.error('无效的 Token')
-      } else if (error.message.includes('403')) {
+      } else if ((/** @type {Error} */ (error)).message.includes('403')) {
         show.error('Token 已过期')
       } else {
-        show.error('登录失败：' + error.message)
+        show.error('登录失败：' + (/** @type {Error} */ (error)).message)
       }
 
       this.setLoading(false)

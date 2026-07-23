@@ -43,7 +43,7 @@ export class AdminConfig {
       }
       this.loading = false
     } catch (error) {
-      show.error('加载配置失败：' + (error.message || '未知错误'))
+      show.error('加载配置失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.loading = false
     }
   }
@@ -306,7 +306,7 @@ export class AdminConfig {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error(error.message || '保存失败')
+      show.error((/** @type {Error} */ (error)).message || '保存失败')
       this.saving = false
       this.render()
       this.bindEvents()
@@ -366,7 +366,7 @@ export class AdminConfig {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error('测试失败：' + (error.message || '未知错误'))
+      show.error('测试失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.testing = false
       this.render()
       this.bindEvents()

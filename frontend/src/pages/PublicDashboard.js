@@ -70,14 +70,14 @@ export class PublicDashboard {
       this.filteredDomains = []
 
       // 根据错误类型提供不同提示
-      if (error.status === 404) {
+      if ((/** @type {any} */ (error)).status === 404) {
         show.error('API 端点不存在，请确认后端服务已部署')
-      } else if (error.status >= 500) {
+      } else if ((/** @type {any} */ (error)).status >= 500) {
         show.error('服务器错误，请稍后重试')
-      } else if (error.name === 'TypeError' || error.message.includes('fetch')) {
+      } else if ((/** @type {Error} */ (error)).name === 'TypeError' || (/** @type {Error} */ (error)).message.includes('fetch')) {
         show.error('网络错误，请检查连接')
       } else {
-        show.error('加载失败：' + (error.message || '未知错误'))
+        show.error('加载失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       }
     }
   }

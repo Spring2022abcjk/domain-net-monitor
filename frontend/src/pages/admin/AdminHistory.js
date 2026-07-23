@@ -43,7 +43,7 @@ export class AdminHistory {
       this.historyData = res.data
       this.loading = false
     } catch (error) {
-      show.error('加载历史记录失败：' + (error.message || '未知错误'))
+      show.error('加载历史记录失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.loading = false
     }
   }
@@ -339,7 +339,7 @@ export class AdminHistory {
 
       show.success(`成功导出 ${historyToExport.length} 条记录`)
     } catch (error) {
-      show.error('导出失败：' + (error.message || '未知错误'))
+      show.error('导出失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
     }
   }
 
@@ -368,7 +368,7 @@ export class AdminHistory {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error('清理失败：' + (error.message || '未知错误'))
+      show.error('清理失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
     }
   }
 }
