@@ -405,9 +405,8 @@
 
 ### 遗留功能（未实现）
 1. **安全配置 UI**（P3）：后端 `GET /api/admin/config/security` 已实现，前端无对应管理界面
-
-### 安全隐患
-2. **清理遗留公开路由**（P2）：`/api/domains`, `/api/detect/*`, `/api/result/*` 无认证直接暴露，前端已不使用，建议添加认证或标记 deprecated
+2. **批量域名替换 API**（P4）：`POST /api/admin/domains/batch` 支持全量替换域名列表
+3. **原始检测结果查询 API**（P4）：`GET /api/admin/results` 返回原始检测结果（非统计数据）
 
 ### P4 可选增强（task-18-todo.md）
 4. 配置历史版本管理（4h）
