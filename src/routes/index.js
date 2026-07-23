@@ -1,3 +1,9 @@
+import { handleGetDomains, handleUpdateDomains, handleAddDomain, handleDeleteDomain } from './domains.js'
+
+import { handleDetectAll, handleDetectSingle } from './detect.js'
+
+import { handleResultAll, handleResultSingle } from './result.js'
+
 import { handleAuth } from './admin/auth.js'
 import { handleConfig } from './admin/config.js'
 import { handleDomains } from './admin/domains.js'
@@ -130,7 +136,7 @@ export async function handleRequest(request, env, corsHeaders = {}, _ctx) {
   // DELETE /api/admin/history/:domain
   else if (path.startsWith('/api/admin/history/') && method === 'DELETE') {
     const domain = path.replace('/api/admin/history/', '')
-    response = await withAdminAuth(deleteHistoryRoute)(request, env, domain)
+    response = await deleteHistoryRoute(request, env, domain)
   }
   // GET /api/admin/history
   else if (path === '/api/admin/history' && method === 'GET') {
@@ -154,6 +160,38 @@ export async function handleRequest(request, env, corsHeaders = {}, _ctx) {
   else if (path.startsWith('/api/public/stats/') && method === 'GET') {
     const domain = path.replace('/api/public/stats/', '')
     response = await handleGetPublicStats(request, env, decodeURIComponent(domain))
+  }
+  // GET /api/domains
+  else if (path === '/api/domains' && method === 'GET') {
+    response = await handleGetDomains(request, env)
+  }
+  // POST /api/domains
+  else if (path === '/api/domains' && method === 'POST') {
+    response = await handleUpdateDomains(request, env)
+  }
+  // POST /api/domains/add
+  else if (path === '/api/domains/add' && method === 'POST') {
+    response = await handleAddDomain(request, env)
+  }
+  // POST /api/domains/delete
+  else if (path === '/api/domains/delete' && method === 'POST') {
+    response = await handleDeleteDomain(request, env)
+  }
+  // GET/POST /api/detect/all
+  else if (path === '/api/detect/all' && (method === 'GET' || method === 'POST')) {
+    response = await handleDetectAll(request, env)
+  }
+  // POST /api/detect/single
+  else if (path === '/api/detect/single' && method === 'POST') {
+    response = await handleDetectSingle(request, env)
+  }
+  // GET /api/result/all
+  else if (path === '/api/result/all' && method === 'GET') {
+    response = await handleResultAll(request, env)
+  }
+  // POST /api/result/single
+  else if (path === '/api/result/single' && method === 'POST') {
+    response = await handleResultSingle(request, env)
   }
   // 404
   else {

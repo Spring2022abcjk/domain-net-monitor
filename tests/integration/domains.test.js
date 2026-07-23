@@ -81,8 +81,8 @@ async function runGetDomainsTests() {
     const body = await response.json()
 
     assertEqual(body.data.domains.length, 2, 'Two domains')
-    assertEqual(body.data.domains[0].domain, 'cloudflare.com', 'First domain')
-    assertEqual(body.data.domains[1].domain, 'google.com', 'Second domain')
+    assertEqual(body.data.domains[0], 'cloudflare.com', 'First domain')
+    assertEqual(body.data.domains[1], 'google.com', 'Second domain')
     assertEqual(body.data.count, 2, 'Count is 2')
   })
 
