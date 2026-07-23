@@ -5,7 +5,7 @@
  * @param {string} props.status - 状态 (active/stopped/checking/unknown)
  * @param {number|null} props.firstSeen - 首次检测时间戳
  * @param {number|null} props.lastChecked - 最近检测时间戳
- * @param {Function} props.onViewDetail - 查看详情回调
+ * @param {Function} [props.onViewDetail] - 查看详情回调
  */
 import { generateElementId } from '../utils/index.js'
 

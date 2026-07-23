@@ -76,7 +76,7 @@ export function Topbar() {
 /**
  * 生成面包屑导航
  * @param {string} hash - 当前 hash 路径
- * @returns {Array} 面包屑数组
+ * @returns {Array<{path: string, label: string}>} 面包屑数组
  */
 function generateBreadcrumbs(hash) {
   const path = hash.replace('#', '')

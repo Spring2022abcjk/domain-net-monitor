@@ -72,7 +72,7 @@ function findChildRoute(parentRoute, fullPath) {
  * @param {import('../types/router.js').RouteConfig} route - 路由对象
  * @param {Object} params - 路由参数
  * @param {URLSearchParams} query - 查询参数
- * @param {import('../types/router.js').RouteConfig} [parentRoute] - 父路由（嵌套场景）
+ * @param {import('../types/router.js').RouteConfig|null} [parentRoute] - 父路由（嵌套场景）
  */
 async function renderRoute(route, params, query, parentRoute = null) {
   // 权限检查：需要认证但未登录（子路由从父路由继承 requiresAuth）

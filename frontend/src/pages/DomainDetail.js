@@ -9,7 +9,7 @@ import { formatDate } from '../utils/index.js'
 
 export class DomainDetail {
   constructor() {
-    this.domain = null
+    this.domain = ''
     this.stats = null
     this.loading = true
     this.error = null

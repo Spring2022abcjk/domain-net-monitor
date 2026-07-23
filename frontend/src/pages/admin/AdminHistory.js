@@ -153,7 +153,7 @@ export class AdminHistory {
 
   /**
    * 获取过滤后的历史数据
-   * @returns {Array} 过滤后的历史数据数组
+   * @returns {HistoryRecord[]} 过滤后的历史数据数组
    */
   getFilteredHistory() {
     let historyData = []

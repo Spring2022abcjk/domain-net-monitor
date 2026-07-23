@@ -47,14 +47,14 @@ export class AdminDomains {
       const target = /** @type {HTMLElement} */ (e.target)
       const deleteBtn = target.closest('.dm-delete-btn')
       if (deleteBtn) {
-        this._handleDeleteDomain(deleteBtn.dataset.domain)
+        this._handleDeleteDomain(/** @type {HTMLElement} */ (deleteBtn).dataset.domain || '')
         return
       }
       const checkbox = target.closest('.dm-domain-checkbox')
       if (checkbox) {
         const domain = checkbox.getAttribute('data-domain')
         if (/** @type {HTMLInputElement} */ (checkbox).checked) {
-          this.selectedDomains.push(domain)
+          if (domain) this.selectedDomains.push(domain)
         } else {
           this.selectedDomains = this.selectedDomains.filter((d) => d !== domain)
         }

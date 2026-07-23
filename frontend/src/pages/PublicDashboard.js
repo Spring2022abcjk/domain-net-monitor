@@ -30,8 +30,9 @@ export class PublicDashboard {
     }
     /** @param {Event} e */
     this.__domainClickHandler = (e) => {
-      const btn = e.target.closest('[data-domain]')
-      if (btn) this.handleViewDetail(btn.dataset.domain)
+      const target = /** @type {HTMLElement} */ (e.target)
+      const btn = target.closest('[data-domain]')
+      if (btn) this.handleViewDetail(/** @type {HTMLElement} */ (btn).dataset.domain || '')
     }
   }
 

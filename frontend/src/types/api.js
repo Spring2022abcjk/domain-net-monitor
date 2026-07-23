@@ -11,7 +11,7 @@
 /**
  * @typedef {Object} ApiListResponse
  * @property {number} code
- * @property {Array} data - 列表数据
+ * @property {Array<Object>} data - 列表数据
  * @property {string} msg
  */
 
@@ -32,7 +32,7 @@
 /**
  * @typedef {Object} HistoryDomain
  * @property {string} domain
- * @property {Array<Object>} [history]
+ * @property {Array<HistoryRecord>} [history]
  * @property {number} [latestCheck]
  */
 

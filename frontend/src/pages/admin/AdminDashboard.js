@@ -82,6 +82,7 @@ export class AdminDashboard {
         <!-- 统计卡片 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           ${Card({
+            title: '',
             content: `
               <div class="flex items-center justify-between">
                 <div>
@@ -94,6 +95,7 @@ export class AdminDashboard {
           })}
           
           ${Card({
+            title: '',
             content: `
               <div class="flex items-center justify-between">
                 <div>
@@ -106,6 +108,7 @@ export class AdminDashboard {
           })}
           
           ${Card({
+            title: '',
             content: `
               <div class="flex items-center justify-between">
                 <div>
@@ -118,6 +121,7 @@ export class AdminDashboard {
           })}
           
           ${Card({
+            title: '',
             content: `
               <div class="flex items-center justify-between">
                 <div>
