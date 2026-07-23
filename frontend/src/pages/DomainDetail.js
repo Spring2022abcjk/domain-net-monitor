@@ -9,7 +9,7 @@ import { formatDate } from '../utils/index.js'
 
 export class DomainDetail {
   constructor() {
-    this.domain = null
+    this.domain = ''
     this.stats = null
     this.loading = true
     this.error = null
@@ -18,6 +18,7 @@ export class DomainDetail {
     }
   }
 
+  /** @param {{ params: { domain: string } }} arg0 */
   async init({ params }) {
     this.domain = decodeURIComponent(params.domain)
     document.title = `${this.domain} - 域名详情`
@@ -147,11 +148,13 @@ export class DomainDetail {
                     {
                       key: 'timestamp',
                       title: '检测时间',
+                      /** @param {number|string} value */
                       render: (value) => formatDate(new Date(value)),
                     },
                     {
                       key: 'status',
                       title: '状态',
+                      /** @param {string} value */
                       render: (value) => {
                         const label = value === 'active' ? '正常' : value === 'stopped' ? '异常' : '未知'
                         const cls =

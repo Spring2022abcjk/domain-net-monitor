@@ -25,7 +25,7 @@ export default {
         <main class="flex-1 container mx-auto px-4 py-8">
           ${currentPage.render()}
         </main>
-        ${Footer.render()}
+        ${Footer()}
       </div>
     `
   },

@@ -3,6 +3,7 @@
  * 支持全局调用：show.error('消息'), show.success('消息')
  */
 
+/** @type {Record<string, { icon: string, class: string }>} */
 const NOTIFICATION_TYPES = {
   success: {
     icon: '✅',
@@ -66,6 +67,8 @@ function show(message, type = 'info', duration = 3000) {
 
 /**
  * 便捷方法：显示错误通知
+ * @param {string} message
+ * @param {number} [duration]
  */
 show.error = function (message, duration = 5000) {
   show(message, 'error', duration)
@@ -73,6 +76,8 @@ show.error = function (message, duration = 5000) {
 
 /**
  * 便捷方法：显示成功通知
+ * @param {string} message
+ * @param {number} [duration]
  */
 show.success = function (message, duration = 3000) {
   show(message, 'success', duration)
@@ -80,6 +85,8 @@ show.success = function (message, duration = 3000) {
 
 /**
  * 便捷方法：显示警告通知
+ * @param {string} message
+ * @param {number} [duration]
  */
 show.warning = function (message, duration = 3000) {
   show(message, 'warning', duration)
@@ -87,6 +94,8 @@ show.warning = function (message, duration = 3000) {
 
 /**
  * 便捷方法：显示信息通知
+ * @param {string} message
+ * @param {number} [duration]
  */
 show.info = function (message, duration = 3000) {
   show(message, 'info', duration)

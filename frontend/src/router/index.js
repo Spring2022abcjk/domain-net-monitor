@@ -7,7 +7,7 @@ import { matchRoute } from './utils.js'
 import { isLoggedIn } from '../utils/storage.js'
 
 // 当前页面实例，用于清理
-/** @type {Object|null} */
+/** @type {import('../types/router.js').PageInstance|null} */
 let currentPageInstance = null
 
 /**
@@ -30,7 +30,7 @@ export function navigateTo(path) {
 
 /**
  * 获取当前页面
- * @returns {Object|null} 页面对象
+ * @returns {import('../types/router.js').PageInstance|null} 页面对象
  */
 export function getCurrentPage() {
   return currentPageInstance
@@ -48,9 +48,9 @@ function handleNotFound() {
 
 /**
  * 查找嵌套的子路由
- * @param {Object} parentRoute - 父路由
+ * @param {import('../types/router.js').RouteConfig} parentRoute - 父路由
  * @param {string} fullPath - 完整路径（如 /admin/dashboard）
- * @returns {Object|null} 子路由对象
+ * @returns {import('../types/router.js').RouteConfig|null} 子路由对象
  */
 function findChildRoute(parentRoute, fullPath) {
   if (!parentRoute.children) return null
@@ -69,10 +69,10 @@ function findChildRoute(parentRoute, fullPath) {
 
 /**
  * 渲染路由
- * @param {Object} route - 路由对象
+ * @param {import('../types/router.js').RouteConfig} route - 路由对象
  * @param {Object} params - 路由参数
  * @param {URLSearchParams} query - 查询参数
- * @param {Object} [parentRoute] - 父路由（嵌套场景）
+ * @param {import('../types/router.js').RouteConfig|null} [parentRoute] - 父路由（嵌套场景）
  */
 async function renderRoute(route, params, query, parentRoute = null) {
   // 权限检查：需要认证但未登录（子路由从父路由继承 requiresAuth）
@@ -112,9 +112,9 @@ async function renderRoute(route, params, query, parentRoute = null) {
     // 动态导入父组件（嵌套路由的布局）
     if (typeof parentRoute.component === 'function') {
       try {
-        const module = await parentRoute.component()
-        console.log('[Router] Loaded parent module:', parentRoute.name, module)
-        ParentComponent = module.default || module[Object.keys(module)[0]]
+        const mod = await parentRoute.component()
+        console.log('[Router] Loaded parent module:', parentRoute.name, mod)
+        ParentComponent = /** @type {any} */ (mod).default || /** @type {any} */ (mod)[Object.keys(/** @type {any} */ (mod))[0]]
         console.log('[Router] ParentComponent resolved:', ParentComponent)
       } catch (error) {
         console.error('[Router] Failed to load parent component:', error)
@@ -127,9 +127,9 @@ async function renderRoute(route, params, query, parentRoute = null) {
     let ChildComponent
     if (typeof route.component === 'function') {
       try {
-        const module = await route.component()
-        console.log('[Router] Loaded child module:', route.name, module)
-        ChildComponent = module.default || module[Object.keys(module)[0]]
+        const mod = await route.component()
+        console.log('[Router] Loaded child module:', route.name, mod)
+        ChildComponent = /** @type {any} */ (mod).default || /** @type {any} */ (mod)[Object.keys(/** @type {any} */ (mod))[0]]
         console.log('[Router] ChildComponent resolved:', ChildComponent)
       } catch (error) {
         console.error('[Router] Failed to load child component:', error)
@@ -145,9 +145,9 @@ async function renderRoute(route, params, query, parentRoute = null) {
     let PageComponent
     if (typeof route.component === 'function') {
       try {
-        const module = await route.component()
-        console.log('[Router] Loaded module:', route.name, module)
-        PageComponent = module.default || module[Object.keys(module)[0]]
+        const mod = await route.component()
+        console.log('[Router] Loaded module:', route.name, mod)
+        PageComponent = /** @type {any} */ (mod).default || /** @type {any} */ (mod)[Object.keys(/** @type {any} */ (mod))[0]]
         console.log('[Router] PageComponent resolved:', PageComponent)
       } catch (error) {
         console.error('[Router] Failed to load component:', error)
@@ -160,14 +160,14 @@ async function renderRoute(route, params, query, parentRoute = null) {
   }
 
   // 初始化页面
-  if (currentPageInstance.init) {
+  if (currentPageInstance?.init) {
     await currentPageInstance.init({ params, query })
   }
 
   // 渲染（如果是 Layout，会自己 render 和 bindEvents）
-  if (currentPageInstance.render) {
+  if (currentPageInstance?.render) {
     app.innerHTML = currentPageInstance.render()
-    if (currentPageInstance.bindEvents) {
+    if (currentPageInstance?.bindEvents) {
       currentPageInstance.bindEvents()
     }
   }

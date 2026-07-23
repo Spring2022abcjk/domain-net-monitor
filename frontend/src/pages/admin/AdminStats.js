@@ -35,7 +35,7 @@ export class AdminStats {
       this.stats = res.data
       this.loading = false
     } catch (error) {
-      show.error('加载统计数据失败：' + (error.message || '未知错误'))
+      show.error('加载统计数据失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.loading = false
     }
   }

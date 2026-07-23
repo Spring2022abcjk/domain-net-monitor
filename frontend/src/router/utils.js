@@ -16,6 +16,7 @@ export function matchRoute(path, pattern) {
     return null
   }
 
+  /** @type {Record<string, string>} */
   const params = {}
   for (let i = 0; i < patternParts.length; i++) {
     const patternPart = patternParts[i]
@@ -50,7 +51,7 @@ export function getQueryParams(hash) {
  * 导航到指定路由
  * @param {string} path - 路由路径（不含 #）
  * @param {Object} [params] - 路由参数
- * @param {Object} [query] - 查询参数
+ * @param {Record<string, string>} [query] - 查询参数
  */
 export function navigate(path, params = {}, query = {}) {
   let finalPath = path

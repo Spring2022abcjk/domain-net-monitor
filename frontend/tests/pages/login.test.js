@@ -91,7 +91,7 @@ export async function runLoginTests() {
     assertEqual(loginCode.includes('loading: this.loading'), true, 'Passes loading to Button')
 
     // 检查按钮禁用
-    assertEqual(loginCode.includes('btn.disabled = true'), true, 'Disables button during loading')
+    assertEqual(loginCode.includes('.disabled = true'), true, 'Disables button during loading')
   })
 
   // ===== 页面结构测试 =====

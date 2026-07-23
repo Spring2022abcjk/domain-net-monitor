@@ -1,8 +1,8 @@
 /**
  * 表格组件
  * @param {Object} props - 属性
- * @param {Array} props.columns - 列定义 [{ key: 'name', title: '名称', width: '100px', render: (value, row, index, col) => string, align: 'left'|'center'|'right' }]
- * @param {Array} props.data - 数据数组
+ * @param {Array<any>} props.columns - 列定义 [{ key: 'name', title: '名称', width: '100px', render: (value, row, index, col) => string, align: 'left'|'center'|'right' }]
+ * @param {Array<any>} props.data - 数据数组
  * @param {string} [props.emptyText='暂无数据'] - 空数据提示
  * @param {string} [props.rowIdPrefix='row'] - 行 ID 前缀
  * @param {Function} [props.rowClassName] - 行类名函数 (row, index) => string
@@ -16,6 +16,7 @@ export function Table({ columns, data, emptyText = '暂无数据', rowIdPrefix =
     `
   }
 
+  /** @param {string} align */
   const getColumnAlignClass = (align) => {
     switch (align) {
       case 'center':

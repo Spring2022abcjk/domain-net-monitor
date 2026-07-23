@@ -43,7 +43,7 @@ export class AdminConfig {
       }
       this.loading = false
     } catch (error) {
-      show.error('加载配置失败：' + (error.message || '未知错误'))
+      show.error('加载配置失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.loading = false
     }
   }
@@ -108,8 +108,9 @@ export class AdminConfig {
           type: 'number',
           id: 'refreshInterval',
           label: '检测间隔（秒）',
+          placeholder: '',
           value: String(this.config.refreshInterval || 43200),
-          min: '1',
+          min: 1,
           required: true,
         })}
         <p class="mt-2 text-sm text-gray-500">
@@ -130,9 +131,10 @@ export class AdminConfig {
           type: 'number',
           id: 'historyRetention',
           label: '保留天数（天）',
+          placeholder: '',
           value: String(this.config.historyRetention || 7),
-          min: '1',
-          max: '365',
+          min: 1,
+          max: 365,
           required: true,
         })}
         <p class="mt-2 text-sm text-gray-500">
@@ -195,16 +197,18 @@ export class AdminConfig {
             type: 'number',
             id: 'rateLimitWindow',
             label: '时间窗口（毫秒）',
+            placeholder: '',
             value: String(windowMs),
-            min: '1000',
+            min: 1000,
             required: false,
           })}
           ${Input({
             type: 'number',
             id: 'rateLimitMax',
             label: '最大请求数',
+            placeholder: '',
             value: String(maxRequests),
-            min: '1',
+            min: 1,
             required: false,
           })}
         </div>
@@ -306,7 +310,7 @@ export class AdminConfig {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error(error.message || '保存失败')
+      show.error((/** @type {Error} */ (error)).message || '保存失败')
       this.saving = false
       this.render()
       this.bindEvents()
@@ -366,7 +370,7 @@ export class AdminConfig {
       this.render()
       this.bindEvents()
     } catch (error) {
-      show.error('测试失败：' + (error.message || '未知错误'))
+      show.error('测试失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       this.testing = false
       this.render()
       this.bindEvents()
@@ -375,6 +379,7 @@ export class AdminConfig {
 
   /**
    * 验证 URL 格式
+   * @param {string} url - 要验证的 URL
    */
   isValidUrl(url) {
     try {

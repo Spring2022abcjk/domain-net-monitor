@@ -7,6 +7,7 @@ import { SearchBox } from '../components/SearchBox.js'
 import { Footer } from '../components/Footer.js'
 import { EmptyState } from '../components/EmptyState.js'
 import { get, setApiBaseUrl } from '../utils/api.js'
+import { getInputValue } from '../utils/dom.js'
 import { show } from '../components/Notification.js'
 import { debounce } from '../utils/index.js'
 import { getApiEndpoint } from '../utils/storage.js'
@@ -23,12 +24,15 @@ export class PublicDashboard {
     this.debouncedSearch = debounce(this._doSearch.bind(this), 300)
     this.__searchClickHandler = () => this.triggerSearch()
     this.__searchInputHandler = () => this.debouncedSearch()
+    /** @param {KeyboardEvent} e */
     this.__searchKeyHandler = (e) => {
       if (e.key === 'Enter') this.debouncedSearch()
     }
+    /** @param {Event} e */
     this.__domainClickHandler = (e) => {
-      const btn = e.target.closest('[data-domain]')
-      if (btn) this.handleViewDetail(btn.dataset.domain)
+      const target = /** @type {HTMLElement} */ (e.target)
+      const btn = target.closest('[data-domain]')
+      if (btn) this.handleViewDetail(/** @type {HTMLElement} */ (btn).dataset.domain || '')
     }
   }
 
@@ -67,14 +71,14 @@ export class PublicDashboard {
       this.filteredDomains = []
 
       // 根据错误类型提供不同提示
-      if (error.status === 404) {
+      if ((/** @type {any} */ (error)).status === 404) {
         show.error('API 端点不存在，请确认后端服务已部署')
-      } else if (error.status >= 500) {
+      } else if ((/** @type {any} */ (error)).status >= 500) {
         show.error('服务器错误，请稍后重试')
-      } else if (error.name === 'TypeError' || error.message.includes('fetch')) {
+      } else if ((/** @type {Error} */ (error)).name === 'TypeError' || (/** @type {Error} */ (error)).message.includes('fetch')) {
         show.error('网络错误，请检查连接')
       } else {
-        show.error('加载失败：' + (error.message || '未知错误'))
+        show.error('加载失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
       }
     }
   }
@@ -166,8 +170,7 @@ export class PublicDashboard {
   }
 
   _doSearch() {
-    const searchInput = document.getElementById('domain-search')
-    this.searchQuery = searchInput ? searchInput.value.trim().toLowerCase() : ''
+    this.searchQuery = getInputValue('domain-search').trim().toLowerCase()
 
     if (!this.searchQuery) {
       this.filteredDomains = this.domains
@@ -179,6 +182,7 @@ export class PublicDashboard {
     this.bindEvents()
   }
 
+  /** @param {string} domain */
   handleViewDetail(domain) {
     window.location.hash = '#/domain/' + encodeURIComponent(domain)
   }

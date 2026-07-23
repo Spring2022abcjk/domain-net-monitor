@@ -11,7 +11,7 @@
 /**
  * @typedef {Object} ApiListResponse
  * @property {number} code
- * @property {Array} data - 列表数据
+ * @property {Array<Object>} data - 列表数据
  * @property {string} msg
  */
 
@@ -27,6 +27,30 @@
  * @property {number} code
  * @property {{domain: string, status: string, firstSeen: number|null, lastChecked: number|null, isDefault: boolean}} data
  * @property {string} msg
+ */
+
+/**
+ * @typedef {Object} HistoryDomain
+ * @property {string} domain
+ * @property {Array<HistoryRecord>} [history]
+ * @property {number} [latestCheck]
+ */
+
+/**
+ * @typedef {Object} HistoryRecord
+ * @property {number|string} timestamp
+ * @property {string} domain
+ * @property {{status: string}} https_rr
+ * @property {{status: string}} ipv6
+ * @property {{status: string}} ech
+ */
+
+/**
+ * @typedef {Object} DomainItem
+ * @property {string} domain
+ * @property {boolean} isDefault
+ * @property {string} status
+ * @property {number|null} lastChecked
  */
 
 export {}

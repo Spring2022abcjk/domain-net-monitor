@@ -1,1 +1,0 @@
-../../../.opencode/skills/api-route.md

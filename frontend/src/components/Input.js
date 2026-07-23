@@ -17,6 +17,8 @@
  * @param {number} [props.maxlength] - 最大长度
  * @param {number} [props.min] - 最小值（number 类型）
  * @param {number} [props.max] - 最大值（number 类型）
+ * @param {string} [props.class] - 额外 CSS 类
+ * @param {Array<{value: string, label: string}>} [props.options] - select 选项
  */
 export function Input({
   type,

@@ -140,11 +140,13 @@ export class AdminDashboard {
                     {
                       key: 'domain',
                       title: '域名',
+                      /** @param {string} value */
                       render: (value) => `<span class="font-medium text-gray-900">${value}</span>`,
                     },
                     {
                       key: 'status',
                       title: '状态',
+                      /** @param {string} value */
                       render: (value) => `
                   <span class="px-2 py-1 text-xs rounded-full ${
                     value === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -156,6 +158,7 @@ export class AdminDashboard {
                     {
                       key: 'lastChecked',
                       title: '最近检测',
+                      /** @param {string} value */
                       render: (value) => {
                         if (!value) return '<span class="text-gray-400">暂无</span>'
                         const date = new Date(value)
