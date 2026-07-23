@@ -2,9 +2,9 @@ import { generateElementId } from '../utils/index.js'
 
 /**
  * 域名状态卡片组件
- * @param {{ domain: string, status: string, firstSeen: number|null, lastChecked: number|null, onViewDetail?: Function }} props - 属性
+ * @param {{ domain: string, status: string, firstSeen: number|null, lastChecked: number|null }} props - 属性
  */
-export function DomainCard({ domain, status, firstSeen, lastChecked, onViewDetail: _onViewDetail }) {
+export function DomainCard({ domain, status, firstSeen, lastChecked }) {
   /** @param {number} timestamp */
   const formatDate = (timestamp) => {
     if (!timestamp) return '暂无数据'

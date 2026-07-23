@@ -3,13 +3,6 @@
  */
 import { getApiToken, getApiEndpoint, setApiToken as syncApiToken } from './storage.js'
 
-/**
- * @typedef {Object} ApiResponse
- * @property {number} code - 业务状态码
- * @property {any} data - 响应数据
- * @property {string} msg - 状态消息
- */
-
 const API_CONFIG = {
   baseUrl: '',
   timeout: 15000,
@@ -83,7 +76,7 @@ export function clearToken() {
  * @param {string} [options.method] - HTTP 方法（GET/POST/PUT/DELETE）
  * @param {string} [options.body] - 请求体（JSON 字符串）
  * @param {Record<string,string>} [options.headers] - 额外请求头
- * @returns {Promise<ApiResponse>} 响应数据
+ * @returns {Promise<import('../types/api.js').ApiResponse>} 响应数据
  */
 export async function request(url, options = {}) {
   // 优先使用传入的 apiToken，否则从 localStorage 读取
@@ -155,7 +148,7 @@ export async function request(url, options = {}) {
  * GET 请求
  * @param {string} url - 请求 URL
  * @param {Object} [params] - 查询参数
- * @returns {Promise<ApiResponse>} 响应数据
+ * @returns {Promise<import('../types/api.js').ApiResponse>} 响应数据
  */
 export function get(url, params) {
   if (!params || Object.keys(params).length === 0) {
@@ -184,7 +177,7 @@ export function get(url, params) {
  * @param {string} url - 请求 URL
  * @param {Object} body - 请求体
  * @param {Object} options - 可选参数（如 apiToken）
- * @returns {Promise<ApiResponse>} 响应数据
+ * @returns {Promise<import('../types/api.js').ApiResponse>} 响应数据
  */
 export function post(url, body, options = {}) {
   return request(url, {
@@ -198,7 +191,7 @@ export function post(url, body, options = {}) {
  * PUT 请求
  * @param {string} url - 请求 URL
  * @param {Object} body - 请求体
- * @returns {Promise<ApiResponse>} 响应数据
+ * @returns {Promise<import('../types/api.js').ApiResponse>} 响应数据
  */
 export function put(url, body) {
   return request(url, {
@@ -210,7 +203,7 @@ export function put(url, body) {
 /**
  * DELETE 请求
  * @param {string} url - 请求 URL
- * @returns {Promise<ApiResponse>} 响应数据
+ * @returns {Promise<import('../types/api.js').ApiResponse>} 响应数据
  */
 export function del(url) {
   return request(url, { method: 'DELETE' })
