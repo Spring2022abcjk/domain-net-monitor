@@ -1,8 +1,8 @@
 # Cloudflare Worker 域名网络特性监控项目 - 主任务清单
 
-**版本**: 5.4
-**更新日期**: 2026-07-09
-**总进度**: 100% (30/30)  
+**版本**: 5.5
+**更新日期**: 2026-07-22
+**总进度**: 100% (31/31)  
 
 ---
 
@@ -398,14 +398,10 @@
 
 ## 下一步
 
-### Task 30 成果（2026-07-09 完成）
-- P1 错误：35 → 0（全部清零）
-- tsc 总错误：346 → 189（-45%）
-- 新建文件：`frontend/src/types/api.js`、`frontend/src/utils/dom.js`、`frontend/tsconfig.json`
-- 修改文件：12 个（api.js, index.js, AdminConfig.js, AdminStats.js 等）
-
-### 剩余 P2/P3（189 个）
-主要为 TS2339（属性不存在，54）、TS7006（隐式 any，50）、TS18046（catch unknown，21），详见 `subtask-31-p2-p3-type-safety.md`。
+### Task 31 成果（2026-07-22 完成）
+- tsc 错误：189 → 0（全部清零）
+- 5 个 Phase 修复：TS2339、TS7006、TS18046、TS2345+TS2353、其他
+- 测试：55/56 通过
 
 ### 遗留功能（未实现）
 1. **安全配置 UI**（P3）：后端 `GET /api/admin/config/security` 已实现，前端无对应管理界面
