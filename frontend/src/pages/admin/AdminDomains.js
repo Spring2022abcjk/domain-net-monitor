@@ -27,10 +27,12 @@ export class AdminDomains {
     this.__addDomainHandler = () => {
       this.showAddModal = true
       this.newDomainInput = ''
+      this._updateDOM()
     }
     this.__cancelAddHandler = () => {
       this.showAddModal = false
       this.newDomainInput = ''
+      this._updateDOM()
     }
     this.__confirmAddHandler = () => this.handleAddDomain()
     this.__batchDeleteHandler = () => this.handleBatchDelete()
@@ -364,8 +366,20 @@ export class AdminDomains {
       this.showAddModal = false
       this.newDomainInput = ''
       await this.loadData()
+      this._updateDOM()
     } catch (error) {
       show.error((/** @type {Error} */ (error)).message || '添加失败')
+    }
+  }
+
+  /**
+   * 更新 DOM 并重新绑定事件
+   */
+  _updateDOM() {
+    const container = document.getElementById('admin-content')
+    if (container) {
+      container.innerHTML = this.render()
+      this.bindEvents()
     }
   }
 
