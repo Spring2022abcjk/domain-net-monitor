@@ -13,6 +13,7 @@ import { runAPIIntegrationTests } from './api-integration.test.js'
 import { runAdminDashboardTests } from './pages/admin-dashboard.test.js'
 import { runPublicDashboardTests } from './pages/public-dashboard.test.js'
 import { runDomainDetailTests } from './pages/domain-detail.test.js'
+import { runAdminSecurityTests } from './pages/admin-security.test.js'
 
 console.log('')
 console.log('╔════════════════════════════════════════╗')
@@ -34,6 +35,7 @@ const testGroups = [
       runAdminDashboardTests,
       runPublicDashboardTests,
       runDomainDetailTests,
+      runAdminSecurityTests,
     ],
   },
   {

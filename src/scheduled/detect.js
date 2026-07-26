@@ -4,7 +4,7 @@ import { detectDomain, saveResult, addToHistory } from '../services/detector.js'
 import { getDefaultDomains } from '../storage/default-domains.js'
 import { cleanupHistory } from '../storage/history.js'
 import { getConfig } from '../storage/config.js'
-import { incrementRequests } from '../storage/stats.js'
+import { incrementRequests, recordDetectionResult } from '../storage/stats.js'
 
 /**
  * 定时检测默认域名
@@ -43,6 +43,7 @@ export async function detectScheduled(env) {
 
       // 根据 overall 判断是否成功（ok 或 partial 都算成功）
       const isSuccess = result.overall === 'ok' || result.overall === 'partial'
+      await recordDetectionResult(env, isSuccess)
 
       results.push({
         domain,

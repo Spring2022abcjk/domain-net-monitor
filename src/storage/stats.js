@@ -17,6 +17,8 @@ export async function getStats(env) {
     const defaultStats = {
       todayRequests: 0,
       rateLimitHits: 0,
+      todaySuccessCount: 0,
+      todayFailCount: 0,
       lastReset: Date.now(),
     }
     await kv.put(KV_KEY_STATS, JSON.stringify(defaultStats))
@@ -34,6 +36,8 @@ export async function getStats(env) {
     const resetStats = {
       todayRequests: 0,
       rateLimitHits: 0,
+      todaySuccessCount: 0,
+      todayFailCount: 0,
       lastReset: Date.now(),
     }
     await kv.put(KV_KEY_STATS, JSON.stringify(resetStats))
@@ -59,6 +63,8 @@ export async function updateStats(env, updates, maxRetries = 3) {
       const defaultStats = {
         todayRequests: 0,
         rateLimitHits: 0,
+        todaySuccessCount: 0,
+        todayFailCount: 0,
         lastReset: Date.now(),
       }
       await kv.put(KV_KEY_STATS, JSON.stringify(defaultStats))
@@ -74,6 +80,8 @@ export async function updateStats(env, updates, maxRetries = 3) {
     if (today !== lastResetDate) {
       stats.todayRequests = 0
       stats.rateLimitHits = 0
+      stats.todaySuccessCount = 0
+      stats.todayFailCount = 0
       stats.lastReset = Date.now()
     }
 
@@ -160,6 +168,37 @@ export async function recordRateLimitHit(env, maxRetries = 3) {
   }
 
   throw new Error('Failed to record rate limit hit after retries')
+}
+
+/**
+ * 记录检测结果（成功/失败）
+ * @param {Object} env - 环境变量
+ * @param {boolean} isSuccess - 是否成功
+ * @param {number} maxRetries - 最大重试次数
+ * @returns {Promise<Object>} 更新后的统计数据
+ */
+export async function recordDetectionResult(env, isSuccess, maxRetries = 3) {
+  const kv = env.DOMAIN_MONITOR_KV
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const stats = await getStats(env)
+
+    const updated = {
+      ...stats,
+      todaySuccessCount: stats.todaySuccessCount + (isSuccess ? 1 : 0),
+      todayFailCount: stats.todayFailCount + (isSuccess ? 0 : 1),
+    }
+
+    try {
+      await kv.put(KV_KEY_STATS, JSON.stringify(updated))
+      return updated
+    } catch (error) {
+      if (attempt === maxRetries - 1) throw error
+      await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempt) * 10))
+    }
+  }
+
+  throw new Error('Failed to record detection result after retries')
 }
 
 /**

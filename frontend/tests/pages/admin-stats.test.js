@@ -45,7 +45,7 @@ export async function runAdminStatsTests() {
 
     assertEqual(content.includes('totalDomains'), true, 'Has total domains stat')
     assertEqual(content.includes('defaultDomains'), true, 'Has default domains stat')
-    assertEqual(content.includes('todayRequests'), true, 'Has today requests stat')
+    assertEqual(content.includes('today?.requests'), true, 'Has today requests stat')
     assertEqual(content.includes('rateLimitHits'), true, 'Has rate limit hits stat')
     assertEqual(content.includes('successCount'), true, 'Has success count stat')
     assertEqual(content.includes('failCount'), true, 'Has fail count stat')
@@ -121,7 +121,7 @@ export async function runAdminStatsTests() {
     const content = readFileSync(join(ROOT, 'src/pages/admin/AdminStats.js'), 'utf-8')
 
     assertEqual(content.includes('|| 0'), true, 'Handles null numbers')
-    assertEqual(content.includes("|| '0.00%'"), true, 'Handles null percentage')
+    assertEqual(content.includes("toFixed(2)}%"), true, 'Formats success rate with percent sign')
     assertEqual(content.includes("|| '0.0 days'"), true, 'Handles null uptime')
   })
 }

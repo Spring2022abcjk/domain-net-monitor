@@ -21,6 +21,16 @@ export async function getStatsRoute(request, env) {
     const detailedStats = await getDetailedStats(env)
     const config = await getConfig(env)
 
+    // 计算今日成功率
+    const totalDetections = (detailedStats.todaySuccessCount || 0) + (detailedStats.todayFailCount || 0)
+    const successRate = totalDetections > 0
+      ? ((detailedStats.todaySuccessCount / totalDetections) * 100).toFixed(2) + '%'
+      : '0%'
+
+    // 计算系统运行时长
+    const uptimeMs = Date.now() - (config.deployTime || Date.now())
+    const uptimeSeconds = Math.floor(uptimeMs / 1000)
+
     const stats = {
       overview: {
         totalDomains: detailedStats.domains.total,
@@ -36,6 +46,11 @@ export async function getStatsRoute(request, env) {
             ? ((detailedStats.rateLimitHits / detailedStats.todayRequests) * 100).toFixed(2) + '%'
             : '0%',
       },
+      detection: {
+        successCount: detailedStats.todaySuccessCount || 0,
+        failCount: detailedStats.todayFailCount || 0,
+        successRate,
+      },
       config: {
         refreshInterval: config.defaultRefreshInterval,
         refreshIntervalHuman: formatDuration(config.defaultRefreshInterval),
@@ -46,6 +61,8 @@ export async function getStatsRoute(request, env) {
         },
       },
       lastReset: new Date(detailedStats.lastReset).toISOString(),
+      uptime: uptimeMs,
+      uptimeHuman: formatDuration(uptimeSeconds),
     }
 
     return jsonResponse(stats)

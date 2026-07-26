@@ -4,6 +4,7 @@ import { jsonResponse, cleanDomain } from '../../utils/helper.js'
 import { isValidAdminToken } from '../../middleware/auth.js'
 import { createUnauthorizedResponse } from '../../middleware/auth.js'
 import { detectDomain, saveResult, addToHistory } from '../../services/detector.js'
+import { incrementRequests, recordDetectionResult } from '../../storage/stats.js'
 import { getAllDomains } from '../../storage/domains.js'
 import { getDefaultDomains } from '../../storage/default-domains.js'
 
@@ -30,6 +31,11 @@ export async function detectSingle(request, env) {
     const result = await detectDomain(domain, env)
     await saveResult(env, result)
     await addToHistory(env, result)
+
+    // 统计记录
+    await incrementRequests(env)
+    const isSuccess = result.overall === 'ok' || result.overall === 'partial'
+    await recordDetectionResult(env, isSuccess)
 
     return jsonResponse(result, 200, 'Detection completed')
   } catch (error) {
@@ -81,9 +87,16 @@ export async function detectAll(request, env) {
             const result = await detectDomain(domain, env)
             await saveResult(env, result)
             await addToHistory(env, result)
+            // 统计记录
+            await incrementRequests(env)
+            const isSuccess = result.overall === 'ok' || result.overall === 'partial'
+            await recordDetectionResult(env, isSuccess)
             return { success: true, result }
           } catch (error) {
             console.error(`Batch detection failed for ${domain}:`, error.message)
+            // 失败也要记录
+            await incrementRequests(env)
+            await recordDetectionResult(env, false)
             return {
               success: false,
               result: {
@@ -162,10 +175,15 @@ export async function detectDefault(request, env) {
         const result = await detectDomain(domain, env)
         await saveResult(env, result)
         await addToHistory(env, result)
+        await incrementRequests(env)
+        const isSuccess = result.overall === 'ok' || result.overall === 'partial'
+        await recordDetectionResult(env, isSuccess)
         results.push(result)
         success++
       } catch (error) {
         console.error(`Default detection failed for ${domain}:`, error.message)
+        await incrementRequests(env)
+        await recordDetectionResult(env, false)
         results.push({
           domain,
           error: error.message,
