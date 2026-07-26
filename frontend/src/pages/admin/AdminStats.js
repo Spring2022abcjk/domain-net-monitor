@@ -74,10 +74,6 @@ export class AdminStats {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          ${this.renderDetectionStats()}
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           ${this.renderSystemInfo()}
         </div>
       </div>
@@ -91,54 +87,23 @@ export class AdminStats {
     return `
       ${Card({
         title: '总域名数',
-        content: `<div class="text-3xl font-bold text-blue-600">${this.stats.totalDomains || 0}</div>`,
+        content: `<div class="text-3xl font-bold text-blue-600">${this.stats.overview?.totalDomains || 0}</div>`,
         footer: '所有已添加的域名',
       })}
       ${Card({
         title: '默认域名数',
-        content: `<div class="text-3xl font-bold text-green-600">${this.stats.defaultDomains || 0}</div>`,
+        content: `<div class="text-3xl font-bold text-green-600">${this.stats.overview?.defaultDomains || 0}</div>`,
         footer: '在公开页面展示的域名',
       })}
       ${Card({
         title: '今日检测',
-        content: `<div class="text-3xl font-bold text-purple-600">${this.stats.todayRequests || 0}</div>`,
+        content: `<div class="text-3xl font-bold text-purple-600">${this.stats.today?.requests || 0}</div>`,
         footer: '今日总检测次数',
       })}
       ${Card({
         title: '限流命中',
-        content: `<div class="text-3xl font-bold text-orange-600">${this.stats.rateLimitHits || 0}</div>`,
+        content: `<div class="text-3xl font-bold text-orange-600">${this.stats.today?.rateLimitHits || 0}</div>`,
         footer: '今日触发限流次数',
-      })}
-    `
-  }
-
-  /**
-   * 渲染检测统计卡片
-   */
-  renderDetectionStats() {
-    const successRate = parseFloat(this.stats.successRate) || 0
-    const successRateColor = successRate >= 90 ? 'text-green-600' : 'text-yellow-600'
-
-    return `
-      ${Card({
-        title: '成功率',
-        content: `
-          <div class="text-3xl font-bold ${successRateColor}">
-            ${this.stats.successRate || '0.00%'}
-          </div>
-        `,
-        footer: '成功次数：' + (this.stats.successCount || 0),
-        class: 'border-l-4 border-green-500',
-      })}
-      ${Card({
-        title: '失败次数',
-        content: `
-          <div class="text-3xl font-bold ${this.stats.failCount > 0 ? 'text-red-600' : 'text-gray-600'}">
-            ${this.stats.failCount || 0}
-          </div>
-        `,
-        footer: '失败率：' + Math.max(0, 100 - successRate).toFixed(2) + '%',
-        class: 'border-l-4 border-red-500',
       })}
     `
   }
@@ -150,11 +115,6 @@ export class AdminStats {
     const lastResetDate = this.stats.lastReset ? new Date(this.stats.lastReset).toLocaleString() : '暂无'
 
     return `
-      ${Card({
-        title: '系统运行时长',
-        content: `<div class="text-3xl font-bold text-blue-600">${this.stats.uptime || '0.0 days'}</div>`,
-        footer: '系统持续运行时间',
-      })}
       ${Card({
         title: '最后重置时间',
         content: `<div class="text-lg font-mono text-gray-700">${lastResetDate}</div>`,

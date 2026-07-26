@@ -407,8 +407,11 @@
 1. **安全配置 UI**（P3）：后端 `GET /api/admin/config/security` 已实现，前端无对应管理界面
 2. **批量域名替换 API**（P4）：`POST /api/admin/domains/batch` 支持全量替换域名列表
 3. **原始检测结果查询 API**（P4）：`GET /api/admin/results` 返回原始检测结果（非统计数据）
+4. **检测成功率统计**（P3）：记录每次检测的成功/失败结果，汇总为域名级成功率，在 AdminStats 和 AdminDashboard 中展示。当前后端 stats API 不含 `successRate` / `successCount` / `failCount`，需在检测流程中记录并在 stats 路由中聚合返回
+5. **系统运行时长**（P3）：记录 Worker 持续运行时间（基于首次部署时间或 lastReset），在 AdminStats 中展示。当前 `uptime` 字段后端不存在
+6. **域名级检测计数**（P4）：在 AdminDashboard 统计卡片中按域名拆分成功/失败次数，需扩展 stats 存储结构以支持 per-domain 计数
 
 ### P4 可选增强（task-18-todo.md）
-4. 配置历史版本管理（4h）
-5. 配置导入/导出（3h）
-6. 配置变更影响分析（2h）
+7. 配置历史版本管理（4h）
+8. 配置导入/导出（3h）
+9. 配置变更影响分析（2h）

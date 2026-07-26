@@ -106,10 +106,10 @@ export class AdminConfig {
         <h2 class="text-lg font-semibold text-gray-900 mb-4">检测配置</h2>
         ${Input({
           type: 'number',
-          id: 'refreshInterval',
-          label: '检测间隔（秒）',
+          id: 'defaultRefreshInterval',
+          label: '刷新间隔',
           placeholder: '',
-          value: String(this.config.refreshInterval || 43200),
+          value: String(this.config.defaultRefreshInterval || 43200),
           min: 1,
           required: true,
         })}
@@ -245,7 +245,7 @@ export class AdminConfig {
     this.bindEvents()
 
     try {
-      const refreshInterval = parseInt(getInputValue('refreshInterval'))
+      const defaultRefreshInterval = parseInt(getInputValue('defaultRefreshInterval'))
       const historyRetention = parseInt(getInputValue('historyRetention'))
       const rateLimitWindow = parseInt(getInputValue('rateLimitWindow'))
       const rateLimitMax = parseInt(getInputValue('rateLimitMax'))
@@ -253,7 +253,7 @@ export class AdminConfig {
       const dohBackup = getInputValue('dohBackup')
 
       // 验证检测间隔
-      if (refreshInterval < 1) {
+      if (defaultRefreshInterval < 1) {
         show.error('检测间隔不能小于 1 秒')
         this.saving = false
         this.render()
@@ -289,7 +289,7 @@ export class AdminConfig {
 
       // 保存配置
       const config = {
-        refreshInterval,
+        defaultRefreshInterval,
         historyRetention,
         rateLimit: {
           windowMs: rateLimitWindow,
@@ -326,7 +326,7 @@ export class AdminConfig {
     }
 
     this.config = {
-      refreshInterval: 43200,
+      defaultRefreshInterval: 43200,
       historyRetention: 7,
       rateLimit: {
         windowMs: 60000,
