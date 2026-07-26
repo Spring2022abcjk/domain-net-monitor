@@ -175,14 +175,6 @@ export class AdminHistory {
             ipv6: latestRecord.ipv6,
             ech: latestRecord.ech,
           })
-        } else if (d.latestCheck) {
-          historyData.push({
-            timestamp: d.latestCheck,
-            domain: d.domain,
-            https_rr: { status: 'no' },
-            ipv6: { status: 'no' },
-            ech: { status: 'no' },
-          })
         }
       })
     }

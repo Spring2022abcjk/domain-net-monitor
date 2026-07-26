@@ -80,49 +80,37 @@ export class AdminDashboard {
         </div>
         
         <!-- 统计卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           ${Card({
             content: `
               <div class="flex items-center justify-between">
                 <div>
                   <div class="text-sm font-medium text-gray-600">监控域名</div>
-                  <div class="text-3xl font-bold text-blue-600 mt-1">${this.stats.domainCount || 0}</div>
+                  <div class="text-3xl font-bold text-blue-600 mt-1">${this.stats.overview?.totalDomains || 0}</div>
                 </div>
                 <span class="text-4xl">🌐</span>
               </div>
             `,
           })}
-          
+
           ${Card({
             content: `
               <div class="flex items-center justify-between">
                 <div>
-                  <div class="text-sm font-medium text-gray-600">运行中</div>
-                  <div class="text-3xl font-bold text-green-600 mt-1">${this.stats.activeCount || 0}</div>
+                  <div class="text-sm font-medium text-gray-600">默认域名</div>
+                  <div class="text-3xl font-bold text-green-600 mt-1">${this.stats.overview?.defaultDomains || 0}</div>
                 </div>
-                <span class="text-4xl">✅</span>
+                <span class="text-4xl">📋</span>
               </div>
             `,
           })}
-          
-          ${Card({
-            content: `
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="text-sm font-medium text-gray-600">已停止</div>
-                  <div class="text-3xl font-bold text-red-600 mt-1">${this.stats.stoppedCount || 0}</div>
-                </div>
-                <span class="text-4xl">❌</span>
-              </div>
-            `,
-          })}
-          
+
           ${Card({
             content: `
               <div class="flex items-center justify-between">
                 <div>
                   <div class="text-sm font-medium text-gray-600">今日检测</div>
-                  <div class="text-3xl font-bold text-purple-600 mt-1">${this.stats.todayChecks || 0}</div>
+                  <div class="text-3xl font-bold text-purple-600 mt-1">${this.stats.today?.requests || 0}</div>
                 </div>
                 <span class="text-4xl">📊</span>
               </div>

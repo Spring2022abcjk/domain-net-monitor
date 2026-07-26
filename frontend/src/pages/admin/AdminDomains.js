@@ -24,13 +24,17 @@ export class AdminDomains {
     this.loading = false
     this.showAddModal = false
     this.newDomainInput = ''
+    this.detecting = false
+    this.__detectNowHandler = () => this.handleDetectNow()
     this.__addDomainHandler = () => {
       this.showAddModal = true
       this.newDomainInput = ''
+      this._updateDOM()
     }
     this.__cancelAddHandler = () => {
       this.showAddModal = false
       this.newDomainInput = ''
+      this._updateDOM()
     }
     this.__confirmAddHandler = () => this.handleAddDomain()
     this.__batchDeleteHandler = () => this.handleBatchDelete()
@@ -120,6 +124,12 @@ export class AdminDomains {
           </p>
         </div>
         <div class="flex items-center gap-3">
+          ${Button({
+            text: '立即检测',
+            variant: 'secondary',
+            size: 'md',
+            id: 'detectNowBtn',
+          })}
           ${Button({
             text: '批量删除',
             variant: 'danger',
@@ -283,6 +293,7 @@ export class AdminDomains {
     const closeBtn = document.getElementById('modal-close-btn')
     const confirmBtn = document.getElementById('confirmAddBtn')
     const batchBtn = document.getElementById('batchDeleteBtn')
+    const detectBtn = document.getElementById('detectNowBtn')
     const selectAll = document.getElementById('selectAll')
     const tableBody = document.querySelector('tbody')
 
@@ -292,9 +303,11 @@ export class AdminDomains {
     closeBtn?.removeEventListener('click', this.__cancelAddHandler)
     confirmBtn?.removeEventListener('click', this.__confirmAddHandler)
     batchBtn?.removeEventListener('click', this.__batchDeleteHandler)
+    detectBtn?.removeEventListener('click', this.__detectNowHandler)
     selectAll?.removeEventListener('change', this.__selectAllHandler)
     tableBody?.removeEventListener('click', this.__tableDelegateHandler)
 
+    detectBtn?.addEventListener('click', this.__detectNowHandler)
     addBtn?.addEventListener('click', this.__addDomainHandler)
     emptyBtn?.addEventListener('click', this.__addDomainHandler)
     cancelBtn?.addEventListener('click', this.__cancelAddHandler)
@@ -364,8 +377,20 @@ export class AdminDomains {
       this.showAddModal = false
       this.newDomainInput = ''
       await this.loadData()
+      this._updateDOM()
     } catch (error) {
       show.error((/** @type {Error} */ (error)).message || '添加失败')
+    }
+  }
+
+  /**
+   * 更新 DOM 并重新绑定事件
+   */
+  _updateDOM() {
+    const container = document.getElementById('admin-content')
+    if (container) {
+      container.innerHTML = this.render()
+      this.bindEvents()
     }
   }
 
@@ -428,6 +453,23 @@ export class AdminDomains {
     }
   }
 
+  /**
+   * 处理立即检测默认域名
+   */
+  async handleDetectNow() {
+    if (this.detecting) return
+    try {
+      this.detecting = true
+      show.info('正在触发默认域名检测...')
+      await post('/api/admin/detect/default')
+      show.success('检测任务已提交')
+    } catch (error) {
+      show.error('触发检测失败：' + ((/** @type {Error} */ (error)).message || '未知错误'))
+    } finally {
+      this.detecting = false
+    }
+  }
+
   /** @param {string} domain */
   async _handleDeleteDomain(domain) {
     if (!confirm(`确定要删除域名 ${domain} 吗？此操作不可恢复。`)) return
@@ -453,6 +495,7 @@ export class AdminDomains {
     document.getElementById('modal-close-btn')?.removeEventListener('click', this.__cancelAddHandler)
     document.getElementById('confirmAddBtn')?.removeEventListener('click', this.__confirmAddHandler)
     document.getElementById('batchDeleteBtn')?.removeEventListener('click', this.__batchDeleteHandler)
+    document.getElementById('detectNowBtn')?.removeEventListener('click', this.__detectNowHandler)
     document.getElementById('selectAll')?.removeEventListener('change', this.__selectAllHandler)
     document.querySelector('tbody')?.removeEventListener('click', this.__tableDelegateHandler)
   }
