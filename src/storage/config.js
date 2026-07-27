@@ -16,6 +16,7 @@ const DEFAULT_CONFIG = {
     primary: DOH_PRIMARY,
     backup: DOH_BACKUP,
   },
+  deployTime: 0, // 首次部署时间戳（0 表示未初始化）
 }
 
 /**
@@ -32,12 +33,19 @@ export async function getConfig(env) {
   }
 
   const config = JSON.parse(data)
-  return {
+  const mergedConfig = {
     ...DEFAULT_CONFIG,
     ...config,
     rateLimit: { ...DEFAULT_CONFIG.rateLimit, ...config.rateLimit },
     doh: { ...DEFAULT_CONFIG.doh, ...config.doh },
   }
+
+  if (!mergedConfig.deployTime) {
+    mergedConfig.deployTime = Date.now()
+    await kv.put(KV_KEY_CONFIG, JSON.stringify(mergedConfig))
+  }
+
+  return mergedConfig
 }
 
 /**

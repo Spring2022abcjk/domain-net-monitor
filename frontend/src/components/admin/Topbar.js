@@ -89,6 +89,7 @@ function generateBreadcrumbs(hash) {
     domains: '域名管理',
     config: '系统配置',
     history: '历史记录',
+    security: '安全配置',
   }
 
   /** @type {Array<{path: string, label: string}>} */

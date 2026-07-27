@@ -74,6 +74,10 @@ export class AdminStats {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          ${this.renderDetectionStats()}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           ${this.renderSystemInfo()}
         </div>
       </div>
@@ -109,16 +113,50 @@ export class AdminStats {
   }
 
   /**
+   * 渲染检测统计卡片
+   */
+  renderDetectionStats() {
+    const successCount = this.stats.detection?.successCount || 0
+    const failCount = this.stats.detection?.failCount || 0
+    const total = successCount + failCount
+    const successRateVal = total > 0 ? parseFloat(((successCount / total) * 100).toFixed(2)) : 0
+
+    return `
+      ${Card({
+        title: '检测成功率',
+        content: `<div class="text-3xl font-bold text-green-600">${successRateVal.toFixed(2)}%</div>`,
+        footer: '今日检测成功率',
+      })}
+      ${Card({
+        title: '检测成功',
+        content: `<div class="text-3xl font-bold text-blue-600">${successCount || 0}</div>`,
+        footer: '今日检测成功次数',
+      })}
+      ${Card({
+        title: '检测失败',
+        content: `<div class="text-3xl font-bold text-red-600">${failCount || 0}</div>`,
+        footer: '今日检测失败次数',
+      })}
+    `
+  }
+
+  /**
    * 渲染系统信息卡片
    */
   renderSystemInfo() {
     const lastResetDate = this.stats.lastReset ? new Date(this.stats.lastReset).toLocaleString() : '暂无'
+    const uptime = this.stats.uptimeHuman || '0.0 days'
 
     return `
       ${Card({
         title: '最后重置时间',
         content: `<div class="text-lg font-mono text-gray-700">${lastResetDate}</div>`,
         footer: '统计数据每日自动重置',
+      })}
+      ${Card({
+        title: '系统运行时长',
+        content: `<div class="text-3xl font-bold text-indigo-600">${uptime}</div>`,
+        footer: '自上次部署以来',
       })}
     `
   }

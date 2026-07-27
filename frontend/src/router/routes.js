@@ -57,6 +57,12 @@ export const routes = [
         component: () => import('../pages/admin/AdminStats.js'),
         meta: { title: '统计概览' },
       },
+      {
+        name: 'admin-security',
+        path: 'security',
+        component: () => import('../pages/admin/AdminSecurity.js'),
+        meta: { title: '安全配置' },
+      },
     ],
   },
   {

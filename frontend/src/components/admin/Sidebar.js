@@ -37,6 +37,12 @@ export function Sidebar({ open = false }) {
       label: '统计概览',
       active: window.location.hash.startsWith('#/admin/stats'),
     },
+    {
+      path: '/admin/security',
+      icon: '🔒',
+      label: '安全配置',
+      active: window.location.hash.startsWith('#/admin/security'),
+    },
   ]
 
   const activeClass = 'bg-blue-50 text-blue-700 border-r-4 border-blue-700'
